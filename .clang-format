@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+
+DeriveLineEnding: false
+UseCRLF: false
+UseTab: Never
+IndentWidth: 4
