@@ -1,6 +1,10 @@
-#include <main_function.h>
+#include <Application.h>
 
 int main(int argc, char **argv) {
-    main_function();
-    return 0;
+    try {
+        Application app;
+        app.run();
+    } catch(...) {
+        return 1;
+    }
 }

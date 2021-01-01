@@ -9,8 +9,16 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/lib/static)
 
 add_subdirectory(deps)
 
-add_library(${PROJECT_NAME}_lib STATIC src/main_function.cpp src/main_function.h)
-target_include_directories(${PROJECT_NAME}_lib PUBLIC ${PROJECT_SOURCE_DIR}/deps src)
+add_compile_definitions(LOG_LEVEL=1)
+
+add_library(${PROJECT_NAME}_lib STATIC src/GLWindow.cpp src/GLWindow.h src/Application.cpp src/Application.h src/Logging.h src/Assert.h src/GLContext.h)
+target_include_directories(${PROJECT_NAME}_lib PUBLIC
+    ${PROJECT_SOURCE_DIR}/deps
+    ${PROJECT_SOURCE_DIR}/deps/glfw/include
+    ${PROJECT_SOURCE_DIR}/deps/glad/include
+    src)
+target_link_libraries(${PROJECT_NAME}_lib PUBLIC glfw glad)
+target_compile_definitions(${PROJECT_NAME}_lib PUBLIC GLFW_INCLUDE_NONE)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_lib)
