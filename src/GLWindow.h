@@ -5,8 +5,9 @@
 class GLFWwindow;
 
 struct WindowProp {
-    std::string title;
-    size_t width, height;
+    std::string title{"Title"};
+    size_t width = 640;
+    size_t height = 480;
 };
 
 class GLWindow {

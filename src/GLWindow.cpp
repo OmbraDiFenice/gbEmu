@@ -7,7 +7,7 @@ unsigned int GLWindow::windowCount = 0;
 GLWindow::GLWindow(const WindowProp& prop) {
     LOG_DBG("creating window");
 
-    glfWindow = glfwCreateWindow(640, 480, "Window", nullptr, nullptr);
+    glfWindow = glfwCreateWindow(prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
     ASSERT(glfWindow != nullptr, "failed to create window!");
 
     ++windowCount;
