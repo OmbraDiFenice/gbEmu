@@ -11,7 +11,8 @@ add_subdirectory(deps)
 
 add_compile_definitions(LOG_LEVEL=1)
 
-add_library(${PROJECT_NAME}_lib STATIC src/GLWindow.cpp src/GLWindow.h src/Application.cpp src/Application.h src/Logging.h src/Assert.h src/GLContext.h)
+add_library(${PROJECT_NAME}_lib STATIC src/GLWindow.cpp src/GLWindow.h src/Application.cpp src/Application.h src/Logging.h src/Assert.h src/GLContext.h src/Pch.h src/GLContext.cpp)
+target_precompile_headers(${PROJECT_NAME}_lib PUBLIC src/Pch.h)
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
     ${PROJECT_SOURCE_DIR}/deps
     ${PROJECT_SOURCE_DIR}/deps/glfw/include

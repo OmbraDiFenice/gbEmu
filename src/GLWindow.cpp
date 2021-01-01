@@ -1,8 +1,6 @@
 #include "GLWindow.h"
-
-#include <Assert.h>
 #include <GLContext.h>
-#include <Logging.h>
+#include <GLFW/glfw3.h>
 
 unsigned int GLWindow::windowCount = 0;
 

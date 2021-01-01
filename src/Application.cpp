@@ -1,7 +1,5 @@
 #include "Application.h"
-
 #include <GLContext.h>
-#include <Logging.h>
 
 Application::Application() {
     GLContext::Init();
