@@ -1,17 +1,16 @@
 #include "Application.h"
-#include <GLContext.h>
 
-Application::Application() {
-    GLContext::Init();
-}
+#include <GLWindowManager.h>
+
+Application::Application() { GLWindowManager::Init(); }
+Application::~Application() { GLWindowManager::Destroy(); }
 
 void Application::run() {
     LOG_DBG("start app");
 
-    WindowProp props;
-    GLWindow window(props);
+    GLWindow window = GLWindowManager::CreateWindow();
 
-    while (GLWindow::GetWindowCount() > 0) {
+    while (GLWindowManager::GetWindowCount() > 0) {
         window.update();
     }
 

@@ -1,10 +1,9 @@
 #pragma once
 
-#include <GLWindow.h>
-
 class Application {
    public:
     Application();
+    ~Application();
 
     void run();
 };
