@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <Application.h>
 
 struct WindowProp {
     std::string title{"Title"};
@@ -8,7 +9,4 @@ struct WindowProp {
     size_t height = 480;
 };
 
-class Window {
-   public:
-    virtual void update() = 0;
-};
+class Window : public Component {};
