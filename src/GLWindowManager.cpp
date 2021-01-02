@@ -10,7 +10,7 @@ void GLWindow::update() { glfwPollEvents(); }
 std::vector<GLFWwindow*> GLWindowManager::windows;
 
 void GLWindowManager::Init() {
-    LOG_DBG("initializing window manager");
+    TRACE_CALL
 
     glfwSetErrorCallback([](int error, const char* description) {
         LOG_ERROR("Code " << error << ": " << description);
@@ -21,16 +21,15 @@ void GLWindowManager::Init() {
 }
 
 void GLWindowManager::SetGlContext(GLFWwindow* window) {
-    LOG_DBG("setting GL context");
+    TRACE_CALL
     glfwMakeContextCurrent(window);
     gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
 }
 
 void GLWindowManager::Destroy() {
-    LOG_DBG("destroying window manager");
+    TRACE_CALL
     for (GLFWwindow* window : windows) {
-        LOG_DBG("destroying window");
         glfwDestroyWindow(window);
     }
     windows.clear();
@@ -38,7 +37,7 @@ void GLWindowManager::Destroy() {
 }
 
 void GLWindowManager::DestroyWindow(GLFWwindow* window) {
-    LOG_DBG("destroying window");
+    TRACE_CALL
     glfwDestroyWindow(window);
     for(auto it = windows.begin(); it != windows.end(); ++it) {
         if(*it == window) {
@@ -49,7 +48,7 @@ void GLWindowManager::DestroyWindow(GLFWwindow* window) {
 }
 
 GLWindow&& GLWindowManager::CreateWindow(const WindowProp& prop) {
-    LOG_DBG("creating window");
+    TRACE_CALL
 
     GLFWwindow* glfWindow = glfwCreateWindow(prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
     ASSERT(glfWindow != nullptr, "failed to create window!");
