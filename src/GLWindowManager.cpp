@@ -3,7 +3,22 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
-GLWindow::GLWindow(GLFWwindow* glfWindow) : _glfWindow(glfWindow) {};
+GLWindow::GLWindow(GLFWwindow* glfWindow) : _glfWindow(glfWindow) {
+    glfwSetWindowUserPointer(glfWindow, this);
+    glfwSetKeyCallback(glfWindow, [](GLFWwindow* window, int code, int key,
+                                     int action, int mods) {
+        auto* self = static_cast<GLWindow*>(glfwGetWindowUserPointer(window));
+        // TODO create key event
+        KeyEvent e;
+        self->_eventCallback(e);
+    });
+    glfwSetMouseButtonCallback(glfWindow, [](GLFWwindow* window, int button,
+                                             int action, int mods) {
+        auto* self = static_cast<GLWindow*>(glfwGetWindowUserPointer(window));
+        MouseEvent e;
+        self->_eventCallback(e);
+    });
+};
 
 void GLWindow::update() { glfwPollEvents(); }
 
@@ -39,8 +54,8 @@ void GLWindowManager::Destroy() {
 void GLWindowManager::DestroyWindow(GLFWwindow* window) {
     TRACE_CALL
     glfwDestroyWindow(window);
-    for(auto it = windows.begin(); it != windows.end(); ++it) {
-        if(*it == window) {
+    for (auto it = windows.begin(); it != windows.end(); ++it) {
+        if (*it == window) {
             windows.erase(it);
             break;
         }
@@ -50,7 +65,8 @@ void GLWindowManager::DestroyWindow(GLFWwindow* window) {
 GLWindow GLWindowManager::CreateWindow(const WindowProp& prop) {
     TRACE_CALL
 
-    GLFWwindow* glfWindow = glfwCreateWindow(prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
+    GLFWwindow* glfWindow = glfwCreateWindow(
+        prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
     ASSERT(glfWindow != nullptr, "failed to create window!");
 
     windows.emplace_back(glfWindow);

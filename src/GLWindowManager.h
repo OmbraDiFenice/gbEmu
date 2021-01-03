@@ -13,6 +13,7 @@ class GLWindow : public Window {
     void update() override;
 
    private:
+
     GLFWwindow* _glfWindow;
 };
 
