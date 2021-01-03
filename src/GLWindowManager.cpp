@@ -47,7 +47,7 @@ void GLWindowManager::DestroyWindow(GLFWwindow* window) {
     }
 }
 
-GLWindow&& GLWindowManager::CreateWindow(const WindowProp& prop) {
+GLWindow GLWindowManager::CreateWindow(const WindowProp& prop) {
     TRACE_CALL
 
     GLFWwindow* glfWindow = glfwCreateWindow(prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
@@ -59,10 +59,10 @@ GLWindow&& GLWindowManager::CreateWindow(const WindowProp& prop) {
 
     GLWindowManager::SetGlContext(glfWindow);
 
-    return std::move(GLWindow(glfWindow));
+    return GLWindow(glfWindow);
 }
 
-GLWindow&& GLWindowManager::CreateWindow() {
+GLWindow GLWindowManager::CreateWindow() {
     WindowProp props;
     return CreateWindow(props);
 }

@@ -22,8 +22,8 @@ class GLWindowManager {
     static void Destroy();
     static size_t GetWindowCount();
 
-    static GLWindow&& CreateWindow(const WindowProp& prop);
-    static GLWindow&& CreateWindow();
+    static GLWindow CreateWindow(const WindowProp& prop);
+    static GLWindow CreateWindow();
 
    private:
     static void SetGlContext(GLFWwindow* window);
