@@ -1,7 +1,6 @@
 #include "Application.h"
 
-#include <GLWindowManager.h>
-#include <Macros.h>
+#include <core/ui/GLWindowManager.h>
 
 Application::Application() { GLWindowManager::Init(); }
 Application::~Application() { GLWindowManager::Destroy(); }

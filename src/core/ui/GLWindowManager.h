@@ -1,7 +1,8 @@
 #pragma once
 
+#include <core/ui/Window.h>
+
 #include <vector>
-#include <Window.h>
 
 class GLFWwindow;
 

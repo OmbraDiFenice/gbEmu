@@ -11,7 +11,10 @@ add_subdirectory(deps)
 
 add_compile_definitions(LOG_LEVEL=1)
 
-add_library(${PROJECT_NAME}_lib STATIC src/Application.cpp src/Application.h src/Logging.h src/Assert.h src/GLWindowManager.h src/Pch.h src/GLWindowManager.cpp src/Window.h src/Event.h src/Macros.h)
+add_library(${PROJECT_NAME}_lib STATIC
+    src/Application.cpp src/Application.h src/Pch.h src/core/Event.h
+    src/utils/Logging.h src/utils/Assert.h src/utils/Macros.h
+    src/core/ui/GLWindowManager.h src/core/ui/GLWindowManager.cpp src/core/ui/Window.h)
 target_precompile_headers(${PROJECT_NAME}_lib PUBLIC src/Pch.h)
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
     ${PROJECT_SOURCE_DIR}/deps

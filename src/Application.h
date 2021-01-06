@@ -1,13 +1,7 @@
 #pragma once
 
-#include <vector>
-#include <Event.h>
-
-class Component {
-   public:
-    virtual void update() = 0;
-    virtual void onEvent(Event& e) {};
-};
+#include <core/Component.h>
+#include <core/Event.h>
 
 class Application {
    public:

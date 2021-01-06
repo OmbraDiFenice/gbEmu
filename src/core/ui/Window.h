@@ -1,10 +1,13 @@
 #pragma once
 
-#include <string>
-#include <functional>
-#include <utility>
 #include <Application.h>
-#include <Event.h>
+#include <core/Event.h>
+
+#include <functional>
+#include <string>
+#include <utility>
+
+#include "core/Component.h"
 
 struct WindowProp {
     std::string title{"Title"};

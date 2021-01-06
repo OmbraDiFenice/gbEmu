@@ -1,8 +1,9 @@
 #pragma once
 
-#include <Logging.h>
-#include <Assert.h>
+#include <utils/Assert.h>
+#include <utils/Logging.h>
+#include <utils/Macros.h>
 
-#include <vector>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <vector>
