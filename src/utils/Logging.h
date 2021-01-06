@@ -6,9 +6,10 @@
 #define OUT std::cout
 #define ERR std::cerr
 
-#define DBG 1
-#define INFO 2
-#define WARN 3
+#define TRACE 0
+#define DBG   1
+#define INFO  2
+#define WARN  3
 #define ERROR 4
 
 #define LOG(stream, level, msg)                                                \
@@ -21,9 +22,10 @@
                << " - " << msg << "\n";                                        \
     }
 
+#define LOG_TRACE(msg) LOG(OUT, TRACE, msg)
 #define LOG_DBG(msg) LOG(OUT, DBG, msg)
 #define LOG_INFO(msg) LOG(OUT, INFO, msg)
 #define LOG_WARN(msg) LOG(ERR, WARN, msg)
 #define LOG_ERROR(msg) LOG(ERR, ERROR, msg)
 
-#define TRACE_CALL LOG_DBG(__FUNCTION__)
+#define TRACE_CALL LOG_TRACE(__FUNCTION__)

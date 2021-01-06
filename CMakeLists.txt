@@ -9,7 +9,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/lib/static)
 
 add_subdirectory(deps)
 
-add_compile_definitions(LOG_LEVEL=1)
+add_compile_definitions(LOG_LEVEL=0)
 
 add_library(${PROJECT_NAME}_lib STATIC
     src/Application.cpp src/Application.h src/Pch.h src/core/Event.h
