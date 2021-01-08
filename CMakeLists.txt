@@ -14,7 +14,7 @@ add_compile_definitions(LOG_LEVEL=0)
 add_library(${PROJECT_NAME}_lib STATIC
     src/Application.cpp src/Application.h src/Pch.h src/core/Event.h
     src/utils/Logging.h src/utils/Assert.h src/utils/Macros.h
-    src/core/ui/GLWindowManager.h src/core/ui/GLWindowManager.cpp src/core/ui/Window.h src/core/emu/Memory.cpp src/core/emu/Memory.h)
+    src/core/ui/GLWindowManager.h src/core/ui/GLWindowManager.cpp src/core/ui/Window.h src/core/emu/Memory.cpp src/core/emu/Memory.h src/core/emu/Cartridge.cpp src/core/emu/Cartridge.h)
 target_precompile_headers(${PROJECT_NAME}_lib PUBLIC src/Pch.h)
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
     ${PROJECT_SOURCE_DIR}/deps
