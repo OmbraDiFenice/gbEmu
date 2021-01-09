@@ -9,6 +9,7 @@ class Application {
     ~Application();
 
     void run();
+    inline bool keepRunning();
 
    private:
     void onEvent(Event& e);

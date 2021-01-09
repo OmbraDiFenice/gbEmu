@@ -13,7 +13,7 @@ void Application::run() {
 
     window.setEventCallback(BIND_FN(Application::onEvent));
 
-    while (GLWindowManager::GetWindowCount() > 0) {
+    while (keepRunning()) {
         for (auto c : _components) {
             c->update();
         }
@@ -38,4 +38,8 @@ void Application::onKeyEvent(KeyEvent& e) {
 
 void Application::onMouseEvent(MouseEvent& e) {
     TRACE_CALL
+}
+
+bool Application::keepRunning() {
+    return GLWindowManager::GetWindowCount() > 0;
 }
