@@ -20,8 +20,8 @@ GLWindow::GLWindow(GLFWwindow* glfWindow) : _glfWindow(glfWindow) {
 }
 
 void GLWindow::update() {
-    glfwPollEvents();
     glfwSwapBuffers(_glfWindow);
+    glfwPollEvents();
 }
 
 GLWindowManager::GLWindowManager() {
