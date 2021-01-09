@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Application.h>
 #include <core/Event.h>
 
 #include <functional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "core/Component.h"
 
@@ -30,4 +30,17 @@ class Window : public Component {
 
    protected:
     std::function<void(Event&)> _eventCallback;
+};
+
+class WindowManager {
+   public:
+    WindowManager() = default;
+    virtual ~WindowManager() = default;
+
+    virtual Window* createWindow(const WindowProp& prop) = 0;
+    virtual Window* createWindow() = 0;
+    static inline size_t GetWindowCount(){ return windows.size(); }
+
+   protected:
+    static std::vector<Window*> windows;
 };

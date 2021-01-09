@@ -2,11 +2,13 @@
 
 #include <core/Component.h>
 #include <core/Event.h>
+#include <core/ui/Window.h>
+#include <core/ui/GLWindowManager.h>
+#include <memory>
 
 class Application {
    public:
-    Application();
-    ~Application();
+    Application() : _windowManager(new GLWindowManager()) {};
 
     void run();
     inline bool keepRunning();
@@ -18,4 +20,5 @@ class Application {
 
    private:
     std::vector<Component*> _components;
+    std::unique_ptr<GLWindowManager> _windowManager;
 };

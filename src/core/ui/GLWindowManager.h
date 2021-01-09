@@ -2,8 +2,6 @@
 
 #include <core/ui/Window.h>
 
-#include <vector>
-
 class GLFWwindow;
 
 class GLWindow : public Window {
@@ -13,24 +11,21 @@ class GLWindow : public Window {
 
     void update() override;
 
-   private:
+    inline GLFWwindow* get() { return _glfWindow; }
 
+   private:
     GLFWwindow* _glfWindow;
 };
 
-class GLWindowManager {
+class GLWindowManager : public WindowManager {
    public:
-    static void Init();
-    static void Destroy();
-    static size_t GetWindowCount();
+    GLWindowManager();
+    ~GLWindowManager() override;
 
-    static GLWindow CreateWindow(const WindowProp& prop);
-    static GLWindow CreateWindow();
+    Window* createWindow(const WindowProp& prop) override;
+    Window* createWindow() override;
 
    private:
-    static void SetGlContext(GLFWwindow* window);
+    void setGlContext(GLFWwindow* window) const;
     static void DestroyWindow(GLFWwindow* window);
-
-   private:
-    static std::vector<GLFWwindow*> windows;
 };
