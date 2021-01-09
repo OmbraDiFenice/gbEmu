@@ -4,7 +4,9 @@
 void Application::run() {
     LOG_DBG("start app");
 
-    Window* window = _windowManager->createWindow();
+    WindowProp prop;
+    prop.width = prop.height = 640;
+    Window* window = _windowManager->createWindow(prop);
     _components.push_back(window);
 
     window->setEventCallback(BIND_FN(Application::onEvent));
