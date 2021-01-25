@@ -1,34 +1,17 @@
 #include "Cartridge.h"
+#include <core/emu/utils.h>
 
 Cartridge::~Cartridge() {
     delete[] _data;
 }
 
 bool Cartridge::load(const std::string& filename) {
-    std::ifstream file{filename, std::ios::binary};
-
-    if(file.fail()) {
-        LOG_ERROR("failed to open cart file '" << filename << "'");
-        return false;
-    }
-
-    LOG_DBG("measuring cart size");
-    file.seekg(0, std::ios::end);
-    size_t cartSize = file.tellg();
-    file.seekg(0, std::ios::beg);
-    LOG_DBG("cart size is " << cartSize << " bytes");
-
-    LOG_DBG("reading cart data");
-    delete[] _data;
-    _data = new char[cartSize];
-    file.read(_data, cartSize);
-    LOG_DBG("cart data read");
-
-    return !file.fail();
+    _data = loadData(filename.c_str());
+    return _data != nullptr;
 }
 
 std::string Cartridge::getTitle() {
-    return std::string{&_data[0x134], 15};
+    return std::string{reinterpret_cast<char*>(&_data[0x134]), 15};
 }
 
 std::string Cartridge::getCartType() {

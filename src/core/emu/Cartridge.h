@@ -17,5 +17,5 @@ class Cartridge {
     unsigned char computeHeaderChecksum();
 
    private:
-    char* _data = nullptr;
+    unsigned char* _data = nullptr;
 };
