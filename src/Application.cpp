@@ -3,6 +3,7 @@
 #include <core/ui/GLShader.h>
 #include <core/ui/GLProgram.h>
 #include <core/ui/GLTexture.h>
+#include <utils/GLErrorMacros.h>
 
 void Application::run() {
     LOG_DBG("start app");
@@ -24,14 +25,14 @@ void Application::run() {
     // clang-format on
 
     unsigned int vertexArray;
-    glGenVertexArrays(1, &vertexArray);
+    GLCall(glGenVertexArrays(1, &vertexArray));
 
     unsigned int vertexBuffer;
-    glGenBuffers(1, &vertexBuffer);
+    GLCall(glGenBuffers(1, &vertexBuffer));
 
     unsigned int indices[6] = {0, 1, 2, 2, 3, 0};
     unsigned int indexBuffer;
-    glGenBuffers(1, &indexBuffer);
+    GLCall(glGenBuffers(1, &indexBuffer));
 
     // clang-format off
     std::string vertexSrc = R"(
@@ -102,24 +103,24 @@ void Application::run() {
         // data setup
         program.bind();
 
-        glBindVertexArray(vertexArray);
+        GLCall(glBindVertexArray(vertexArray));
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
+        GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void*)(3*sizeof(float)));
+        GLCall(glEnableVertexAttribArray(0));
+        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr));
+        GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void*)(3*sizeof(float))));
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-                     GL_STATIC_DRAW);
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
+        GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+                     GL_STATIC_DRAW));
 
         // drawing
-        glClearColor(0.15f, 0.15f, 0.15f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        GLCall(glClearColor(0.15f, 0.15f, 0.15f, 1));
+        GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         for (auto c : _components) {
             c->update();
