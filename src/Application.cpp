@@ -88,15 +88,26 @@ void Application::run() {
         0, 0, 0, 0, 0, 0, 0, 0
     };
     // clang-format on
-    unsigned char colorMap[] = {0x00, 0x08, 0x10, 0xFF};
-    unsigned char tileData[64];
-    for(int i = 0; i < 64; ++i) {
-        tileData[i] = colorMap[testTile[i]];
-    }
     const unsigned int WIDTH = 8;
     const unsigned int HEIGHT = 8;
 
-    GLTexture texture("test.png");
+    // vertically flip image
+    unsigned char buf[WIDTH];
+    for(int i = 0; i < HEIGHT/2; ++i) {
+        memcpy(buf, &testTile[i * WIDTH], WIDTH);
+        memcpy(&testTile[i * WIDTH], &testTile[(HEIGHT-1-i) * WIDTH], WIDTH);
+        memcpy(&testTile[(HEIGHT-1-i) * WIDTH], buf, WIDTH);
+    }
+
+    // map int color to rgba
+    uint32_t colorMap[] = {0xff000000, 0xFF0000ff, 0xff00ff00, 0xffff0000};
+    unsigned char tileData[WIDTH * HEIGHT * 4];
+    for(int i = 0; i < WIDTH * HEIGHT; ++i) {
+        memcpy(&tileData[i*4], &colorMap[testTile[i]], 4);
+    }
+
+    // GLTexture texture("test.png");
+    GLTexture texture(tileData, WIDTH, HEIGHT);
     texture.bind();
     program.setUniform("u_Texture", 0);
 

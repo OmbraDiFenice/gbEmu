@@ -4,11 +4,14 @@
 class GLTexture {
    public:
     GLTexture(const std::string& iPath);
-    // GLTexture(const unsigned char* iData, int iWidth, int iHeight);
+    GLTexture(unsigned char* iData, int iWidth, int iHeight);
     virtual ~GLTexture();
 
     void bind(unsigned int slot = 0) const;
     void unbind() const;
+
+   protected:
+    void initTexture();
 
    private:
     GLuint _ref;
