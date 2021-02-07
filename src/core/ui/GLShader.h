@@ -7,7 +7,7 @@ class GLShader : public Shader {
    public:
     GLShader(const std::string& iCode, GLenum iType);
 
-    [[nodiscard]] GLuint getRef() const { return _ref; }
+    GLuint getRef() const { return _ref; }
     bool compile() const override;
 
    private:

@@ -1,5 +1,6 @@
 #pragma once
 #include <core/ui/Program.h>
+#include <core/ui/Shader.h>
 #include <glad/gl.h>
 
 class GLProgram : public Program {
@@ -8,7 +9,8 @@ class GLProgram : public Program {
     ~GLProgram() override;
 
     void addShader(const std::string& iSrc, GLenum iType);
-    [[nodiscard]] GLuint getRef() const { return _ref; }
+    void loadShader(const std::string& iPath, GLenum iType);
+    GLuint getRef() const { return _ref; }
     bool link() const override;
     void bind() const override;
     void unbind() const override;

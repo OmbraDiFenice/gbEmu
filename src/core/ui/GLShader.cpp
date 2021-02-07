@@ -20,7 +20,7 @@ bool GLShader::compile() const {
         GLint logLength = 0;
         GLCall(glGetShaderiv(_ref, GL_INFO_LOG_LENGTH, &logLength));
 
-        GLchar* log = new GLchar[logLength];
+        auto* log = new GLchar[logLength];
         GLCall(glGetShaderInfoLog(_ref, logLength, &logLength, log));
 
         LOG_ERROR("Shader compilation error");

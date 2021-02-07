@@ -24,6 +24,12 @@ void GLProgram::addShader(const std::string& iSrc, GLenum iType) {
     Program::addShader(shader);
 }
 
+void GLProgram::loadShader(const std::string& iFilePath, GLenum iType) {
+    std::ifstream in(iFilePath, std::ios::in);
+    std::string shaderSrc = std::string((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+    addShader(shaderSrc, iType);
+}
+
 bool GLProgram::link() const {
     for(auto& shader : _shaderList) {
         if(!shader->compile()) return false;
