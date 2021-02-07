@@ -1,4 +1,4 @@
 cmake-build-debug/
 bin/
-deps/
-!deps/glad/
+deps/glfw/
+deps/gtest/

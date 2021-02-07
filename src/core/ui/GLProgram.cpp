@@ -62,3 +62,7 @@ void GLProgram::bind() const {
 void GLProgram::unbind() const {
     glUseProgram(0);
 }
+
+void GLProgram::setUniform(const std::string& iName, int iValue) {
+    glUniform1i(glGetUniformLocation(_ref, iName.c_str()), iValue);
+}

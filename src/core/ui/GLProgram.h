@@ -13,6 +13,8 @@ class GLProgram : public Program {
     void bind() const override;
     void unbind() const override;
 
+    void setUniform(const std::string& iName, int iValue) override;
+
    private:
     GLuint _ref;
 };

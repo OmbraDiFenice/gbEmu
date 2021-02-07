@@ -1,0 +1,1 @@
+add_library(stbi_image STATIC stbi_image.h stbi_image.cpp)

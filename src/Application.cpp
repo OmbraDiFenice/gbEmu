@@ -1,8 +1,8 @@
 #include "Application.h"
 #include <glad/gl.h>
-#include <core/emu/Video.h>
 #include <core/ui/GLShader.h>
 #include <core/ui/GLProgram.h>
+#include <core/ui/GLTexture.h>
 
 void Application::run() {
     LOG_DBG("start app");
@@ -86,22 +86,17 @@ void Application::run() {
         0, 0, 0, 0, 0, 0, 0, 0
     };
     // clang-format on
-    unsigned char tileMap[Video::kTileDataTableSize * Video::kDecodedTileSize];
-    memcpy(&tileMap[0], testTile, Video::kDecodedTileSize);
-    unsigned int textureId;
-    const unsigned int WIDTH = Video::kTileDataTableSize * 8;
+    unsigned char colorMap[] = {0x00, 0x08, 0x10, 0xFF};
+    unsigned char tileData[64];
+    for(int i = 0; i < 64; ++i) {
+        tileData[i] = colorMap[testTile[i]];
+    }
+    const unsigned int WIDTH = 8;
     const unsigned int HEIGHT = 8;
 
-    glCreateTextures(GL_TEXTURE_2D, 1, &textureId);
-    glTextureStorage2D(textureId, 1, GL_RGBA8, WIDTH, HEIGHT);
-
-    glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTextureSubImage2D(textureId, 0, 0, 0, WIDTH, HEIGHT, GL_RED, GL_UNSIGNED_BYTE, tileMap);
-
-    GLint location = glGetUniformLocation(textureId, "u_Texture");
-    glUniform1i(location, 0);
+    GLTexture texture("test.png");
+    texture.bind();
+    program.setUniform("u_Texture", 0);
 
     while (keepRunning()) {
         // data setup

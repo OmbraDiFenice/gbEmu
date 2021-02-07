@@ -10,6 +10,8 @@ class Program {
     virtual void bind() const = 0;
     virtual void unbind() const = 0;
 
+    virtual void setUniform(const std::string& iName, int value) = 0;
+
    protected:
     void addShader(std::shared_ptr<const Shader> iShader) { _shaderList.emplace_back(iShader); };
 
