@@ -47,6 +47,10 @@ GLWindowManager::~GLWindowManager() {
 Window* GLWindowManager::createWindow(const WindowProp& prop) {
     TRACE_CALL
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     GLFWwindow* glfWindow = glfwCreateWindow(
         prop.width, prop.height, prop.title.c_str(), nullptr, nullptr);
     ASSERT(glfWindow != nullptr, "failed to create window!");
@@ -58,6 +62,10 @@ Window* GLWindowManager::createWindow(const WindowProp& prop) {
     glfwSetWindowCloseCallback(glfWindow, GLWindowManager::DestroyWindow);
 
     setGlContext(glfWindow);
+
+    LOG_INFO("Vendor: " << glGetString(GL_VENDOR));
+    LOG_INFO("Renderer: " << glGetString(GL_RENDERER));
+    LOG_INFO("Version: " << glGetString(GL_VERSION));
 
     return window;
 }
