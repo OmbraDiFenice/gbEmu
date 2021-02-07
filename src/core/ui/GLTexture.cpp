@@ -4,9 +4,11 @@
 #include <stbi/stbi_image.h>
 #include <utils/GLErrorMacros.h>
 
-GLTexture::GLTexture(const std::string& iPath) {
+GLTexture::GLTexture(const std::string& iPath) : _ref(0), _data(nullptr) {
     int bpp;
+    stbi_set_flip_vertically_on_load(true);
     _data = stbi_load("test.png", &_width, &_height, &bpp, 4);
+    ASSERT(_data != nullptr, "failed to load image from file");
 
     GLCall(glGenTextures(1, &_ref));
     GLCall(glBindTexture(GL_TEXTURE_2D, _ref));
@@ -20,9 +22,7 @@ GLTexture::GLTexture(const std::string& iPath) {
                         GL_UNSIGNED_BYTE, _data));
     unbind();
 
-    if (_data) {
-        stbi_image_free(_data);
-    }
+    stbi_image_free(_data);
 }
 
 GLTexture::~GLTexture() {
@@ -38,4 +38,4 @@ void GLTexture::bind(unsigned int slot) const {
     GLCall(glBindTexture(GL_TEXTURE_2D, _ref));
 }
 
-void GLTexture::unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }
+void GLTexture::unbind() const { GLCall(glBindTexture(GL_TEXTURE_2D, 0)); }

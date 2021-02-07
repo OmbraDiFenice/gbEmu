@@ -74,6 +74,7 @@ void Application::run() {
     program.addShader(vertexSrc, GL_VERTEX_SHADER);
     program.addShader(fragmentSrc, GL_FRAGMENT_SHADER);
     program.link();
+    program.bind();
 
     // clang-format off
     unsigned char testTile[] = {
@@ -101,7 +102,6 @@ void Application::run() {
 
     while (keepRunning()) {
         // data setup
-        program.bind();
 
         GLCall(glBindVertexArray(vertexArray));
 
@@ -110,6 +110,7 @@ void Application::run() {
 
         GLCall(glEnableVertexAttribArray(0));
         GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr));
+        GLCall(glEnableVertexAttribArray(1));
         GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void*)(3*sizeof(float))));
 
         GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
