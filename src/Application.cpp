@@ -1,10 +1,12 @@
 #include <Pch.h>
 #include "Application.h"
-#include <glad/gl.h>
-#include <core/ui/GLShader.h>
 #include <core/ui/GLProgram.h>
+#include <core/ui/GLShader.h>
 #include <core/ui/GLTexture.h>
+#include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
+
+#include <core/ui/Texture.h>
 
 void Application::run() {
     LOG_DBG("start app");
@@ -65,15 +67,15 @@ void Application::run() {
     }
 
     // map int color to rgba
-    uint32_t colorMap[] = {0xff000000, 0xFF0000ff, 0xff00ff00, 0xffff0000};
+    uint32_t colorMap[] = {0xFF000000, 0xff0000FF, 0xFF00FF00, 0xFFFF0000};
     unsigned char tileData[WIDTH * HEIGHT * 4];
     for(int i = 0; i < WIDTH * HEIGHT; ++i) {
         memcpy(&tileData[i*4], &colorMap[testTile[i]], 4);
     }
 
     // GLTexture texture("test.png");
-    GLTexture texture(tileData, WIDTH, HEIGHT);
-    texture.bind();
+    GLTexture texture(tileData, WIDTH, HEIGHT, 4);
+    texture.bind(0);
     program.setUniform("u_Texture", 0);
 
     while (keepRunning()) {
