@@ -1,6 +1,6 @@
 #pragma once
 #include <core/emu/Video.h>
-#include <core/ui/GLTexture.h>
+#include <core/ui/opengl/GLTexture.h>
 
 class TileMapAdapter {
    public:

@@ -1,8 +1,8 @@
 #include <Pch.h>
 
-#include <core/ui/GLProgram.h>
+#include <core/ui/opengl/GLProgram.h>
 
-#include <core/ui/GLShader.h>
+#include <core/ui/opengl/GLShader.h>
 #include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 

@@ -5,9 +5,9 @@
 #include <core/TileMapAdapter.h>
 #include <core/emu/Video.h>
 #include <core/emu/utils.h>
-#include <core/ui/GLProgram.h>
-#include <core/ui/GLShader.h>
 #include <core/ui/Texture.h>
+#include <core/ui/opengl/GLProgram.h>
+#include <core/ui/opengl/GLShader.h>
 #include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 

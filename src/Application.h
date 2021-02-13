@@ -2,8 +2,8 @@
 
 #include <core/Component.h>
 #include <core/Event.h>
-#include <core/ui/GLWindowManager.h>
 #include <core/ui/Window.h>
+#include <core/ui/opengl/GLWindowManager.h>
 #include <memory>
 
 class Application {

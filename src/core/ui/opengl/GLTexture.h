@@ -1,5 +1,5 @@
 #pragma once
-#include "Texture.h"
+#include "core/ui/Texture.h"
 #include "glad/gl.h"
 
 class GLTexture : public Texture {
