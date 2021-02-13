@@ -58,7 +58,7 @@ void GLTexture::loadFromFile(const std::string &iPath) {
     _data = stbi_load("test.png", &_width, &_height, &bpp, 4);
     ASSERT(_data != nullptr, "failed to load image from file");
 
-    GLTexture::initTexture(4);
+    initTexture(4);
 
     stbi_image_free(_data);
 }
