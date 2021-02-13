@@ -5,6 +5,7 @@ UseCRLF: false
 UseTab: Never
 IndentWidth: 4
 AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: true
 
 IncludeBlocks: Preserve
 IncludeCategories:

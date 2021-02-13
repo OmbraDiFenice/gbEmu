@@ -2,12 +2,21 @@
 
 class Video {
    public:
-    void decodeTileMap(unsigned char* iTileDataMap,
-                       unsigned char* oDecodedTileMap);
-    void decodeTile(unsigned char* iTileData, unsigned char* oDecodedTile);
+    static constexpr size_t kTileWidth         = 8;    // pixels
+    static constexpr size_t kTileHeight        = 8;    // pixels
+    static constexpr size_t kTileDataSize      = 16;   // bytes
+    static constexpr size_t kTileDataTableSize = 256;  // tiles
+    static constexpr size_t kDecodedTileSize =
+        kTileWidth * kTileHeight;  // bytes
+    static constexpr size_t kTileMapSize =
+        Video::kTileDataTableSize * Video::kTileDataSize; // bytes
 
    public:
-    static const size_t kTileDataSize = 16;        // bytes
-    static const size_t kTileDataTableSize = 256;  // tiles
-    static const size_t kDecodedTileSize = 64;     // bytes
+    unsigned char tileMap[Video::kTileDataTableSize][Video::kDecodedTileSize];
+
+   public:
+    void decodeTileMap(unsigned char* iTileDataMap);
+
+   private:
+    void decodeTile(unsigned char* iTileData, unsigned char* oDecodedTile);
 };
