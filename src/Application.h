@@ -2,13 +2,13 @@
 
 #include <core/Component.h>
 #include <core/Event.h>
-#include <core/ui/Window.h>
 #include <core/ui/GLWindowManager.h>
+#include <core/ui/Window.h>
 #include <memory>
 
 class Application {
    public:
-    Application() : _windowManager(new GLWindowManager()) {};
+    Application() : _windowManager(new GLWindowManager()){};
 
     void run();
     inline bool keepRunning();

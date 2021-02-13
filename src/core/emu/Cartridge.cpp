@@ -1,9 +1,10 @@
+#include <Pch.h>
+
 #include "Cartridge.h"
+
 #include <core/emu/utils.h>
 
-Cartridge::~Cartridge() {
-    delete[] _data;
-}
+Cartridge::~Cartridge() { delete[] _data; }
 
 bool Cartridge::load(const std::string& filename) {
     _data = loadData(filename.c_str());
@@ -49,9 +50,7 @@ std::string Cartridge::getCartType() {
     return map[_data[0x147]];
 }
 
-size_t Cartridge::getRomSize() {
-    return 32 << _data[0x148];
-}
+size_t Cartridge::getRomSize() { return 32 << _data[0x148]; }
 
 size_t Cartridge::getRamSize() {
     static size_t map[4];
@@ -73,7 +72,7 @@ unsigned char Cartridge::getHeaderChecksum() {
 
 unsigned char Cartridge::computeHeaderChecksum() {
     unsigned char checksum = 0;
-    for(int i = 0x134; i <= 0x14C; ++i) {
+    for (int i = 0x134; i <= 0x14C; ++i) {
         checksum = checksum - _data[i] - 1;
     }
     return checksum;

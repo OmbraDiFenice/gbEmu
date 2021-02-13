@@ -1,5 +1,7 @@
 #include <Pch.h>
+
 #include "Application.h"
+
 #include <core/ui/GLProgram.h>
 #include <core/ui/GLShader.h>
 #include <core/ui/GLTexture.h>
@@ -60,17 +62,18 @@ void Application::run() {
 
     // vertically flip image
     unsigned char buf[WIDTH];
-    for(int i = 0; i < HEIGHT/2; ++i) {
+    for (int i = 0; i < HEIGHT / 2; ++i) {
         memcpy(buf, &testTile[i * WIDTH], WIDTH);
-        memcpy(&testTile[i * WIDTH], &testTile[(HEIGHT-1-i) * WIDTH], WIDTH);
-        memcpy(&testTile[(HEIGHT-1-i) * WIDTH], buf, WIDTH);
+        memcpy(&testTile[i * WIDTH], &testTile[(HEIGHT - 1 - i) * WIDTH],
+               WIDTH);
+        memcpy(&testTile[(HEIGHT - 1 - i) * WIDTH], buf, WIDTH);
     }
 
     // map int color to rgba
     uint32_t colorMap[] = {0xFF000000, 0xff0000FF, 0xFF00FF00, 0xFFFF0000};
     unsigned char tileData[WIDTH * HEIGHT * 4];
-    for(int i = 0; i < WIDTH * HEIGHT; ++i) {
-        memcpy(&tileData[i*4], &colorMap[testTile[i]], 4);
+    for (int i = 0; i < WIDTH * HEIGHT; ++i) {
+        memcpy(&tileData[i * 4], &colorMap[testTile[i]], 4);
     }
 
     // GLTexture texture("test.png");
@@ -84,16 +87,20 @@ void Application::run() {
         GLCall(glBindVertexArray(vertexArray));
 
         GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
-        GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+        GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
+                            GL_STATIC_DRAW));
 
         GLCall(glEnableVertexAttribArray(0));
-        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr));
+        GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                                     5 * sizeof(float), nullptr));
         GLCall(glEnableVertexAttribArray(1));
-        GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (const void*)(3*sizeof(float))));
+        GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
+                                     5 * sizeof(float),
+                                     (const void*)(3 * sizeof(float))));
 
         GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
         GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-                     GL_STATIC_DRAW));
+                            GL_STATIC_DRAW));
 
         // drawing
         GLCall(glClearColor(0.15f, 0.15f, 0.15f, 1));
@@ -119,14 +126,8 @@ void Application::onEvent(Event& e) {
     }
 }
 
-void Application::onKeyEvent(KeyEvent& e) {
-    TRACE_CALL
-}
+void Application::onKeyEvent(KeyEvent& e) { TRACE_CALL }
 
-void Application::onMouseEvent(MouseEvent& e) {
-    TRACE_CALL
-}
+void Application::onMouseEvent(MouseEvent& e) { TRACE_CALL }
 
-bool Application::keepRunning() {
-    return WindowManager::GetWindowCount() > 0;
-}
+bool Application::keepRunning() { return WindowManager::GetWindowCount() > 0; }

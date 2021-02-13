@@ -1,12 +1,12 @@
 #include <Pch.h>
-#include <glad/gl.h>
+
 #include <core/ui/GLProgram.h>
+
 #include <core/ui/GLShader.h>
+#include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 
-GLProgram::GLProgram() {
-    GLCall(_ref = glCreateProgram());
-}
+GLProgram::GLProgram() { GLCall(_ref = glCreateProgram()); }
 
 GLProgram::~GLProgram() {
     // TODO: should wrap this in GLCall but as of now it triggers an infinite
@@ -35,7 +35,8 @@ void GLProgram::loadShader(const std::string& iFilePath, GLenum iType) {
 bool GLProgram::link() const {
     for (auto& shader : _shaderList) {
         if (!shader->compile()) return false;
-        GLCall(glAttachShader(_ref, static_cast<const GLShader*>(shader.get())->getRef()));
+        GLCall(glAttachShader(
+            _ref, static_cast<const GLShader*>(shader.get())->getRef()));
     }
 
     GLCall(glLinkProgram(_ref));
@@ -56,13 +57,15 @@ bool GLProgram::link() const {
 
         GLCall(glDeleteProgram(_ref));
         for (auto& shader : _shaderList) {
-            GLCall(glDeleteShader(static_cast<const GLShader*>(shader.get())->getRef()));
+            GLCall(glDeleteShader(
+                static_cast<const GLShader*>(shader.get())->getRef()));
         }
         return false;
     }
 
     for (auto& shader : _shaderList) {
-        GLCall(glDetachShader(_ref, static_cast<const GLShader*>(shader.get())->getRef()));
+        GLCall(glDetachShader(
+            _ref, static_cast<const GLShader*>(shader.get())->getRef()));
     }
 
     return true;
@@ -74,7 +77,7 @@ void GLProgram::unbind() const { GLCall(glUseProgram(0)); }
 
 void GLProgram::setUniform(const std::string& iName, int iValue) {
     GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
-    if(location == -1) {
+    if (location == -1) {
         LOG_WARN("uniform " << iName << " not found in program");
     } else {
         GLCall(glUniform1i(location, iValue));
@@ -84,7 +87,7 @@ void GLProgram::setUniform(const std::string& iName, int iValue) {
 void GLProgram::setUniformMatrix4(const std::string& iName, const float* iData,
                                   const int iCount) const {
     GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
-    if(location == -1) {
+    if (location == -1) {
         LOG_WARN("uniform " << iName << " not found in program");
     } else {
         GLCall(glUniformMatrix4fv(location, iCount, GL_FALSE, iData));

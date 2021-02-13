@@ -1,9 +1,11 @@
 #include <Pch.h>
-#include <glad/gl.h>
+
 #include "GLShader.h"
+
+#include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 
-GLShader::GLShader(const std::string &iCode, GLenum iType) {
+GLShader::GLShader(const std::string& iCode, GLenum iType) {
     GLCall(_ref = glCreateShader(iType));
 
     const GLchar* source = iCode.c_str();
@@ -16,7 +18,7 @@ bool GLShader::compile() const {
     GLint compilationSuccessful = 0;
     GLCall(glGetShaderiv(_ref, GL_COMPILE_STATUS, &compilationSuccessful));
 
-    if(compilationSuccessful == GL_FALSE) {
+    if (compilationSuccessful == GL_FALSE) {
         GLint logLength = 0;
         GLCall(glGetShaderiv(_ref, GL_INFO_LOG_LENGTH, &logLength));
 

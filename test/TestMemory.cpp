@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <core/emu/Memory.h>
 
 class TestMemory : public ::testing::Test {};

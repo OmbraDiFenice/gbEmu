@@ -5,7 +5,8 @@
 class GLTexture : public Texture {
    public:
     explicit GLTexture(const std::string& iPath);
-    GLTexture(unsigned char* iData, int iWidth, int iHeight, unsigned int channels = 4);
+    GLTexture(unsigned char* iData, int iWidth, int iHeight,
+              unsigned int channels = 4);
     ~GLTexture() override;
 
     void bind(unsigned int slot) const override;

@@ -23,9 +23,9 @@
     }
 
 #define LOG_TRACE(msg) LOG(OUT, TRACE, msg)
-#define LOG_DBG(msg) LOG(OUT, DBG, msg)
-#define LOG_INFO(msg) LOG(OUT, INFO, msg)
-#define LOG_WARN(msg) LOG(ERR, WARN, msg)
+#define LOG_DBG(msg)   LOG(OUT, DBG, msg)
+#define LOG_INFO(msg)  LOG(OUT, INFO, msg)
+#define LOG_WARN(msg)  LOG(ERR, WARN, msg)
 #define LOG_ERROR(msg) LOG(ERR, ERROR, msg)
 
 #define TRACE_CALL LOG_TRACE(__FUNCTION__)

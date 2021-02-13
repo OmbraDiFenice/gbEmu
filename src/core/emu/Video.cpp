@@ -1,3 +1,5 @@
+#include <Pch.h>
+
 #include "Video.h"
 
 #include <core/emu/utils.h>

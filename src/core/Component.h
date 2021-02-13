@@ -5,5 +5,5 @@
 class Component {
    public:
     virtual void update() = 0;
-    virtual void onEvent(Event& e) {};
+    virtual void onEvent(Event& e){};
 };

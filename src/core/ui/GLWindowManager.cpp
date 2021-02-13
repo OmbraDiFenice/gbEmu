@@ -1,3 +1,5 @@
+#include <Pch.h>
+
 #include "GLWindowManager.h"
 
 #include <GLFW/glfw3.h>
@@ -28,7 +30,7 @@ GLWindowManager::GLWindowManager() {
     TRACE_CALL
 
     glfwSetErrorCallback([](int error, const char* description) {
-      LOG_ERROR("Code " << error << ": " << description);
+        LOG_ERROR("Code " << error << ": " << description);
     });
 
     int success = glfwInit();
@@ -47,8 +49,8 @@ GLWindowManager::~GLWindowManager() {
 Window* GLWindowManager::createWindow(const WindowProp& prop) {
     TRACE_CALL
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* glfWindow = glfwCreateWindow(

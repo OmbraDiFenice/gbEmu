@@ -4,3 +4,11 @@ DeriveLineEnding: false
 UseCRLF: false
 UseTab: Never
 IndentWidth: 4
+AlignConsecutiveMacros: true
+
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '<|"Pch.h'
+    Priority: -10
+  - Regex: '<|"(gtest|gmock)'
+    Priority: -9

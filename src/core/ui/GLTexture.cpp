@@ -1,5 +1,7 @@
 #include <Pch.h>
+
 #include "GLTexture.h"
+
 #include <stbi/stbi_image.h>
 #include <utils/GLErrorMacros.h>
 
@@ -37,11 +39,16 @@ void GLTexture::initTexture(unsigned int channels) {
 
 GLenum GLTexture::GetGlFormatFromChannels(unsigned int channels) {
     switch (channels) {
-        case  1: return GL_R8;
-        case  2: return GL_RG8;
-        case  3: return GL_RGB8;
-        case  4: return GL_RGBA8;
-        default: return GL_RGBA8;
+        case 1:
+            return GL_R8;
+        case 2:
+            return GL_RG8;
+        case 3:
+            return GL_RGB8;
+        case 4:
+            return GL_RGBA8;
+        default:
+            return GL_RGBA8;
     }
 }
 

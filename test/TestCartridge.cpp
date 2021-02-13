@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <core/emu/Cartridge.h>
 
 class TestCartridge : public ::testing::Test {

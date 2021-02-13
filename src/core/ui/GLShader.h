@@ -1,7 +1,7 @@
 #pragma once
-#include <string>
 #include <core/ui/Shader.h>
 #include <glad/gl.h>
+#include <string>
 
 class GLShader : public Shader {
    public:

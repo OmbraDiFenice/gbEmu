@@ -1,3 +1,5 @@
+#include <Pch.h>
+
 #include "Memory.h"
 
 Memory::Memory(size_t bytes) : size(bytes) { _data = new Byte[bytes]; }

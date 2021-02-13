@@ -13,7 +13,9 @@ class Program {
     virtual void setUniform(const std::string& iName, int value) = 0;
 
    protected:
-    void addShader(std::shared_ptr<const Shader> iShader) { _shaderList.emplace_back(iShader); };
+    void addShader(std::shared_ptr<const Shader> iShader) {
+        _shaderList.emplace_back(iShader);
+    };
 
    protected:
     std::vector<std::shared_ptr<const Shader>> _shaderList;

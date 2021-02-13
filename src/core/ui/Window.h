@@ -1,12 +1,10 @@
 #pragma once
 
 #include <core/Event.h>
-
 #include <functional>
 #include <string>
 #include <utility>
 #include <vector>
-
 #include "core/Component.h"
 
 struct WindowProp {
@@ -26,7 +24,9 @@ class Window : public Component {
      * The callback registered here is supposed to be handled at application
      * level.
      */
-    virtual void setEventCallback(std::function<void(Event&)> cb) { _eventCallback = std::move(cb); }
+    virtual void setEventCallback(std::function<void(Event&)> cb) {
+        _eventCallback = std::move(cb);
+    }
 
    protected:
     std::function<void(Event&)> _eventCallback;
@@ -39,7 +39,7 @@ class WindowManager {
 
     virtual Window* createWindow(const WindowProp& prop) = 0;
     virtual Window* createWindow() = 0;
-    static inline size_t GetWindowCount(){ return windows.size(); }
+    static inline size_t GetWindowCount() { return windows.size(); }
 
    protected:
     static std::vector<Window*> windows;

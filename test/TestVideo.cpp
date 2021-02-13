@@ -1,5 +1,6 @@
-#include <core/emu/Video.h>
 #include <gtest/gtest.h>
+
+#include <core/emu/Video.h>
 
 class TestVideo : public ::testing::Test {
    protected:
