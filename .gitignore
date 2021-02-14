@@ -2,3 +2,4 @@ cmake-build-debug/
 bin/
 deps/glfw/
 deps/gtest/
+docs/
