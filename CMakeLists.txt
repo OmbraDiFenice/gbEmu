@@ -9,6 +9,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/lib/static)
 
 add_subdirectory(deps)
 
+set(glm_DIR deps/glm/cmake/glm)
+find_package(glm REQUIRED)
+
 add_compile_definitions(LOG_LEVEL=0)
 
 add_library(${PROJECT_NAME}_lib STATIC
@@ -21,7 +24,7 @@ target_include_directories(${PROJECT_NAME}_lib PUBLIC
     ${PROJECT_SOURCE_DIR}/deps/glfw/include
     ${PROJECT_SOURCE_DIR}/deps/glad/include
     src)
-target_link_libraries(${PROJECT_NAME}_lib PUBLIC glfw glad stbi_image)
+target_link_libraries(${PROJECT_NAME}_lib PUBLIC glfw glad stbi_image glm::glm)
 target_compile_definitions(${PROJECT_NAME}_lib PUBLIC GLFW_INCLUDE_NONE)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
