@@ -75,7 +75,7 @@ void GLProgram::bind() const { GLCall(glUseProgram(_ref)); }
 
 void GLProgram::unbind() const { GLCall(glUseProgram(0)); }
 
-void GLProgram::setUniform(const std::string& iName, int iValue) {
+void GLProgram::setUniform(const std::string& iName, int iValue) const {
     GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
     if (location == -1) {
         LOG_WARN("uniform " << iName << " not found in program");
@@ -84,12 +84,12 @@ void GLProgram::setUniform(const std::string& iName, int iValue) {
     }
 }
 
-void GLProgram::setUniformMatrix4(const std::string& iName, const float* iData,
-                                  const int iCount) const {
+void GLProgram::setUniformMatrix3(const std::string& iName,
+                                  const float* iData) const {
     GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
     if (location == -1) {
         LOG_WARN("uniform " << iName << " not found in program");
     } else {
-        GLCall(glUniformMatrix4fv(location, iCount, GL_FALSE, iData));
+        GLCall(glUniformMatrix3fv(location, 1, GL_FALSE, iData));
     }
 }

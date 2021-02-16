@@ -15,9 +15,9 @@ class GLProgram : public Program {
     void bind() const override;
     void unbind() const override;
 
-    void setUniform(const std::string& iName, int iValue) override;
-    void setUniformMatrix4(const std::string& iName, const float* iData,
-                           int iCount) const;
+    void setUniform(const std::string& iName, int iValue) const override;
+    void setUniformMatrix3(const std::string& iName,
+                           const float* iData) const override;
 
    private:
     GLuint _ref;

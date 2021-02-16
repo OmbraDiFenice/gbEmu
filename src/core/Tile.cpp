@@ -6,7 +6,10 @@
 #include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 
-Tile::Tile(const int iIndex) { setIndex(iIndex); }
+Tile::Tile(int iX, int iY, const int iIndex) {
+    setPosition(iX, iY);
+    setIndex(iIndex);
+}
 
 void Tile::bind() const {
     /* vertex array */
@@ -43,10 +46,22 @@ void Tile::setIndex(const int iIndex) {
 }
 
 void Tile::setTextureCoords() {
-    const float relativeTileWidth = 1.0f / 256.0f;
+    constexpr float relativeTileWidth = 1.0f / Video::kTileDataTableSize;
     vertices[3 + 5 * 0] =  _index * relativeTileWidth;
     vertices[3 + 5 * 1] =  (_index + 1) * relativeTileWidth;
     vertices[3 + 5 * 2] =  (_index + 1) * relativeTileWidth;
     vertices[3 + 5 * 3] =  _index * relativeTileWidth;
     bind();
+}
+
+void Tile::setPosition(float iX, float iY) {
+    vertices[0 + 5 * 0] = iX + vertices[0 + 5 * 0];
+    vertices[0 + 5 * 1] = iX + vertices[0 + 5 * 1];
+    vertices[0 + 5 * 2] = iX + vertices[0 + 5 * 2];
+    vertices[0 + 5 * 3] = iX + vertices[0 + 5 * 3];
+
+    vertices[1 + 5 * 0] = iY + vertices[1 + 5 * 0];
+    vertices[1 + 5 * 1] = iY + vertices[1 + 5 * 1];
+    vertices[1 + 5 * 2] = iY + vertices[1 + 5 * 2];
+    vertices[1 + 5 * 3] = iY + vertices[1 + 5 * 3];
 }
