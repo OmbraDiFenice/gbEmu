@@ -1,8 +1,8 @@
 #include <Pch.h>
 
-#include "TileMapAdapter.h"
+#include "TileMapPatternAdapter.h"
 
-GLTexture TileMapAdapter::toTexture(unsigned char *iTileMap,
+GLTexture TileMapPatternAdapter::toTexture(unsigned char *iTileMap,
                                     unsigned int iWidth, unsigned int iHeight,
                                     unsigned int iTileWidth,
                                     unsigned int iTileHeight) {
@@ -14,7 +14,7 @@ GLTexture TileMapAdapter::toTexture(unsigned char *iTileMap,
     return GLTexture(tileData, iWidth, iHeight, _bytesPerColor);
 }
 
-void TileMapAdapter::verticalMirror(unsigned char *ioBuffer,
+void TileMapPatternAdapter::verticalMirror(unsigned char *ioBuffer,
                                     unsigned int iWidth, unsigned int iHeight) {
     unsigned char buf[iWidth];
     for (int i = 0; i < iHeight / 2; ++i) {
@@ -25,7 +25,7 @@ void TileMapAdapter::verticalMirror(unsigned char *ioBuffer,
     }
 }
 
-void TileMapAdapter::mapToRgb(unsigned char *iBuffer, unsigned char *oRgbBuffer,
+void TileMapPatternAdapter::mapToRgb(unsigned char *iBuffer, unsigned char *oRgbBuffer,
                               unsigned int iWidth, unsigned int iHeight) {
     for (int i = 0; i < iWidth * iHeight; ++i) {
         memcpy(&oRgbBuffer[i * _bytesPerColor], &_colorMap[iBuffer[i]],
@@ -33,7 +33,7 @@ void TileMapAdapter::mapToRgb(unsigned char *iBuffer, unsigned char *oRgbBuffer,
     }
 }
 
-void TileMapAdapter::reorderData(unsigned char *ioBuffer, unsigned int iWidth,
+void TileMapPatternAdapter::reorderData(unsigned char *ioBuffer, unsigned int iWidth,
                                  unsigned int iHeight, unsigned int iTileWidth,
                                  unsigned int iTileHeight) {
     const int totalTileNumber = (iWidth * iHeight) / (iTileWidth * iTileHeight);

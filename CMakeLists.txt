@@ -17,7 +17,7 @@ add_compile_definitions(LOG_LEVEL=0)
 add_library(${PROJECT_NAME}_lib STATIC
     src/Application.cpp src/Application.h src/Pch.h src/core/Event.h
     src/utils/Logging.h src/utils/Assert.h src/utils/Macros.h
-        src/core/ui/opengl/GLWindowManager.h src/core/ui/opengl/GLWindowManager.cpp src/core/ui/Window.h src/core/emu/Memory.cpp src/core/emu/Memory.h src/core/emu/Cartridge.cpp src/core/emu/Cartridge.h src/core/ui/Window.cpp src/core/emu/utils.cpp src/core/emu/utils.h src/core/emu/Video.cpp src/core/emu/Video.h src/core/ui/Shader.h src/core/ui/opengl/GLShader.cpp src/core/ui/opengl/GLShader.h src/core/ui/Program.h src/core/ui/opengl/GLProgram.cpp src/core/ui/opengl/GLProgram.h src/core/ui/opengl/GLTexture.cpp src/core/ui/opengl/GLTexture.h src/utils/GLErrorMacros.h src/core/ui/Texture.h src/core/TileMapAdapter.cpp src/core/TileMapAdapter.h src/core/Tile.cpp src/core/Tile.h)
+        src/core/ui/opengl/GLWindowManager.h src/core/ui/opengl/GLWindowManager.cpp src/core/ui/Window.h src/core/emu/Memory.cpp src/core/emu/Memory.h src/core/emu/Cartridge.cpp src/core/emu/Cartridge.h src/core/ui/Window.cpp src/core/emu/utils.cpp src/core/emu/utils.h src/core/emu/Video.cpp src/core/emu/Video.h src/core/ui/Shader.h src/core/ui/opengl/GLShader.cpp src/core/ui/opengl/GLShader.h src/core/ui/Program.h src/core/ui/opengl/GLProgram.cpp src/core/ui/opengl/GLProgram.h src/core/ui/opengl/GLTexture.cpp src/core/ui/opengl/GLTexture.h src/utils/GLErrorMacros.h src/core/ui/Texture.h src/core/TileMapPatternAdapter.cpp src/core/TileMapPatternAdapter.h src/core/Tile.cpp src/core/Tile.h)
 target_precompile_headers(${PROJECT_NAME}_lib PUBLIC src/Pch.h)
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
     ${PROJECT_SOURCE_DIR}/deps

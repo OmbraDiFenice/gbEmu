@@ -4,7 +4,7 @@
 
 #include <core/emu/utils.h>
 
-void Video::decodeTileMap(unsigned char* iTileDataMap) {
+void Video::decodeTileMapPatterns(unsigned char* iTileDataMap) {
     for (int tileIndex = 0; tileIndex < kTileDataTableSize; ++tileIndex) {
         decodeTile(&iTileDataMap[tileIndex * kTileDataSize],
                    tileMap[tileIndex]);

@@ -3,7 +3,7 @@
 #include "Application.h"
 
 #include <core/Tile.h>
-#include <core/TileMapAdapter.h>
+#include <core/TileMapPatternAdapter.h>
 #include <core/emu/Video.h>
 #include <core/emu/utils.h>
 #include <core/ui/Texture.h>
@@ -31,12 +31,12 @@ void Application::run() {
     program.link();
     program.bind();
 
-    unsigned char* tileMap = loadData("tileMap_8800.DMP");
+    unsigned char* tileMapPatterns = loadData("tileMap_8800.DMP");
     Video video;
-    video.decodeTileMap(tileMap);
+    video.decodeTileMapPatterns(tileMapPatterns);
 
-    TileMapAdapter tileMapAdapter;
-    const Texture& texture = tileMapAdapter.toTexture(
+    TileMapPatternAdapter tileMapPatternAdapter;
+    const Texture& texture = tileMapPatternAdapter.toTexture(
         reinterpret_cast<unsigned char*>(video.tileMap),
         Video::kTileWidth * Video::kTileDataTableSize, Video::kTileHeight,
         Video::kTileWidth, Video::kTileHeight);
@@ -75,7 +75,7 @@ void Application::run() {
         }
     }
 
-    delete[] tileMap;
+    delete[] tileMapPatterns;
     LOG_DBG("end app");
 }
 

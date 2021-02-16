@@ -52,7 +52,7 @@ TEST_F(TestVideo, decodeTileMap) {
     memcpy(&tileMap[Video::kTileMapSize - Video::kTileDataSize], testTileData,
            Video::kTileDataSize);
 
-    video.decodeTileMap(tileMap);
+    video.decodeTileMapPatterns(tileMap);
 
     checkTile(expectedTestTile, video.tileMap[0]);
     checkTile(expectedTestTile, video.tileMap[255]);

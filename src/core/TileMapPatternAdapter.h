@@ -2,7 +2,7 @@
 #include <core/emu/Video.h>
 #include <core/ui/opengl/GLTexture.h>
 
-class TileMapAdapter {
+class TileMapPatternAdapter {
    public:
     /** Convert a tileMap buffer from a set of color-indexed pixels to an OpenGL
      * texture object
@@ -80,7 +80,7 @@ class TileMapAdapter {
      * And so on.
      *
      * This allows to have Y texture coord always 0 and 1, so to select which
-     * tile is goning to be displayed all we need is it's 0-based index and we
+     * tile is going to be displayed all we need is it's 0-based index and we
      * only need to update the X texture coords.
      *
      * Note that "bytes" here will correspond to "pixel" since the input buffer
