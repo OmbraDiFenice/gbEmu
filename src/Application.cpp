@@ -10,9 +10,9 @@
 #include <core/ui/opengl/GLProgram.h>
 #include <core/ui/opengl/GLShader.h>
 #include <glad/gl.h>
-#include <utils/GLErrorMacros.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <utils/GLErrorMacros.h>
 
 void Application::run() {
     LOG_DBG("start app");
@@ -35,6 +35,7 @@ void Application::run() {
     Video video;
     video.decodeTileMapPatterns(tileMapPatterns);
 
+    /* decode tile data table texture */
     TileMapPatternAdapter tileMapPatternAdapter;
     const Texture& texture = tileMapPatternAdapter.toTexture(
         reinterpret_cast<unsigned char*>(video.tileMap),
@@ -43,12 +44,14 @@ void Application::run() {
     texture.bind(0);
     program.setUniform("u_Texture", 0);
 
-    Tile tile1(0, 1, 139);
-    Tile tile2(1, 1, 140);
-    Tile tile3(0, 0, 155);
-    Tile tile4(1, 0, 156);
-    Tile tile5(0, -1, 171);
-    Tile tile6(1, -1, 172);
+    /* create tile data table out of many individual tiles */
+    Tile tileDataTable[16][16];
+    for(int y = 0; y < 16; ++y) {
+        for(int x = 0; x < 16; ++x) {
+            tileDataTable[x][y].setIndex(x + 16 * y);
+            tileDataTable[x][y].setPosition(x - 8, 8 - y);
+        }
+    }
 
     glm::mat3 proj = glm::ortho(-16.0f, 16.0f, -16.0f, 16.0f);
     program.setUniformMatrix3("u_Proj", &proj[0][0]);
@@ -57,18 +60,13 @@ void Application::run() {
         GLCall(glClearColor(0.15f, 0.15f, 0.15f, 1));
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        tile1.bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-        tile2.bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-        tile3.bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-        tile4.bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-        tile5.bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-        tile6.bind();
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+        /* draw tile data table */
+        for(int y = 0; y < 16; ++y) {
+            for(int x = 0; x < 16; ++x) {
+                tileDataTable[x][y].bind();
+                GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+            }
+        }
 
         for (auto c : _components) {
             c->update();

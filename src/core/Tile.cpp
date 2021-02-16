@@ -6,7 +6,12 @@
 #include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 
-Tile::Tile(int iX, int iY, const int iIndex) {
+Tile::Tile() {
+    setPosition(0, 0);
+    setIndex(0);
+}
+
+Tile::Tile(int iX, int iY, int iIndex) {
     setPosition(iX, iY);
     setIndex(iIndex);
 }

@@ -2,14 +2,15 @@
 
 class Tile {
    public:
-    explicit Tile(int iX, int iY, int iIndex = 0);
+    explicit Tile();
+    explicit Tile(int iX, int iY, int iIndex);
     void setIndex(int iIndex);
+    void setPosition(float iX, float iY);
 
     void bind() const;
 
    private:
     void setTextureCoords();
-    void setPosition(float iX, float iY);
 
    private:
     int _index;
