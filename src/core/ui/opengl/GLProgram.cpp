@@ -93,3 +93,13 @@ void GLProgram::setUniformMatrix3(const std::string& iName,
         GLCall(glUniformMatrix3fv(location, 1, GL_FALSE, iData));
     }
 }
+
+void GLProgram::setUniformMatrix4(const std::string& iName,
+                                  const float* iData) const {
+    GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
+    if (location == -1) {
+        LOG_WARN("uniform " << iName << " not found in program");
+    } else {
+        GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, iData));
+    }
+}

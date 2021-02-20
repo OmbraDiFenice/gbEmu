@@ -18,6 +18,8 @@ class GLProgram : public Program {
     void setUniform(const std::string& iName, int iValue) const override;
     void setUniformMatrix3(const std::string& iName,
                            const float* iData) const override;
+    void setUniformMatrix4(const std::string& iName,
+                                   const float* iData) const override;
 
    private:
     GLuint _ref;

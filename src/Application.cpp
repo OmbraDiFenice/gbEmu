@@ -46,8 +46,8 @@ void Application::run() {
 
     /* create tile data table out of many individual tiles */
     Tile tileDataTable[16][16];
-    for(int y = 0; y < 16; ++y) {
-        for(int x = 0; x < 16; ++x) {
+    for (int y = 0; y < 16; ++y) {
+        for (int x = 0; x < 16; ++x) {
             tileDataTable[x][y].setIndex(x + 16 * y);
             tileDataTable[x][y].setPosition(x - 8, 8 - y);
         }
@@ -61,10 +61,11 @@ void Application::run() {
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
         /* draw tile data table */
-        for(int y = 0; y < 16; ++y) {
-            for(int x = 0; x < 16; ++x) {
+        for (int y = 0; y < 16; ++y) {
+            for (int x = 0; x < 16; ++x) {
                 tileDataTable[x][y].bind();
-                GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+                GLCall(
+                    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
             }
         }
 
