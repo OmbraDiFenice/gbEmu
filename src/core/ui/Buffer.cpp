@@ -5,7 +5,7 @@
 void Buffer::setVertexElement(unsigned int iVertex, unsigned int iElement,
                               unsigned int iElementOffset, float iValue) {
     ASSERT(iVertex < _vbCount, "invalid vertex selected");
-    int vertexIndex = iVertex * _layout.getValues();
+    int vertexIndex = iVertex * _layout.getCount();
 
     ASSERT(iElement < _layout.getElements().size(), "invalid element selected");
     int elementIndex = 0;
@@ -24,11 +24,11 @@ VertexLayout::VertexLayout(std::initializer_list<VertexElement> iElements)
 };
 
 void VertexLayout::computeStride() {
-    stride = 0;
-    values = 0;
+    _stride = 0;
+    _count  = 0;
     for (const auto& element : _elements) {
-        stride += element.size();
-        values += element.count;
+        _stride += element.size();
+        _count += element.count;
     }
 }
 
@@ -45,7 +45,7 @@ std::ostream& operator<<(std::ostream& os, const VertexLayout& iLayout) {
     for (const auto& element : iLayout._elements) {
         os << element << " ";
     }
-    os << "] stride: " << iLayout.stride << " values: " << iLayout.values;
+    os << "] _stride: " << iLayout._stride << " values: " << iLayout._count;
     return os;
 }
 

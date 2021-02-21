@@ -25,12 +25,12 @@ struct VertexElement {
 
 class VertexLayout {
    public:
-    VertexLayout() : stride(0), values(0){};
+    VertexLayout() : _stride(0), _count(0){};
     VertexLayout(std::initializer_list<VertexElement> iElements);
 
     inline size_t getElementCount() const { return _elements.size(); }
-    inline int getStride() const { return stride; }
-    inline int getValues() const { return values; }
+    inline int getStride() const { return _stride; }
+    inline int getCount() const { return _count; }
     inline const std::vector<VertexElement>& getElements() const {
         return _elements;
     }
@@ -44,8 +44,8 @@ class VertexLayout {
 
    private:
     std::vector<VertexElement> _elements;
-    int stride;
-    int values;
+    int _stride;
+    int _count;
 };
 
 class Buffer {

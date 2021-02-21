@@ -57,6 +57,8 @@ void Application::run() {
     glm::mat3 proj = glm::ortho(-16.0f, 16.0f, -16.0f, 16.0f);
     program.setUniformMatrix3("u_Proj", &proj[0][0]);
 
+    program.setUniform("u_RelativeTileWidth", 1.0f / Video::kTileDataTableSize);
+
     const Renderer& renderer = GLRenderer();
 
     while (keepRunning()) {

@@ -16,15 +16,14 @@ class Tile {
 
    private:
     void initBuffers(int iX, int iY, int iIndex);
-    void setTextureCoords(int iIndex);
 
    private:
     // clang-format off
-    float _vertices[4 * 5] = {
-        0.0f, 0.0f,  0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f,  0.0f, 1.0f, 1.0f,
-        0.0f, 1.0f,  0.0f, 0.0f, 1.0f
+    float _vertices[4 * 4] = {
+        0.0f, 0.0f,  0.0f, 0.0f,
+        1.0f, 0.0f,  0.0f, 0.0f,
+        1.0f, 1.0f,  0.0f, 1.0f,
+        0.0f, 1.0f,  0.0f, 1.0f
     };
     // clang-format on
 

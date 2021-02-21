@@ -10,11 +10,12 @@ class Program {
     virtual void bind() const   = 0;
     virtual void unbind() const = 0;
 
-    virtual void setUniform(const std::string& iName, int value) const = 0;
+    virtual void setUniform(const std::string& iName, int iValue) const   = 0;
+    virtual void setUniform(const std::string& iName, float iValue) const = 0;
     virtual void setUniformMatrix3(const std::string& iName,
-                                   const float* iData) const           = 0;
+                                   const float* iData) const              = 0;
     virtual void setUniformMatrix4(const std::string& iName,
-                                   const float* iData) const           = 0;
+                                   const float* iData) const              = 0;
 
    protected:
     void addShader(std::shared_ptr<const Shader> iShader) {
