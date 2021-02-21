@@ -14,7 +14,7 @@ void GLVertexBuffer::bind() const {
     GLuint vertexBuffer;
     GLCall(glGenBuffers(1, &vertexBuffer));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, _vbSize * _layout.getStride(), _vb,
+    GLCall(glBufferData(GL_ARRAY_BUFFER, _vbCount * sizeof(*_vb), _vb,
                         GL_STATIC_DRAW));
 
     /* index buffer */
@@ -22,7 +22,7 @@ void GLVertexBuffer::bind() const {
     GLCall(glGenBuffers(1, &indexBuffer));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
     GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                        _ib.size() * sizeof(unsigned int), _ib.data(),
+                        _ib.size() * sizeof(_ib.front()), _ib.data(),
                         GL_STATIC_DRAW));
 
     /* vertex array attrib */
@@ -30,9 +30,9 @@ void GLVertexBuffer::bind() const {
     size_t pos = 0;
     for (const VertexElement& element : _layout.getElements()) {
         GLCall(glEnableVertexAttribArray(i));
-        GLCall(glVertexAttribPointer(i, element.size, element.type, GL_FALSE,
+        GLCall(glVertexAttribPointer(i, element.count, element.type, GL_FALSE,
                                      _layout.getStride(), (const void*)(pos)));
         ++i;
-        pos += element.bytes();
+        pos += element.size();
     }
 }

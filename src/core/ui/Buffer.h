@@ -5,18 +5,22 @@
 #include <vector>
 
 struct VertexElement {
-    int size;
+    int count;
     int type;
 
-    VertexElement(int iSize, int iType) : size(iSize), type(iType){};
+    VertexElement(int iCount, int iType) : count(iCount), type(iType){};
 
-    size_t bytes() const {
+    size_t size() const {
         switch (type) {
             case GL_FLOAT:
-                return size * sizeof(float);
+                return count * sizeof(float);
         }
         return 0;
     }
+
+    bool operator==(const VertexElement& iOther) const;
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const VertexElement& iLayout);
 };
 
 class VertexLayout {
@@ -30,6 +34,10 @@ class VertexLayout {
     inline const std::vector<VertexElement>& getElements() const {
         return _elements;
     }
+
+    bool operator==(const VertexLayout& iOther) const;
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const VertexLayout& iLayout);
 
    private:
     void computeStride();
@@ -45,14 +53,23 @@ class Buffer {
     inline void setIndexBuffer(std::vector<unsigned int> iIndexBuffer) {
         _ib = std::move(iIndexBuffer);
     }
-    inline void setVertexBuffer(float* iVertexBuffer, size_t iBufferSize) {
-        _vb     = iVertexBuffer;
-        _vbSize = iBufferSize;
+    virtual inline void setVertexBuffer(float* iVertexBuffer,
+                                        size_t iBufferCount) {
+        _vb      = iVertexBuffer;
+        _vbCount = iBufferCount;
     }
-    inline void setVertexLayout(const VertexLayout& iLayout) {
+    virtual inline void setVertexLayout(const VertexLayout& iLayout) {
         _layout = iLayout;
     }
-    inline float* getVertexBuffer() { return _vb; }
+    inline float* getVertexBuffer() const { return _vb; }
+    inline size_t getVertexBufferSize() const {
+        return _vbCount * sizeof(float);
+    }
+    inline size_t getVertexBufferCount() const { return _vbCount; }
+    inline const std::vector<unsigned int>& getIndexBuffer() const {
+        return _ib;
+    }
+    inline const VertexLayout& getLayout() const { return _layout; }
 
     virtual void bind() const = 0;
 
@@ -62,6 +79,6 @@ class Buffer {
    protected:
     std::vector<unsigned int> _ib;
     float* _vb;
-    size_t _vbSize;
+    size_t _vbCount;
     VertexLayout _layout;
 };

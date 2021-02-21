@@ -63,11 +63,15 @@ void Application::run() {
         renderer.clear(0.15f, 0.15f, 0.15f, 1);
 
         /* draw tile data table */
+        renderer.startBatch(
+            16 * 16 *
+            tileDataTable[0][0].getVertexBuffer().getVertexBufferCount());
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
                 renderer.draw(tileDataTable[x][y].getVertexBuffer());
             }
         }
+        renderer.endBatch();
 
         for (auto c : _components) {
             c->update();
