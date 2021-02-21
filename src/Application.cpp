@@ -32,7 +32,7 @@ void Application::run() {
     program.link();
     program.bind();
 
-    unsigned char* tileMapPatterns = loadData("tileMap_8800.DMP");
+    unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
     Video video;
     video.decodeTileMapPatterns(tileMapPatterns);
 
@@ -45,16 +45,17 @@ void Application::run() {
     texture.bind(0);
     program.setUniform("u_Texture", 0);
 
-    /* create tile data table out of many individual tiles */
-    Tile tileDataTable[16][16];
-    for (int y = 0; y < 16; ++y) {
-        for (int x = 0; x < 16; ++x) {
-            tileDataTable[x][y].setIndex(x + 16 * y);
-            tileDataTable[x][y].setPosition(x - 8, 8 - y);
+    /* create tile map */
+    unsigned char* tileMap = loadData("tileMap_9800.DMP");
+    Tile tileDataTable[32][32];
+    for (int y = 0; y < 32; ++y) {
+        for (int x = 0; x < 32; ++x) {
+            tileDataTable[x][y].setIndex((char)(tileMap[x + 32 * y]) + 128);
+            tileDataTable[x][y].setPosition(x - 16, 16 - y);
         }
     }
 
-    glm::mat3 proj = glm::ortho(-16.0f, 16.0f, -16.0f, 16.0f);
+    glm::mat3 proj = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f);
     program.setUniformMatrix3("u_Proj", &proj[0][0]);
 
     program.setUniform("u_RelativeTileWidth", 1.0f / Video::kTileDataTableSize);
@@ -66,10 +67,10 @@ void Application::run() {
 
         /* draw tile data table */
         renderer.startBatch(
-            16 * 16 *
+            32 * 32 *
             tileDataTable[0][0].getVertexBuffer().getVertexBufferCount());
-        for (int y = 0; y < 16; ++y) {
-            for (int x = 0; x < 16; ++x) {
+        for (int y = 0; y < 32; ++y) {
+            for (int x = 0; x < 32; ++x) {
                 renderer.draw(tileDataTable[x][y].getVertexBuffer());
             }
         }

@@ -28,9 +28,7 @@ void GLRenderer::endBatch() const {
     ASSERT(_batchBuffer.isLayoutSet(),
            "trying to draw a batch without setting its layout");
 
-    _batchBuffer.bind();
-    GLCall(glDrawElements(GL_TRIANGLES, _batchBuffer.getIndexBuffer().size(),
-                          GL_UNSIGNED_INT, nullptr));
+    drawImmediate(_batchBuffer);
     delete[] _batchBuffer.getVertexBuffer();
     _batchActive = false;
 }
