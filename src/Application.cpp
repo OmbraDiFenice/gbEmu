@@ -8,6 +8,7 @@
 #include <core/emu/utils.h>
 #include <core/ui/Texture.h>
 #include <core/ui/opengl/GLProgram.h>
+#include <core/ui/opengl/GLRenderer.h>
 #include <core/ui/opengl/GLShader.h>
 #include <glad/gl.h>
 #include <glm/glm.hpp>
@@ -56,16 +57,15 @@ void Application::run() {
     glm::mat3 proj = glm::ortho(-16.0f, 16.0f, -16.0f, 16.0f);
     program.setUniformMatrix3("u_Proj", &proj[0][0]);
 
+    const Renderer& renderer = GLRenderer();
+
     while (keepRunning()) {
-        GLCall(glClearColor(0.15f, 0.15f, 0.15f, 1));
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
+        renderer.clear(0.15f, 0.15f, 0.15f, 1);
 
         /* draw tile data table */
         for (int y = 0; y < 16; ++y) {
             for (int x = 0; x < 16; ++x) {
-                tileDataTable[x][y].bind();
-                GLCall(
-                    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+                renderer.draw(tileDataTable[x][y].getVertexBuffer());
             }
         }
 
