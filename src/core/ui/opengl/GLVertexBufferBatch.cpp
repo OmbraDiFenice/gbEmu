@@ -2,7 +2,9 @@
 
 #include "GLVertexBufferBatch.h"
 
-GLVertexBufferBatch::GLVertexBufferBatch() { _nextVertexBuffer = _vb; }
+GLVertexBufferBatch::GLVertexBufferBatch() : _indexOffset(0) {
+    _nextVertexBuffer = _vb;
+}
 
 bool GLVertexBufferBatch::isLayoutCompatible(
     const VertexLayout& iLayout) const {
@@ -24,7 +26,8 @@ void GLVertexBufferBatch::addBuffer(const Buffer& iBuffer) {
     // at least 1 index in the index buffer
     auto [min, max] = std::minmax_element(iBuffer.getIndexBuffer().begin(),
                                           iBuffer.getIndexBuffer().end());
-    _indexOffset += *max - *min + 1;
+    _indexOffset += (max == iBuffer.getIndexBuffer().end() ? 0 : *max) -
+                    (min == iBuffer.getIndexBuffer().end() ? 0 : *min) + 1;
 }
 
 void GLVertexBufferBatch::setVertexLayout(const VertexLayout& iLayout) {
