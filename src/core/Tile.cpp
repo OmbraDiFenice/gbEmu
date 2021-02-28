@@ -36,7 +36,7 @@ void Tile::setPosition(float iX, float iY) {
 }
 
 void Tile::initBuffers(int iX, int iY, int iIndex) {
-    _vb.setVertexBuffer(_vertices, sizeof(_vertices) / sizeof(float));
+    _vb.setVertexBuffer(_vertices, 4 * _layout.getCount());
     _vb.setVertexLayout(_layout);
     _vb.setIndexBuffer(_indices);
 

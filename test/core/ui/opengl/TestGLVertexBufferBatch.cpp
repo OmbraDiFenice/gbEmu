@@ -11,11 +11,6 @@ class TestGLVertexBufferBatch : public ::testing::Test {
     initBatch(float* iData, unsigned int iBufferNum, unsigned int iVertexNum,
               const VertexLayout& iLayout,
               const std::vector<std::vector<unsigned int>>& iIndexBuffers);
-
-   private:
-    GLVertexBuffer createBuffer(float* iData, int iVertexNum,
-                                const VertexLayout& iLayout,
-                                const std::vector<unsigned int>& iIndexes);
 };
 
 std::tuple<std::vector<GLVertexBuffer>, std::vector<unsigned int>>
@@ -34,8 +29,8 @@ TestGLVertexBufferBatch::initBatch(
     for (int i = 0; i < iBufferNum; ++i) {
         const auto& indexes = iIndexBuffers.at(i);
 
-        buffers[i] =
-            createBuffer(&iData[i * iVertexNum], iVertexNum, iLayout, indexes);
+        buffers[i] = GLVertexBuffer::create(&iData[i * iVertexNum], iVertexNum,
+                                            iLayout, indexes);
 
         for (unsigned int index : indexes) {
             expectedIndexes.push_back(index + counter);
@@ -44,16 +39,6 @@ TestGLVertexBufferBatch::initBatch(
     }
 
     return {buffers, expectedIndexes};
-}
-
-GLVertexBuffer TestGLVertexBufferBatch::createBuffer(
-    float* iData, int iVertexNum, const VertexLayout& iLayout,
-    const std::vector<unsigned int>& iIndexes) {
-    GLVertexBuffer buffer;
-    buffer.setVertexBuffer(iData, iVertexNum);
-    buffer.setIndexBuffer(iIndexes);
-    buffer.setVertexLayout(iLayout);
-    return buffer;
 }
 
 TEST_F(TestGLVertexBufferBatch,

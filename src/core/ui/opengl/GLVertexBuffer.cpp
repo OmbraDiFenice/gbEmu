@@ -4,6 +4,16 @@
 
 #include <utils/GLErrorMacros.h>
 
+GLVertexBuffer GLVertexBuffer::create(
+    float* iData, int iVertexNum, const VertexLayout& iLayout,
+    const std::vector<unsigned int>& iIndexes) {
+    GLVertexBuffer buffer;
+    buffer.setVertexBuffer(iData, iVertexNum);
+    buffer.setIndexBuffer(iIndexes);
+    buffer.setVertexLayout(iLayout);
+    return buffer;
+}
+
 void GLVertexBuffer::bind() const {
     /* vertex array */
     GLuint vertexArray;

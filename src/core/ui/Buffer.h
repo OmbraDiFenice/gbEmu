@@ -50,6 +50,9 @@ class VertexLayout {
 
 class Buffer {
    public:
+    Buffer() : _vb(nullptr), _vbCount(0){};
+    virtual ~Buffer() = default;
+
     inline void setIndexBuffer(std::vector<unsigned int> iIndexBuffer) {
         _ib = std::move(iIndexBuffer);
     }
@@ -66,6 +69,9 @@ class Buffer {
         return _vbCount * sizeof(float);
     }
     inline size_t getVertexBufferCount() const { return _vbCount; }
+    inline size_t getVertexCount() const {
+        return getVertexBufferCount() / _layout.getCount();
+    }
     inline const std::vector<unsigned int>& getIndexBuffer() const {
         return _ib;
     }

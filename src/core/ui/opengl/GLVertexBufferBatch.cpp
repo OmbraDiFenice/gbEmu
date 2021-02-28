@@ -2,9 +2,7 @@
 
 #include "GLVertexBufferBatch.h"
 
-GLVertexBufferBatch::GLVertexBufferBatch() : _indexOffset(0) {
-    _nextVertexBuffer = _vb;
-}
+GLVertexBufferBatch::GLVertexBufferBatch() { reset(); }
 
 bool GLVertexBufferBatch::isLayoutCompatible(
     const VertexLayout& iLayout) const {
@@ -39,8 +37,15 @@ void GLVertexBufferBatch::setVertexLayout(const VertexLayout& iLayout) {
                "trying to batch render buffers with incompatible layout");
     }
 }
+
 void GLVertexBufferBatch::setVertexBuffer(float* iVertexBuffer,
                                           size_t iBufferCount) {
     Buffer::setVertexBuffer(iVertexBuffer, iBufferCount);
     _nextVertexBuffer = _vb;
+}
+
+void GLVertexBufferBatch::reset() {
+    _isLayoutInitialized = false;
+    _indexOffset         = 0;
+    _nextVertexBuffer    = _vb;
 }
