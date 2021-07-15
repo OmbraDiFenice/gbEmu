@@ -9,9 +9,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/lib/static)
 
 add_subdirectory(deps)
 
-set(glm_DIR deps/glm/cmake/glm)
-find_package(glm REQUIRED)
-
 add_compile_definitions(LOG_LEVEL=0)
 
 add_library(${PROJECT_NAME}_lib STATIC
