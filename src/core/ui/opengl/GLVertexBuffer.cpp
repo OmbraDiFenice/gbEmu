@@ -14,26 +14,34 @@ GLVertexBuffer GLVertexBuffer::create(
     return buffer;
 }
 
+GLVertexBuffer::GLVertexBuffer() : initialized(false) {
+}
+
 void GLVertexBuffer::bind() const {
-    /* vertex array */
-    GLuint vertexArray;
-    GLCall(glGenVertexArrays(1, &vertexArray));
-    GLCall(glBindVertexArray(vertexArray));
+    if(!initialized) {
+        init();
+    }
 
     /* vertex buffer */
-    GLuint vertexBuffer;
-    GLCall(glGenBuffers(1, &vertexBuffer));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
     GLCall(glBufferData(GL_ARRAY_BUFFER, _vbCount * sizeof(*_vb), _vb,
                         GL_STATIC_DRAW));
 
     /* index buffer */
-    GLuint indexBuffer;
-    GLCall(glGenBuffers(1, &indexBuffer));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
     GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                         _ib.size() * sizeof(_ib.front()), _ib.data(),
                         GL_STATIC_DRAW));
+}
+
+void GLVertexBuffer::init() const {
+    /* vertex array */
+    GLCall(glGenVertexArrays(1, &vertexArray));
+    GLCall(glBindVertexArray(vertexArray));
+
+    GLCall(glGenBuffers(1, &vertexBuffer));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
+
+    GLCall(glGenBuffers(1, &indexBuffer));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer));
 
     /* vertex array attrib */
     int i      = 0;
@@ -45,4 +53,6 @@ void GLVertexBuffer::bind() const {
         ++i;
         pos += element.size();
     }
+
+    initialized = true;
 }

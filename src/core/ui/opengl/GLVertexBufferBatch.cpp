@@ -48,4 +48,5 @@ void GLVertexBufferBatch::reset() {
     _isLayoutInitialized = false;
     _indexOffset         = 0;
     _nextVertexBuffer    = _vb;
+    _ib.clear();
 }
