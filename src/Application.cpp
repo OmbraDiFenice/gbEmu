@@ -9,6 +9,7 @@
 #include <core/ui/Texture.h>
 #include <core/ui/opengl/GLProgram.h>
 #include <core/ui/opengl/GLRenderer.h>
+#include <core/ui/opengl/GLBatchRenderer.h>
 #include <core/ui/opengl/GLShader.h>
 #include <glad/gl.h>
 #include <glm/glm.hpp>
@@ -60,21 +61,17 @@ void Application::run() {
 
     program.setUniform("u_RelativeTileWidth", 1.0f / Video::kTileDataTableSize);
 
-    const Renderer& renderer = GLRenderer();
+    const Renderer& renderer = GLBatchRenderer(32*32);
 
     while (keepRunning()) {
         renderer.clear(0.15f, 0.15f, 0.15f, 1);
 
         /* draw tile data table */
-        renderer.startBatch(
-            32 * 32 *
-            tileDataTable[0][0].getVertexBuffer().getVertexBufferCount());
         for (int y = 0; y < 32; ++y) {
             for (int x = 0; x < 32; ++x) {
                 renderer.draw(tileDataTable[x][y].getVertexBuffer());
             }
         }
-        renderer.endBatch();
 
         for (auto c : _components) {
             c->update();
