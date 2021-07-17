@@ -15,3 +15,5 @@ void GLRenderer::clear(float iRed, float iGreen, float iBlue,
     GLCall(glClearColor(iRed, iGreen, iBlue, iAlpha));
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
+
+void GLRenderer::flush() const {}

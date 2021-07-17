@@ -12,7 +12,7 @@ GLBatchRenderer::~GLBatchRenderer() {
     }
 }
 
-void GLBatchRenderer::flushBatch() const {
+void GLBatchRenderer::flush() const {
     ASSERT(_batchBuffer.isLayoutSet(),
            "trying to draw a batch without setting its layout");
 
@@ -25,7 +25,7 @@ void GLBatchRenderer::draw(const Buffer& iBuffer) const {
     }
 
     if (_usedBatch >= _batchSize) {
-        flushBatch();
+        flush();
         _usedBatch = 0;
         _batchBuffer.reset();
     }

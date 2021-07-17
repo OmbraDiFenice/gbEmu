@@ -7,4 +7,5 @@ class GLRenderer : public Renderer {
     void draw(const Buffer& iBuffer) const override;
     void clear(float iRed, float iGreen, float iBlue,
                float iAlpha) const override;
+    void flush() const override;
 };

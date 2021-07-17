@@ -9,8 +9,7 @@ class GLBatchRenderer : public GLRenderer {
     ~GLBatchRenderer();
 
     void draw(const Buffer& iBuffer) const override;
-
-    void flushBatch() const;
+    void flush() const override;
 
    private:
     void initialize(const Buffer& iBuffer) const;

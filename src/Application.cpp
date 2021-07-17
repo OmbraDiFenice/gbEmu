@@ -73,6 +73,8 @@ void Application::run() {
             }
         }
 
+        renderer.flush();
+
         for (auto c : _components) {
             c->update();
         }
