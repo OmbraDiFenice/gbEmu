@@ -9,15 +9,15 @@ class Video {
     static constexpr unsigned int kTilesPerRow       = 32;  // tiles
     static constexpr unsigned int kTilesPerColumn    = 32;  // tiles
     static constexpr unsigned int kTileDataSize      = 16;  // bytes, compressed
-    static constexpr unsigned int kTileDataTableSize = 256;  // tiles
+    static constexpr unsigned int kBackgroundTableSize = 256;  // tiles
     static constexpr unsigned int kDecodedTileSize =
         kTileWidth * kTileHeight;  // bytes
     static constexpr unsigned int kTileMapSize =
-        Video::kTileDataTableSize * Video::kTileDataSize;  // bytes
+        Video::kBackgroundTableSize * Video::kTileDataSize;  // bytes
 
-    static constexpr unsigned int kSpritePatternTableSize = 256;  // tiles
+    static constexpr unsigned int kSpriteTableSize   = 256;  // tiles
     static constexpr unsigned int kSpriteDataSize = 16;  // bytes, compressed
-    static constexpr unsigned int kDecodedSpriteSize = kTileWidth * kTileHeight;
+    static constexpr unsigned int kDecodedSpriteSize = kTileWidth * kTileHeight;  // bytes
 
     struct CompressedSprite {
         unsigned char data[Video::kSpriteDataSize];
@@ -27,7 +27,6 @@ class Video {
     };
 
    public:
-    unsigned char tileMap[Video::kTileDataTableSize][Video::kDecodedTileSize];
 
    public:
     explicit Video(TileMapPatternAdapter& adapter);
@@ -35,6 +34,7 @@ class Video {
     std::shared_ptr<Texture> decodeSpritePatterns(CompressedSprite* iSpritePatterns);
 
     const std::shared_ptr<Texture>& getSpriteTableTexture() const { return _spriteTableTexture; }
+    const std::shared_ptr<Texture>& getBackgroundTableTexture() const { return _backgroundTableTexture; }
 
    private:
     void decodeTile(const unsigned char* iTileData, unsigned char* oDecodedTile);
@@ -42,5 +42,6 @@ class Video {
    private:
     TileMapPatternAdapter& _adapter;
 
+    std::shared_ptr<Texture> _backgroundTableTexture;
     std::shared_ptr<Texture> _spriteTableTexture;
 };
