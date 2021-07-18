@@ -1,5 +1,5 @@
 #pragma once
-#include <core/emu/Video.h>
+
 #include <core/ui/opengl/GLTexture.h>
 
 class TileMapPatternAdapter {
@@ -21,7 +21,7 @@ class TileMapPatternAdapter {
      * @return OpenGL texture representation of the tile map, where all the
      * tiles are on 1 row
      */
-    GLTexture toTexture(unsigned char* iTileMap, unsigned int iWidth,
+    std::shared_ptr<Texture> toTexture(unsigned char* iTileMap, unsigned int iWidth,
                         unsigned int iHeight, unsigned int iTileWidth,
                         unsigned int iTileHeight);
 
@@ -46,7 +46,7 @@ class TileMapPatternAdapter {
      * @param iWidth width of the input buffer
      * @param iHeight height of the input buffer
      */
-    void mapToRgb(unsigned char* iBuffer, unsigned char* oRgbBuffer,
+    void mapToRgb(const unsigned char* iBuffer, unsigned char* oRgbBuffer,
                   unsigned int iWidth, unsigned int iHeight);
 
     /** Reorder pixels in the buffer so that the texture will be 1 line of

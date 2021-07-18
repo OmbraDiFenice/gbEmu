@@ -2,16 +2,16 @@
 
 #include "TileMapPatternAdapter.h"
 
-GLTexture TileMapPatternAdapter::toTexture(unsigned char *iTileMap,
+std::shared_ptr<Texture> TileMapPatternAdapter::toTexture(unsigned char *iTileMap,
                                     unsigned int iWidth, unsigned int iHeight,
                                     unsigned int iTileWidth,
                                     unsigned int iTileHeight) {
     reorderData(iTileMap, iWidth, iHeight, iTileWidth, iTileHeight);
     verticalMirror(iTileMap, iWidth, iHeight);
 
-    unsigned char tileData[iWidth * iHeight * _bytesPerColor];
-    mapToRgb(iTileMap, tileData, iWidth, iHeight);
-    return GLTexture(tileData, iWidth, iHeight, _bytesPerColor);
+    std::shared_ptr<unsigned char[]> tileData(new unsigned char[iWidth * iHeight * _bytesPerColor]);
+    mapToRgb(iTileMap, tileData.get(), iWidth, iHeight);
+    return std::make_shared<GLTexture>(tileData, iWidth, iHeight, _bytesPerColor);
 }
 
 void TileMapPatternAdapter::verticalMirror(unsigned char *ioBuffer,
@@ -25,7 +25,7 @@ void TileMapPatternAdapter::verticalMirror(unsigned char *ioBuffer,
     }
 }
 
-void TileMapPatternAdapter::mapToRgb(unsigned char *iBuffer, unsigned char *oRgbBuffer,
+void TileMapPatternAdapter::mapToRgb(const unsigned char *iBuffer, unsigned char *oRgbBuffer,
                               unsigned int iWidth, unsigned int iHeight) {
     for (int i = 0; i < iWidth * iHeight; ++i) {
         memcpy(&oRgbBuffer[i * _bytesPerColor], &_colorMap[iBuffer[i]],

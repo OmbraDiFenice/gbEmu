@@ -33,33 +33,48 @@ void Application::run() {
     program.link();
     program.bind();
 
+    TileMapPatternAdapter tileMapPatternAdapter;
+
     unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
-    Video video;
+    unsigned char* spritePatterns = loadData("spriteDataTable_8000.DMP");
+    Video video(tileMapPatternAdapter);
     video.decodeTileMapPatterns(tileMapPatterns);
 
-    /* decode tile data table texture */
-    TileMapPatternAdapter tileMapPatternAdapter;
-    const Texture& texture = tileMapPatternAdapter.toTexture(
-        reinterpret_cast<unsigned char*>(video.tileMap),
-        Video::kTileWidth * Video::kTileDataTableSize, Video::kTileHeight,
-        Video::kTileWidth, Video::kTileHeight);
-    texture.bind(0);
-    program.setUniform("u_Texture", 0);
+    video.decodeSpritePatterns(reinterpret_cast<Video::CompressedSprite*>(spritePatterns));
+    program.setUniform("u_SpriteTableTexture", 1);
+    program.setUniform("u_RelativeSpriteWidth", 1.0f / Video::kSpritePatternTableSize);
+
+    /* decode tile data table into a texture */
+    //std::shared_ptr<Texture> texture = tileMapPatternAdapter.toTexture(
+    //    reinterpret_cast<unsigned char*>(video.tileMap),
+    //    Video::kTileWidth * Video::kTileDataTableSize, Video::kTileHeight,
+    //    Video::kTileWidth, Video::kTileHeight);
+    //texture->bind(0);
+    //program.setUniform("u_Texture", 0);
 
     /* create tile map */
-    unsigned char* tileMap = loadData("tileMap_9800.DMP");
-    Tile tileDataTable[32][32];
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 32; ++x) {
-            tileDataTable[x][y].setIndex((char)(tileMap[x + 32 * y]) + 128);
-            tileDataTable[x][y].setPosition(x - 16, 16 - y);
+    // unsigned char* tileMap = loadData("tileMap_9800.DMP");
+    // Tile tileDataTable[32][32];
+    // for (int y = 0; y < 32; ++y) {
+    //     for (int x = 0; x < 32; ++x) {
+    //         tileDataTable[x][y].setIndex((char)(tileMap[x + 32 * y]) + 128);
+    //         tileDataTable[x][y].setPosition(x - 16, 16 - y);
+    //     }
+    // }
+
+    /* create sprite map */
+    Tile spriteMap[Video::kTilesPerRow][Video::kTilesPerColumn];
+    for (int y = 0; y < 16; ++y) {
+        for (int x = 0; x < 16; ++x) {
+            spriteMap[x][y].setIndex(x + 16 * y);
+            spriteMap[x][y].setPosition(x - 16, 16 - y);
         }
     }
 
     glm::mat3 proj = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f);
     program.setUniformMatrix3("u_Proj", &proj[0][0]);
 
-    program.setUniform("u_RelativeTileWidth", 1.0f / Video::kTileDataTableSize);
+    //program.setUniform("u_RelativeTileWidth", 1.0f / Video::kTileDataTableSize);
 
     const Renderer& renderer = GLBatchRenderer(32*32);
 
@@ -67,9 +82,17 @@ void Application::run() {
         renderer.clear(0.15f, 0.15f, 0.15f, 1);
 
         /* draw tile data table */
-        for (int y = 0; y < 32; ++y) {
-            for (int x = 0; x < 32; ++x) {
-                renderer.draw(tileDataTable[x][y].getVertexBuffer());
+        //for (int y = 0; y < 32; ++y) {
+        //    for (int x = 0; x < 32; ++x) {
+        //        renderer.draw(tileDataTable[x][y].getVertexBuffer());
+        //    }
+        //}
+
+        /* draw sprites */
+        video.getSpriteTableTexture()->bind(1);
+        for (int y = 0; y < 16; ++y) {
+            for (int x = 0; x < 16; ++x) {
+                renderer.draw(spriteMap[x][y].getVertexBuffer());
             }
         }
 
