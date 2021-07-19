@@ -21,9 +21,17 @@ class TilePatternAdapter {
      * @return OpenGL texture representation of the tile map, where all the
      * tiles are on 1 row
      */
-    std::shared_ptr<Texture> toTexture(unsigned char* iTileMap, unsigned int iWidth,
-                        unsigned int iHeight, unsigned int iTileWidth,
-                        unsigned int iTileHeight);
+    std::shared_ptr<Texture> toTexture(unsigned char* iTileMap,
+                                       unsigned int iWidth,
+                                       unsigned int iHeight,
+                                       unsigned int iTileWidth,
+                                       unsigned int iTileHeight);
+
+    /** Set which index in the color map colors will become transparent.
+     *
+     * Put this to a negative number to make all colors in the color map solid.
+     */
+     void setTransparentColorIndex(int iTransparentColorIndex) { _transparentColorIndex = iTransparentColorIndex; }
 
    private:
     /** Vertically flip the pixels in the buffer
@@ -98,6 +106,7 @@ class TilePatternAdapter {
                      unsigned int iTileHeight);
 
    private:
-    uint32_t _colorMap[4]    = {0xF0E0D0, 0x989898, 0x686868, 0x383838};
-    const int _bytesPerColor = sizeof(_colorMap[0]);
+    uint32_t _colorMap[4]      = {0xFFF0E0D0, 0xFF989898, 0xFF686868, 0xFF383838};
+    int _transparentColorIndex = -1;
+    const int _bytesPerColor   = sizeof(_colorMap[0]);
 };

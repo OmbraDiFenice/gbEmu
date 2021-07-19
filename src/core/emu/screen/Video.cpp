@@ -7,6 +7,8 @@
 Video::Video(TilePatternAdapter& adapter) : _adapter(adapter) {}
 
 void Video::decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns) {
+    _adapter.setTransparentColorIndex(-1);
+
     TileData tileMapData[kBackgroundTableSize];
 
     decodeTilePatterns(iBackgroundPatterns, kBackgroundTableSize, tileMapData);
@@ -19,6 +21,8 @@ void Video::decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns) {
 
 std::shared_ptr<Texture> Video::decodeSpritePatterns(
     CompressedTileData* iSpritePatterns) {
+    _adapter.setTransparentColorIndex(0);
+
     TileData spriteMapData[kSpriteTableSize];
 
     decodeTilePatterns(iSpritePatterns, kSpriteTableSize, spriteMapData);

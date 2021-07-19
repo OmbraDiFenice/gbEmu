@@ -54,8 +54,8 @@ void Application::run() {
     while (keepRunning()) {
         renderer.clear(0.15f, 0.15f, 0.15f, 1);
 
-        backgroundMap.render(renderer, video, program);
-        //spriteMap.render(renderer, video, program);
+        //backgroundMap.render(renderer, video, program);
+        spriteMap.render(renderer, video, program);
 
         renderer.flush();
 

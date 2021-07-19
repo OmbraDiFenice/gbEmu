@@ -4,6 +4,7 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
+#include <utils/GLErrorMacros.h>
 
 GLWindow::GLWindow(GLFWwindow* glfWindow) : _glfWindow(glfWindow) {
     glfwSetWindowUserPointer(glfWindow, this);
@@ -82,6 +83,8 @@ void GLWindowManager::setGlContext(GLFWwindow* window) const {
     glfwMakeContextCurrent(window);
     gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    GLCall(glEnable(GL_BLEND));
 }
 
 void GLWindowManager::DestroyWindow(GLFWwindow* window) {

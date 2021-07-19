@@ -32,8 +32,14 @@ void TilePatternAdapter::mapToRgb(const unsigned char *iBuffer,
                                      unsigned char *oRgbBuffer,
                                      unsigned int iWidth,
                                      unsigned int iHeight) {
+    uint32_t filteredColorMap[4];
+    memcpy(filteredColorMap, _colorMap, _bytesPerColor * 4);
+    if(_transparentColorIndex >= 0) {
+        filteredColorMap[_transparentColorIndex] &= 0x00FFFFFF;
+    }
+
     for (int i = 0; i < iWidth * iHeight; ++i) {
-        memcpy(&oRgbBuffer[i * _bytesPerColor], &_colorMap[iBuffer[i]],
+        memcpy(&oRgbBuffer[i * _bytesPerColor], &filteredColorMap[iBuffer[i]],
                _bytesPerColor);
     }
 }
