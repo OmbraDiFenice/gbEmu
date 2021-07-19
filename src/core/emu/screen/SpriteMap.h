@@ -3,13 +3,12 @@
 #include <core/emu/screen/VideoItem.h>
 #include <core/emu/screen/TileBuffer.h>
 
-class BackgroundMap : VideoItem {
+class SpriteMap : public VideoItem {
    public:
-    BackgroundMap();
-    void reindex(const unsigned char* iBackgroundTileMap, bool iSignedIndexes);
+    SpriteMap();
 
     void render(const Renderer& renderer, const Video& iVideo, Program& ioProgram) const override;
 
    private:
-    TileBuffer backgroundMap[32][32];
+    TileBuffer spriteMap[16][16];
 };

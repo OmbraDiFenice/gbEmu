@@ -21,7 +21,7 @@ void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap, bool iSigne
 
 void BackgroundMap::render(const Renderer& renderer, const Video& iVideo, Program& ioProgram) const {
     iVideo.getBackgroundTableTexture()->bind(0);
-    ioProgram.setUniform("u_BackgroundTableTexture", 0);
+    ioProgram.setUniform("u_TileTexture", 0);
     ioProgram.setUniform("u_RelativeTileWidth", 1.0f / Video::kBackgroundTableSize);
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {

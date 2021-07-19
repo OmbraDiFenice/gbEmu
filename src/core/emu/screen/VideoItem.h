@@ -2,6 +2,7 @@
 
 #include <core/ui/Renderer.h>
 #include <core/ui/Program.h>
+#include <core/emu/screen/Video.h>
 
 class VideoItem {
    public:
