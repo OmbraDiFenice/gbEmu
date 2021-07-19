@@ -9,7 +9,7 @@ class TileBuffer {
     explicit TileBuffer(int iX, int iY, int iIndex);
     void setIndex(int iIndex);
     void setPosition(float iX, float iY);
-    inline const Buffer& getVertexBuffer() { return *_vb; }
+    inline const Buffer& getVertexBuffer() const { return *_vb; }
 
     void bind() const;
 

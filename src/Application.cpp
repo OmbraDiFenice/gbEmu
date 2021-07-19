@@ -2,6 +2,7 @@
 
 #include "Application.h"
 
+#include <core/emu/screen/BackgroundMap.h>
 #include <core/emu/screen/TileBuffer.h>
 #include <core/emu/screen/TilePatternAdapter.h>
 #include <core/emu/screen/Video.h>
@@ -35,20 +36,15 @@ void Application::run() {
     Video video(tileMapPatternAdapter);
 
     video.decodeTileMapPatterns(reinterpret_cast<Video::CompressedTileData*>(tileMapPatterns));
-    program.setUniform("u_BackgroundTableTexture", 0);
 
     video.decodeSpritePatterns(reinterpret_cast<Video::CompressedTileData*>(spritePatterns));
     program.setUniform("u_SpriteTableTexture", 1);
 
     /* create background map */
     unsigned char* tileMap = loadData("tileMap_9800.DMP");
-    TileBuffer backgroundMap[32][32];
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 32; ++x) {
-            backgroundMap[x][y].setIndex((char)(tileMap[x + 32 * y]) + 128);
-            backgroundMap[x][y].setPosition(x - 16, 16 - y);
-        }
-    }
+
+    BackgroundMap backgroundMap;
+    backgroundMap.reindex(tileMap, true);
 
     /* create sprite map */
     TileBuffer spriteMap[32][32];
@@ -67,14 +63,7 @@ void Application::run() {
     while (keepRunning()) {
         renderer.clear(0.15f, 0.15f, 0.15f, 1);
 
-        /* draw background */
-        video.getBackgroundTableTexture()->bind(0);
-        program.setUniform("u_RelativeTileWidth", 1.0f / Video::kBackgroundTableSize);
-        for (int y = 0; y < 32; ++y) {
-            for (int x = 0; x < 32; ++x) {
-                renderer.draw(backgroundMap[x][y].getVertexBuffer());
-            }
-        }
+        backgroundMap.render(renderer, video, program);
 
         /* draw sprites */
         // video.getSpriteTableTexture()->bind(1);
