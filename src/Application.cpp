@@ -2,19 +2,14 @@
 
 #include "Application.h"
 
-#include <core/Tile.h>
-#include <core/TileMapPatternAdapter.h>
-#include <core/emu/Video.h>
+#include <core/emu/screen/TileBuffer.h>
+#include <core/emu/screen/TilePatternAdapter.h>
+#include <core/emu/screen/Video.h>
 #include <core/emu/utils.h>
-#include <core/ui/Texture.h>
-#include <core/ui/opengl/GLProgram.h>
-#include <core/ui/opengl/GLRenderer.h>
 #include <core/ui/opengl/GLBatchRenderer.h>
-#include <core/ui/opengl/GLShader.h>
-#include <glad/gl.h>
+#include <core/ui/opengl/GLProgram.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <utils/GLErrorMacros.h>
 
 void Application::run() {
     LOG_DBG("start app");
@@ -33,21 +28,21 @@ void Application::run() {
     program.link();
     program.bind();
 
-    TileMapPatternAdapter tileMapPatternAdapter;
+    TilePatternAdapter tileMapPatternAdapter;
 
     unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
     unsigned char* spritePatterns = loadData("spriteDataTable_8000.DMP");
     Video video(tileMapPatternAdapter);
 
-    video.decodeTileMapPatterns(tileMapPatterns);
+    video.decodeTileMapPatterns(reinterpret_cast<Video::CompressedTileData*>(tileMapPatterns));
     program.setUniform("u_BackgroundTableTexture", 0);
 
-    video.decodeSpritePatterns(reinterpret_cast<Video::CompressedSprite*>(spritePatterns));
+    video.decodeSpritePatterns(reinterpret_cast<Video::CompressedTileData*>(spritePatterns));
     program.setUniform("u_SpriteTableTexture", 1);
 
     /* create background map */
     unsigned char* tileMap = loadData("tileMap_9800.DMP");
-    Tile backgroundMap[32][32];
+    TileBuffer backgroundMap[32][32];
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {
             backgroundMap[x][y].setIndex((char)(tileMap[x + 32 * y]) + 128);
@@ -56,7 +51,7 @@ void Application::run() {
     }
 
     /* create sprite map */
-    Tile spriteMap[Video::kTilesPerRow][Video::kTilesPerColumn];
+    TileBuffer spriteMap[32][32];
     for (int y = 0; y < 16; ++y) {
         for (int x = 0; x < 16; ++x) {
             spriteMap[x][y].setIndex(x + 16 * y);
@@ -83,7 +78,7 @@ void Application::run() {
 
         /* draw sprites */
         // video.getSpriteTableTexture()->bind(1);
-        //program.setUniform("u_RelativeTileWidth", 1.0f / Video::kSpriteTableSize);
+        // program.setUniform("u_RelativeTileWidth", 1.0f / Video::kSpriteTableSize);
         // for (int y = 0; y < 16; ++y) {
         //     for (int x = 0; x < 16; ++x) {
         //         renderer.draw(spriteMap[x][y].getVertexBuffer());

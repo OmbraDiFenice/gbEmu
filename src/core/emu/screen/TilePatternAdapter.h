@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/ui/opengl/GLTexture.h>
+#include <core/ui/Texture.h>
 
-class TileMapPatternAdapter {
+class TilePatternAdapter {
    public:
     /** Convert a tileMap buffer from a set of color-indexed pixels to an OpenGL
      * texture object

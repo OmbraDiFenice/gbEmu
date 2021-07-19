@@ -1,16 +1,15 @@
 #pragma once
 
-#include <core/ui/opengl/GLVertexBuffer.h>
 #include <vector>
 #include <core/ui/Buffer.h>
 
-class Tile {
+class TileBuffer {
    public:
-    explicit Tile();
-    explicit Tile(int iX, int iY, int iIndex);
+    explicit TileBuffer();
+    explicit TileBuffer(int iX, int iY, int iIndex);
     void setIndex(int iIndex);
     void setPosition(float iX, float iY);
-    inline const Buffer& getVertexBuffer() { return _vb; }
+    inline const Buffer& getVertexBuffer() { return *_vb; }
 
     void bind() const;
 
@@ -29,5 +28,5 @@ class Tile {
 
     const static std::vector<unsigned int> _indices;
     const static VertexLayout _layout;
-    GLVertexBuffer _vb;
+    std::shared_ptr<Buffer> _vb;
 };

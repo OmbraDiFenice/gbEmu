@@ -1,21 +1,22 @@
 #include <gtest/gtest.h>
 
-#include <core/emu/Video.h>
+#include <core/emu/screen/TilePatternAdapter.h>
+#include <core/emu/screen/Video.h>
 
-class TestVideo : public ::testing::Test {
+class TestVideo : public Video, public ::testing::Test {
    protected:
-    unsigned char testTileData[Video::kTileDataSize];
-    unsigned char expectedTestTile[Video::kDecodedTileSize];
-    Video video;
+    static TilePatternAdapter tileMapPatternAdapter;
+    CompressedTileData testTileData;
+    TileData expectedTestTile;
 
-    TestVideo() {
+    TestVideo() : Video(tileMapPatternAdapter) {
         // clang-format off
-        unsigned char testTileDataTmp[] = {
+        CompressedTileData testTileDataTmp = {
             0x7C, 0x7C, 0x00, 0xC6, 0xC6, 0x00, 0x00, 0xFE,
             0xC6, 0xC6, 0x00, 0xC6, 0xC6, 0x00, 0x00, 0x00,
         };
 
-        unsigned char expectedTestTileTmp[] = {
+        TileData expectedTestTileTmp = {
             0, 3, 3, 3, 3, 3, 0, 0,
             2, 2, 0, 0, 0, 2, 2, 0,
             1, 1, 0, 0, 0, 1, 1, 0,
@@ -31,29 +32,34 @@ class TestVideo : public ::testing::Test {
         memcpy(expectedTestTile, expectedTestTileTmp, 64);
     }
 
-    void checkTile(unsigned char* expectedTile, unsigned char* actualTile) {
+    void checkTile(unsigned char* expectedTile, unsigned char* actualTile,
+                   const char* message) {
         // 8x8 pixel tile
         for (int x = 0; x < 8; ++x) {
             for (int y = 0; y < 8; ++y) {
                 EXPECT_EQ(expectedTile[x + 8 * y], actualTile[x + 8 * y])
-                    << "pixel mismatch at x: " << x << " y: " << y;
+                    << message << ": pixel mismatch at x= " << x << " y= " << y;
             }
         }
     }
 };
 
-TEST_F(TestVideo, decodeTileMap) {
-    unsigned char tileMap[Video::kTileMapSize];
+TilePatternAdapter TestVideo::tileMapPatternAdapter;
 
-    // set tile at the beginning of the tileMap
-    memcpy(&tileMap[0], testTileData, Video::kTileDataSize);
+TEST_F(TestVideo, decodeTilePatterns) {
+    CompressedTileData tileMapData[kBackgroundTableSize];
+    TileData uncompressedTileMapData[kBackgroundTableSize];
 
-    // set tile at the end of the tileMap
-    memcpy(&tileMap[Video::kTileMapSize - Video::kTileDataSize], testTileData,
-           Video::kTileDataSize);
+    // set tile at the beginning of the tileMapData
+    memcpy(&tileMapData[0], testTileData, kTileDataSize);
 
-    video.decodeTileMapPatterns(tileMap);
+    // set tile at the end of the tileMapData
+    memcpy(&tileMapData[kBackgroundTableSize - 1], testTileData, kTileDataSize);
 
-    checkTile(expectedTestTile, video.tileMap[0]);
-    checkTile(expectedTestTile, video.tileMap[255]);
+    decodeTilePatterns(tileMapData, kBackgroundTableSize,
+                       uncompressedTileMapData);
+
+    checkTile(expectedTestTile, uncompressedTileMapData[0], "first tile");
+    checkTile(expectedTestTile,
+              uncompressedTileMapData[kBackgroundTableSize - 1], "last tile");
 }
