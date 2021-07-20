@@ -84,6 +84,16 @@ void GLProgram::setUniform(const std::string& iName, int iValue) const {
     }
 }
 
+void GLProgram::setUniform(const std::string& iName, size_t iSize,
+                           int* iValues) const {
+    GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
+    if(location == -1) {
+        LOG_WARN("uniform " << iName << " not found in program");
+    } else {
+        GLCall(glUniform1iv(location, iSize, iValues));
+    }
+}
+
 void GLProgram::setUniform(const std::string& iName, float iValue) const {
     GLCall(GLint location = glGetUniformLocation(_ref, iName.c_str()));
     if (location == -1) {
