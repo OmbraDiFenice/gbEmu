@@ -1,6 +1,7 @@
 #include <Pch.h>
 
 #include <core/emu/screen/BackgroundMap.h>
+#include <core/emu/screen/Video.h>
 
 BackgroundMap::BackgroundMap() {
     for (int y = 0; y < 32; ++y) {
@@ -20,8 +21,8 @@ void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap, bool iSigne
     }
 }
 
-void BackgroundMap::render(const Renderer& renderer, const Video& iVideo, Program& ioProgram) const {
-    iVideo.getBackgroundTableTexture()->bind();
+void BackgroundMap::render(const GbRenderer& renderer) const {
+    _backgroundTableTexture->bind();
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {
             renderer.draw(backgroundMap[x][y].getVertexBuffer());

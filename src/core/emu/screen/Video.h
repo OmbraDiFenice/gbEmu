@@ -1,8 +1,10 @@
 #pragma once
 
 #include <core/emu/screen/TilePatternAdapter.h>
+#include <core/emu/screen/BackgroundMap.h>
+#include <core/emu/screen/SpriteMap.h>
 
-class Video {
+class Video : public VideoItem {
    public:
     static constexpr unsigned int kTileWidth    = 8;   // pixels
     static constexpr unsigned int kTileHeight   = 8;   // pixels
@@ -24,28 +26,29 @@ class Video {
 
    public:
     explicit Video(TilePatternAdapter& adapter);
-    void decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns);
-    std::shared_ptr<Texture> decodeSpritePatterns(
-        CompressedTileData* iSpritePatterns);
 
-    const std::shared_ptr<Texture>& getSpriteTableTexture() const {
-        return _spriteTableTexture;
-    }
-    const std::shared_ptr<Texture>& getBackgroundTableTexture() const {
-        return _backgroundTableTexture;
-    }
+    /** Take data from gb video memory and rebuild background and sprite textures */
+    void update();
+
+    void render(const GbRenderer& renderer) const;
+
+    const BackgroundMap& getBackground() const { return _background; };
+    const SpriteMap& getSprites() const { return _sprites; };
 
    protected:
     void decodeTilePatterns(const CompressedTileData* iCompressedTilePatterns,
                             unsigned int iSize, TileData* oDecodedTilePatterns);
 
    private:
+    std::shared_ptr<Texture> decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns);
+    std::shared_ptr<Texture> decodeSpritePatterns(
+        CompressedTileData* iSpritePatterns);
     void decodeTile(const CompressedTileData& iTileData,
                     TileData& oDecodedTile);
 
    private:
     TilePatternAdapter& _adapter;
 
-    std::shared_ptr<Texture> _backgroundTableTexture;
-    std::shared_ptr<Texture> _spriteTableTexture;
+    BackgroundMap _background;
+    SpriteMap _sprites;
 };

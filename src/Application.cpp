@@ -2,12 +2,9 @@
 
 #include "Application.h"
 
-#include <core/emu/screen/BackgroundMap.h>
-#include <core/emu/screen/SpriteMap.h>
 #include <core/emu/screen/TilePatternAdapter.h>
 #include <core/emu/screen/Video.h>
-#include <core/emu/utils.h>
-#include <core/ui/opengl/GLBatchRenderer.h>
+#include <core/emu/screen/GbRenderer.h>
 #include <core/ui/opengl/GLProgram.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,46 +26,28 @@ void Application::run() {
     program.link();
     program.bind();
 
-    TilePatternAdapter tileMapPatternAdapter;
-
-    unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
-    unsigned char* spritePatterns = loadData("spriteDataTable_8000.DMP");
-    Video video(tileMapPatternAdapter);
-
-    video.decodeTileMapPatterns(reinterpret_cast<Video::CompressedTileData*>(tileMapPatterns));
     program.setUniform("u_BackgroundPatterns", Video::TextureSlot::Background);
     program.setUniform("u_RelativeTileWidth", 1.0f / Video::kBackgroundTableSize);
-
-    auto spriteTexture = video.decodeSpritePatterns(reinterpret_cast<Video::CompressedTileData*>(spritePatterns));
     program.setUniform("u_SpritePatterns", Video::TextureSlot::Sprites);
     program.setUniform("u_RelativeTileWidth", 1.0f / Video::kSpriteTableSize);
 
-    unsigned char* tileMap = loadData("tileMap_9800.DMP");
-
-    BackgroundMap backgroundMap;
-    backgroundMap.reindex(tileMap, true);
-
-    SpriteMap spriteMap;
+    TilePatternAdapter tileMapPatternAdapter;
+    Video video(tileMapPatternAdapter);
+    video.update();
 
     glm::mat3 proj = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f);
     program.setUniformMatrix3("u_Proj", &proj[0][0]);
 
-    const Renderer& renderer = GLBatchRenderer(32*32);
+    GbRenderer renderer = GbRenderer();
 
     while (keepRunning()) {
-        renderer.clear(0.15f, 0.15f, 0.15f, 1);
-
-        //backgroundMap.render(renderer, video, program);
-        spriteMap.render(renderer, video, program);
-
-        renderer.flush();
+        renderer.render(video);
 
         for (auto c : _components) {
             c->update();
         }
     }
 
-    delete[] tileMapPatterns;
     LOG_DBG("end app");
 }
 

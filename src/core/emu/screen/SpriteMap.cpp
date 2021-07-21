@@ -1,6 +1,7 @@
 #include <Pch.h>
 
 #include <core/emu/screen/SpriteMap.h>
+#include <core/emu/screen/Video.h>
 
 SpriteMap::SpriteMap() {
     for (int y = 0; y < 16; ++y) {
@@ -11,9 +12,8 @@ SpriteMap::SpriteMap() {
     }
 }
 
-void SpriteMap::render(const Renderer& renderer, const Video& iVideo,
-                       Program& ioProgram) const {
-    iVideo.getSpriteTableTexture()->bind();
+void SpriteMap::render(const GbRenderer& renderer) const {
+    _spriteTableTexture->bind();
     for (int y = 0; y < 16; ++y) {
         for (int x = 0; x < 16; ++x) {
             renderer.draw(spriteMap[x][y].getVertexBuffer());

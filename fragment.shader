@@ -10,6 +10,6 @@ uniform sampler2D u_SpritePatterns;
 
 void main()
 {
-    color = texture(u_SpritePatterns, v_TexCoord);
+    color = texture(u_BackgroundPatterns, v_TexCoord);
     //color = vec4(v_Position + 0.5, 1.0);
 }

@@ -6,17 +6,42 @@
 
 Video::Video(TilePatternAdapter& adapter) : _adapter(adapter) {}
 
-void Video::decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns) {
+void Video::update() {
+    unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
+    unsigned char* spritePatterns  = loadData("spriteDataTable_8000.DMP");
+
+    auto backgroundTableTexture = decodeTileMapPatterns(
+        reinterpret_cast<Video::CompressedTileData*>(tileMapPatterns));
+    _background.setBackgroundTableTexture(backgroundTableTexture);
+
+    unsigned char* tileMap = loadData("tileMap_9800.DMP");
+    _background.reindex(tileMap, true);
+
+    auto spriteTableTexture = decodeSpritePatterns(reinterpret_cast<Video::CompressedTileData*>(spritePatterns));
+    _sprites.setSpriteTableTexture(spriteTableTexture);
+
+    delete[] tileMapPatterns;
+    delete[] spritePatterns;
+    delete[] tileMap;
+}
+
+void Video::render(const GbRenderer& renderer) const {
+    renderer.clear(0.15f, 0.15f, 0.15f, 1);
+    renderer.render(_background);
+    //renderer.render(_sprites);
+    renderer.flush();
+}
+
+std::shared_ptr<Texture> Video::decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns) {
     _adapter.setTransparentColorIndex(-1);
 
     TileData tileMapData[kBackgroundTableSize];
 
     decodeTilePatterns(iBackgroundPatterns, kBackgroundTableSize, tileMapData);
 
-    _backgroundTableTexture =
-        _adapter.toTexture(reinterpret_cast<unsigned char*>(tileMapData),
-                           kTileWidth * kBackgroundTableSize, kTileHeight,
-                           kTileWidth, kTileHeight, Video::TextureSlot::Background);
+    return _adapter.toTexture(reinterpret_cast<unsigned char*>(tileMapData),
+                       kTileWidth * kBackgroundTableSize, kTileHeight,
+                       kTileWidth, kTileHeight, Video::TextureSlot::Background);
 }
 
 std::shared_ptr<Texture> Video::decodeSpritePatterns(
@@ -27,16 +52,15 @@ std::shared_ptr<Texture> Video::decodeSpritePatterns(
 
     decodeTilePatterns(iSpritePatterns, kSpriteTableSize, spriteMapData);
 
-    _spriteTableTexture = _adapter.toTexture(
+    return _adapter.toTexture(
         reinterpret_cast<unsigned char*>(spriteMapData),
-        kTileWidth * kSpriteTableSize, kTileHeight, kTileWidth, kTileHeight, Video::TextureSlot::Sprites);
-
-    return _spriteTableTexture;
+        kTileWidth * kSpriteTableSize, kTileHeight, kTileWidth, kTileHeight,
+        Video::TextureSlot::Sprites);
 }
 
 void Video::decodeTilePatterns(
-    const Video::CompressedTileData* iCompressedTilePatterns, const unsigned int iSize,
-    Video::TileData* oDecodedTilePatterns) {
+    const Video::CompressedTileData* iCompressedTilePatterns,
+    const unsigned int iSize, Video::TileData* oDecodedTilePatterns) {
     for (int tileIndex = 0; tileIndex < iSize; ++tileIndex) {
         decodeTile(iCompressedTilePatterns[tileIndex],
                    oDecodedTilePatterns[tileIndex]);
