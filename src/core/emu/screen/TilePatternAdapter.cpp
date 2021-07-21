@@ -5,7 +5,7 @@
 
 std::shared_ptr<Texture> TilePatternAdapter::toTexture(
     unsigned char *iTileMap, unsigned int iWidth, unsigned int iHeight,
-    unsigned int iTileWidth, unsigned int iTileHeight) {
+    unsigned int iTileWidth, unsigned int iTileHeight, int iTextureSlot) {
     reorderData(iTileMap, iWidth, iHeight, iTileWidth, iTileHeight);
     verticalMirror(iTileMap, iWidth, iHeight);
 
@@ -13,7 +13,7 @@ std::shared_ptr<Texture> TilePatternAdapter::toTexture(
         new unsigned char[iWidth * iHeight * _bytesPerColor]);
     mapToRgb(iTileMap, tileData.get(), iWidth, iHeight);
     return std::make_shared<GLTexture>(tileData, iWidth, iHeight,
-                                       _bytesPerColor);
+                                       iTextureSlot, _bytesPerColor);
 }
 
 void TilePatternAdapter::verticalMirror(unsigned char *ioBuffer,

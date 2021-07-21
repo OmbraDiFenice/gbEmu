@@ -7,13 +7,17 @@
 
 #include <utility>
 
-GLTexture::GLTexture(const std::string &iPath) : Texture(iPath) {
+GLTexture::GLTexture(const std::string& iPath, unsigned int iChannels,
+                     unsigned int iTextureSlot)
+    : Texture(iPath, iTextureSlot) {
     loadFromFile(iPath);
+    initTexture(iChannels);
 }
 
-GLTexture::GLTexture(std::shared_ptr<unsigned char[]> iData, int iWidth, int iHeight,
+GLTexture::GLTexture(std::shared_ptr<unsigned char[]> iData, int iWidth,
+                     int iHeight, unsigned int iTextureSlot,
                      unsigned int channels)
-    : Texture(std::move(iData), iWidth, iHeight), _ref(0) {
+    : Texture(std::move(iData), iWidth, iHeight, iTextureSlot), _ref(0) {
     initTexture(channels);
 }
 
@@ -26,7 +30,7 @@ GLTexture::~GLTexture() {
 
 void GLTexture::initTexture(unsigned int channels) {
     GLCall(glGenTextures(1, &_ref));
-    GLCall(glBindTexture(GL_TEXTURE_2D, _ref));
+    bind();
 
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
@@ -54,18 +58,15 @@ GLenum GLTexture::GetGlFormatFromChannels(unsigned int channels) {
     }
 }
 
-void GLTexture::loadFromFile(const std::string &iPath) {
+void GLTexture::loadFromFile(const std::string& iPath) {
     int bpp;
     stbi_set_flip_vertically_on_load(true);
     _data.reset(stbi_load("test.png", &_width, &_height, &bpp, 4));
     ASSERT(_data != nullptr, "failed to load image from file");
-
-    initTexture(4);
 }
 
-void GLTexture::bind(unsigned int slot) const {
-    ASSERT(slot < 32, "slot has to be less than 32");
-    GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+void GLTexture::bind() const {
+    GLCall(glActiveTexture(GL_TEXTURE0 + _textureSlot));
     GLCall(glBindTexture(GL_TEXTURE_2D, GLTexture::_ref));
 }
 

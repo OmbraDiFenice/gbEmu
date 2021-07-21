@@ -7,8 +7,8 @@ class TileBuffer {
    public:
     explicit TileBuffer();
     explicit TileBuffer(int iX, int iY, int iIndex);
-    void setIndex(int iIndex);
     void setPosition(float iX, float iY);
+    void setTileIndex(int iIndex);
     inline const Buffer& getVertexBuffer() const { return *_vb; }
 
     void bind() const;
@@ -18,11 +18,11 @@ class TileBuffer {
 
    private:
     // clang-format off
-    float _vertices[4 * 4] = {
-        0.0f, 0.0f,  0.0f, 0.0f,
-        1.0f, 0.0f,  0.0f, 0.0f,
-        1.0f, 1.0f,  0.0f, 1.0f,
-        0.0f, 1.0f,  0.0f, 1.0f
+    float _vertices[4 * 4] = {  // TODO: the size should somehow depend on the layout, at least having a check on the size to signal potential errors when we add new data
+        0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f
     };
     // clang-format on
 

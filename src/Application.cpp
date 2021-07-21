@@ -36,8 +36,12 @@ void Application::run() {
     Video video(tileMapPatternAdapter);
 
     video.decodeTileMapPatterns(reinterpret_cast<Video::CompressedTileData*>(tileMapPatterns));
+    program.setUniform("u_BackgroundPatterns", Video::TextureSlot::Background);
+    program.setUniform("u_RelativeTileWidth", 1.0f / Video::kBackgroundTableSize);
 
-    video.decodeSpritePatterns(reinterpret_cast<Video::CompressedTileData*>(spritePatterns));
+    auto spriteTexture = video.decodeSpritePatterns(reinterpret_cast<Video::CompressedTileData*>(spritePatterns));
+    program.setUniform("u_SpritePatterns", Video::TextureSlot::Sprites);
+    program.setUniform("u_RelativeTileWidth", 1.0f / Video::kSpriteTableSize);
 
     unsigned char* tileMap = loadData("tileMap_9800.DMP");
 

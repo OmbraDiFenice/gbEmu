@@ -4,12 +4,13 @@
 
 class GLTexture : public Texture {
    public:
-    explicit GLTexture(const std::string& iPath);
+    explicit GLTexture(const std::string& iPath, unsigned int iChannels,
+                       unsigned int iTextureSlot);
     GLTexture(std::shared_ptr<unsigned char[]> iData, int iWidth, int iHeight,
-              unsigned int channels = 4);
+              unsigned int iTextureSlot, unsigned int channels);
     ~GLTexture() override;
 
-    void bind(unsigned int slot) const override;
+    void bind() const override;
     void unbind() const override;
 
    private:

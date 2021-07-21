@@ -17,6 +17,7 @@ class TilePatternAdapter {
      * byte correspond to 1 pixel)
      * @param iTileHeight width of a single tile in the tile map, in bytes (each
      * byte correspond to 1 pixel)
+     * @param iTextureSlot slot number where to store the texture on the GPU
      *
      * @return OpenGL texture representation of the tile map, where all the
      * tiles are on 1 row
@@ -25,7 +26,8 @@ class TilePatternAdapter {
                                        unsigned int iWidth,
                                        unsigned int iHeight,
                                        unsigned int iTileWidth,
-                                       unsigned int iTileHeight);
+                                       unsigned int iTileHeight,
+                                       int iTextureSlot);
 
     /** Set which index in the color map colors will become transparent.
      *

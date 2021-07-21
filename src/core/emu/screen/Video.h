@@ -16,6 +16,12 @@ class Video {
     using CompressedTileData = unsigned char[kTileDataSize];
     using TileData           = unsigned char[kDecodedTileSize];
 
+    enum TextureSlot {
+        Transparent = 0,
+        Background = 1,
+        Sprites = 2
+    };
+
    public:
     explicit Video(TilePatternAdapter& adapter);
     void decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns);

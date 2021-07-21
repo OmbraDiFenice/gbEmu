@@ -16,7 +16,7 @@ void Video::decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns) {
     _backgroundTableTexture =
         _adapter.toTexture(reinterpret_cast<unsigned char*>(tileMapData),
                            kTileWidth * kBackgroundTableSize, kTileHeight,
-                           kTileWidth, kTileHeight);
+                           kTileWidth, kTileHeight, Video::TextureSlot::Background);
 }
 
 std::shared_ptr<Texture> Video::decodeSpritePatterns(
@@ -29,22 +29,22 @@ std::shared_ptr<Texture> Video::decodeSpritePatterns(
 
     _spriteTableTexture = _adapter.toTexture(
         reinterpret_cast<unsigned char*>(spriteMapData),
-        kTileWidth * kSpriteTableSize, kTileHeight, kTileWidth, kTileHeight);
+        kTileWidth * kSpriteTableSize, kTileHeight, kTileWidth, kTileHeight, Video::TextureSlot::Sprites);
 
     return _spriteTableTexture;
 }
 
 void Video::decodeTilePatterns(
-    const CompressedTileData* iCompressedTilePatterns, const unsigned int iSize,
-    TileData* oDecodedTilePatterns) {
+    const Video::CompressedTileData* iCompressedTilePatterns, const unsigned int iSize,
+    Video::TileData* oDecodedTilePatterns) {
     for (int tileIndex = 0; tileIndex < iSize; ++tileIndex) {
         decodeTile(iCompressedTilePatterns[tileIndex],
                    oDecodedTilePatterns[tileIndex]);
     }
 }
 
-void Video::decodeTile(const CompressedTileData& iTileData,
-                       TileData& oDecodedTile) {
+void Video::decodeTile(const Video::CompressedTileData& iTileData,
+                       Video::TileData& oDecodedTile) {
     for (int row = 0; row < kTileDataSize; row += 2) {  // 2 bytes per pixel row
         unsigned char lsbyte = iTileData[row];
         unsigned char msbyte = iTileData[row + 1];
