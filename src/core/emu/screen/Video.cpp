@@ -4,7 +4,9 @@
 
 #include <core/emu/utils.h>
 
-Video::Video(TilePatternAdapter& adapter) : _adapter(adapter) {}
+Video::Video(TilePatternAdapter& adapter) : _adapter(adapter) {
+    _proj = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f);
+}
 
 void Video::update() {
     unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
@@ -27,8 +29,13 @@ void Video::update() {
 
 void Video::render(const GbRenderer& renderer) const {
     renderer.clear(0.15f, 0.15f, 0.15f, 1);
+
     renderer.render(_background);
-    //renderer.render(_sprites);
+    setCommonUniforms(_background.getProgram());
+
+    renderer.render(_sprites);
+    setCommonUniforms(_sprites.getProgram());
+
     renderer.flush();
 }
 
@@ -78,4 +85,8 @@ void Video::decodeTile(const Video::CompressedTileData& iTileData,
                 (BIT(msbyte, 7 - col) << 1) | BIT(lsbyte, 7 - col);
         }
     }
+}
+
+void Video::setCommonUniforms(const std::unique_ptr<Program>& iProgram) const {
+    iProgram->setUniformMatrix3("u_Proj", &_proj[0][0]);
 }

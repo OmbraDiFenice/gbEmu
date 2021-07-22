@@ -5,9 +5,6 @@
 #include <core/emu/screen/TilePatternAdapter.h>
 #include <core/emu/screen/Video.h>
 #include <core/emu/screen/GbRenderer.h>
-#include <core/ui/opengl/GLProgram.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 void Application::run() {
     LOG_DBG("start app");
@@ -20,23 +17,9 @@ void Application::run() {
 
     window->setEventCallback(BIND_FN(Application::onEvent));
 
-    GLProgram program;
-    program.loadShader("vertex.shader", GL_VERTEX_SHADER);
-    program.loadShader("fragment.shader", GL_FRAGMENT_SHADER);
-    program.link();
-    program.bind();
-
-    program.setUniform("u_BackgroundPatterns", Video::TextureSlot::Background);
-    program.setUniform("u_RelativeTileWidth", 1.0f / Video::kBackgroundTableSize);
-    program.setUniform("u_SpritePatterns", Video::TextureSlot::Sprites);
-    program.setUniform("u_RelativeTileWidth", 1.0f / Video::kSpriteTableSize);
-
     TilePatternAdapter tileMapPatternAdapter;
     Video video(tileMapPatternAdapter);
     video.update();
-
-    glm::mat3 proj = glm::ortho(-32.0f, 32.0f, -32.0f, 32.0f);
-    program.setUniformMatrix3("u_Proj", &proj[0][0]);
 
     GbRenderer renderer = GbRenderer();
 

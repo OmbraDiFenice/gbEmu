@@ -3,6 +3,8 @@
 #include <core/emu/screen/TilePatternAdapter.h>
 #include <core/emu/screen/BackgroundMap.h>
 #include <core/emu/screen/SpriteMap.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Video : public VideoItem {
    public:
@@ -45,10 +47,12 @@ class Video : public VideoItem {
         CompressedTileData* iSpritePatterns);
     void decodeTile(const CompressedTileData& iTileData,
                     TileData& oDecodedTile);
+    void setCommonUniforms(const std::unique_ptr<Program>& iProgram) const;
 
    private:
     TilePatternAdapter& _adapter;
 
     BackgroundMap _background;
     SpriteMap _sprites;
+    glm::mat3 _proj;
 };

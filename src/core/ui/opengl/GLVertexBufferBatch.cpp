@@ -15,6 +15,7 @@ void GLVertexBufferBatch::addBuffer(const Buffer& iBuffer) {
     memcpy(_nextVertexBuffer, iBuffer.getVertexBuffer(),
            iBuffer.getVertexBufferSize());
     _nextVertexBuffer += iBuffer.getVertexBufferCount();
+    _vbCount += iBuffer.getVertexBufferCount();
 
     for (auto index : iBuffer.getIndexBuffer()) {
         _ib.push_back(index + _indexOffset);
@@ -48,5 +49,6 @@ void GLVertexBufferBatch::reset() {
     _isLayoutInitialized = false;
     _indexOffset         = 0;
     _nextVertexBuffer    = _vb;
+    _vbCount             = 0;
     _ib.clear();
 }

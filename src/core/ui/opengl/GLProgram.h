@@ -8,8 +8,8 @@ class GLProgram : public Program {
     GLProgram();
     ~GLProgram() override;
 
-    void addShader(const std::string& iSrc, GLenum iType);
-    void loadShader(const std::string& iPath, GLenum iType);
+    void addShader(const std::string& iSrc, unsigned int iType) override;
+    void loadShader(const std::string& iPath, unsigned int iType) override;
     GLuint getRef() const { return _ref; }
     bool link() const override;
     void bind() const override;

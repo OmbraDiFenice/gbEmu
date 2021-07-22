@@ -6,9 +6,11 @@ class Program {
    public:
     virtual ~Program() = default;
 
-    virtual bool link() const   = 0;
-    virtual void bind() const   = 0;
-    virtual void unbind() const = 0;
+    virtual void addShader(const std::string& iSrc, unsigned int iType)   = 0;
+    virtual void loadShader(const std::string& iPath, unsigned int iType) = 0;
+    virtual bool link() const                                             = 0;
+    virtual void bind() const                                             = 0;
+    virtual void unbind() const                                           = 0;
 
     virtual void setUniform(const std::string& iName, int iValue) const   = 0;
     virtual void setUniform(const std::string& iName, float iValue) const = 0;

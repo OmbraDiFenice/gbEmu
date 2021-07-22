@@ -19,5 +19,4 @@ class GLBatchRenderer : public GLRenderer {
     const size_t _batchSize;
     mutable size_t _usedBatch;
     mutable bool _initialized;
-    void initialize(const Buffer& iBuffer);
 };
