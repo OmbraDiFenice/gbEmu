@@ -8,14 +8,14 @@
 
 class Video : public VideoItem {
    public:
-    static constexpr unsigned int kTileWidth    = 8;   // pixels
-    static constexpr unsigned int kTileHeight   = 8;   // pixels
-    static constexpr unsigned int kTileDataSize = 16;  // bytes, compressed
+    static constexpr unsigned int kTileWidth    = 8;   ///< pixels
+    static constexpr unsigned int kTileHeight   = 8;   ///< pixels
+    static constexpr unsigned int kTileDataSize = 16;  ///< bytes, compressed
 
-    static constexpr unsigned int kBackgroundTableSize = 256;  // tiles
-    static constexpr unsigned int kSpriteTableSize     = 256;  // tiles
+    static constexpr unsigned int kBackgroundTableSize = 256;  ///< tiles
+    static constexpr unsigned int kSpriteTableSize     = 256;  ///< tiles
     static constexpr unsigned int kDecodedTileSize =
-        kTileWidth * kTileHeight;  // bytes
+        kTileWidth * kTileHeight;  ///< bytes
 
     using CompressedTileData = unsigned char[kTileDataSize];
     using TileData           = unsigned char[kDecodedTileSize];
