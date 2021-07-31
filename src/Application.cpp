@@ -2,15 +2,18 @@
 
 #include "Application.h"
 
+#include <core/emu/screen/GbRenderer.h>
 #include <core/emu/screen/TilePatternAdapter.h>
 #include <core/emu/screen/Video.h>
-#include <core/emu/screen/GbRenderer.h>
 
 void Application::run() {
     LOG_DBG("start app");
 
+    float scalingFactor = 2;
+
     WindowProp prop;
-    prop.width = prop.height = 640;
+    prop.width  = 160 * scalingFactor;
+    prop.height = 144 * scalingFactor;
 
     Window* window = _windowManager->createWindow(prop);
     _components.push_back(window);

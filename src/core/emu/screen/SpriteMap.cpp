@@ -13,7 +13,7 @@ SpriteMap::SpriteMap()
     for (int y = 0; y < 16; ++y) {
         for (int x = 0; x < 16; ++x) {
             _spritePatternTable[x + 16 * y].setTileIndex(x + 16 * y);
-            _spritePatternTable[x + 16 * y].setPosition(x - 16, 16 - y);
+            _spritePatternTable[x + 16 * y].setPosition(x, y);
         }
     }
 }
@@ -21,11 +21,6 @@ SpriteMap::SpriteMap()
 void SpriteMap::update() {
     for (unsigned int spriteIndex = 0; spriteIndex < 40; ++spriteIndex) {
         const ObjectAttributeMemoryElement& spriteAttribute = _oam[spriteIndex];
-
-        _spritesToBeDrawn[spriteIndex].setPosition(
-            (spriteAttribute.getX() - 8) / 8 - 16,
-            16 - (spriteAttribute.getY() - 16) / 8);
-
         _spritesToBeDrawn[spriteIndex].setTileIndex(
             spriteAttribute.getPatternIndex());
     }
@@ -34,7 +29,32 @@ void SpriteMap::update() {
 void SpriteMap::render(const GbRenderer& renderer) const {
     _program->bind();
     _spriteTableTexture->bind();
+
+    glm::mat4 identity(1.0);
+
+    // this scaling brings the size of the tile from 1x1 pixels to tileWidth x
+    // tileHeight pixels
+    glm::vec3 scalingVec(Video::kTileWidth, Video::kTileHeight, 1);
+    glm::vec3 positionVec(0, 0, 0);
+
     for (unsigned int spriteIndex = 0; spriteIndex < 40; ++spriteIndex) {
+        const ObjectAttributeMemoryElement& spriteAttribute = _oam[spriteIndex];
+        positionVec.x = spriteAttribute.getX() - 8;
+        positionVec.y = spriteAttribute.getY() - 16;
+
+        if (spriteAttribute.getFlag(
+                ObjectAttributeMemoryElement::Flag::yFlip)) {
+            scalingVec.y *= -1;
+        }
+        if (spriteAttribute.getFlag(
+                ObjectAttributeMemoryElement::Flag::xFlip)) {
+            scalingVec.x *= -1;
+        }
+
+        glm::mat4 position = glm::translate(identity, positionVec);
+        glm::mat4 scale    = glm::scale(identity, scalingVec);
+        _program->setUniformMatrix4("u_Transform", &(position * scale)[0][0]);
+
         renderer.draw(_spritesToBeDrawn[spriteIndex].getVertexBuffer());
     }
 }

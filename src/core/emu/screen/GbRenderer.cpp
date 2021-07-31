@@ -6,9 +6,7 @@
 #include <core/emu/screen/SpriteMap.h>
 #include <core/emu/screen/Video.h>
 
-GbRenderer::GbRenderer() {
-    _renderer = std::make_unique<GLBatchRenderer>(32*32);
-}
+GbRenderer::GbRenderer() { _renderer = std::make_unique<GLRenderer>(); }
 
 void GbRenderer::render(const Video& iVideo) const {
     iVideo.render(*this);

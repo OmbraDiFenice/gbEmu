@@ -55,5 +55,5 @@ class Video : public VideoItem {
 
     BackgroundMap _background;
     SpriteMap _sprites;
-    glm::mat3 _proj;
+    glm::mat4 _proj;
 };

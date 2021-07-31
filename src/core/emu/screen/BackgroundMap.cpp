@@ -3,19 +3,14 @@
 #include <core/emu/screen/BackgroundMap.h>
 #include <core/emu/screen/Video.h>
 #include <core/ui/opengl/GLProgram.h>
+#include <glm/mat4x4.hpp>
 
 BackgroundMap::BackgroundMap()
     : _program(nullptr),
       _colorMap({{0xD0, 0xE0, 0xF0, 0xFF},
                  {0x98, 0x98, 0x98, 0xFF},
                  {0x68, 0x68, 0x68, 0xFF},
-                 {0x38, 0x38, 0x38, 0xFF}}) {
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 32; ++x) {
-            _backgroundPatternTable[x + 32 * y].setPosition(x - 16, 16 - y);
-        }
-    }
-}
+                 {0x38, 0x38, 0x38, 0xFF}}) {}
 
 void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap,
                             bool iSignedIndexes) {
@@ -29,8 +24,27 @@ void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap,
 void BackgroundMap::render(const GbRenderer& renderer) const {
     _program->bind();
     _backgroundTableTexture->bind();
-    for (int patternIndex = 0; patternIndex < 32 * 32; ++patternIndex) {
-        renderer.draw(_backgroundPatternTable[patternIndex].getVertexBuffer());
+
+    glm::mat4 identity(1.0);
+
+    // this scaling brings the size of the tile from 1x1 pixels to tileWidth x
+    // tileHeight pixels
+    glm::vec3 scalingVec(Video::kTileWidth, Video::kTileHeight, 1);
+    glm::mat4 scale = glm::scale(identity, scalingVec);
+    glm::vec3 positionVec(0, 0, 0);
+
+    for (int y = 0; y < 32; ++y) {
+        for (int x = 0; x < 32; ++x) {
+            positionVec.x = x * Video::kTileWidth;
+            positionVec.y = y * Video::kTileHeight;
+
+            glm::mat4 position = glm::translate(identity, positionVec);
+            _program->setUniformMatrix4("u_Transform",
+                                        &(position * scale)[0][0]);
+
+            renderer.draw(
+                _backgroundPatternTable[x + 32 * y].getVertexBuffer());
+        }
     }
 }
 
