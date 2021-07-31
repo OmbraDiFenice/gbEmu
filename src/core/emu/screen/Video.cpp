@@ -35,13 +35,8 @@ void Video::update() {
 
 void Video::render(const GbRenderer& renderer) const {
     renderer.clear(0.15f, 0.15f, 0.15f, 1);
-
     renderer.render(_background);
-    setCommonUniforms(_background.getProgram());
-
     renderer.render(_sprites);
-    setCommonUniforms(_sprites.getProgram());
-
     renderer.flush();
 }
 
@@ -92,10 +87,13 @@ void Video::decodeTile(const Video::CompressedTileData& iTileData,
 }
 
 void Video::setCommonUniforms(const std::unique_ptr<Program>& iProgram) const {
+    iProgram->bind();
     iProgram->setUniformMatrix3("u_Proj", &_proj[0][0]);
 }
 
 void Video::initialize() {
     _background.initialize();
+    setCommonUniforms(_background.getProgram());
     _sprites.initialize();
+    setCommonUniforms(_sprites.getProgram());
 }
