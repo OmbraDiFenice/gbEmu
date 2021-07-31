@@ -96,3 +96,8 @@ void Video::decodeTile(const Video::CompressedTileData& iTileData,
 void Video::setCommonUniforms(const std::unique_ptr<Program>& iProgram) const {
     iProgram->setUniformMatrix3("u_Proj", &_proj[0][0]);
 }
+
+void Video::initialize() {
+    _background.initialize();
+    _sprites.initialize();
+}

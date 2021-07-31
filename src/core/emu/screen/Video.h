@@ -33,6 +33,7 @@ class Video : public VideoItem {
     void update();
 
     void render(const GbRenderer& renderer) const;
+    void initialize() override;
 
     const BackgroundMap& getBackground() const { return _background; };
     const SpriteMap& getSprites() const { return _sprites; };

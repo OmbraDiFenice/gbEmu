@@ -23,6 +23,7 @@ class SpriteMap : public VideoItem {
     }
 
     void render(const GbRenderer& renderer) const override;
+    void initialize() override;
 
    private:
     TileBuffer spriteMap[16][16];

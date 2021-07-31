@@ -4,19 +4,7 @@
 #include <core/emu/screen/Video.h>
 #include <core/ui/opengl/GLProgram.h>
 
-BackgroundMap::BackgroundMap() {
-    _program = std::make_unique<GLProgram>();
-    _program->loadShader("vertex.shader", GL_VERTEX_SHADER);
-    _program->loadShader("fragment.shader", GL_FRAGMENT_SHADER);
-    _program->link();
-    _program->bind();
-
-    _program->setUniform("u_TilePatterns", Video::TextureSlot::Background);
-    _program->setUniform("u_TilemapHeight",
-                         static_cast<float>(Video::kBackgroundTableSize));
-
-    _program->unbind();
-
+BackgroundMap::BackgroundMap() : _program(nullptr) {
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {
             backgroundMap[x][y].setPosition(x - 16, 16 - y);
@@ -42,4 +30,18 @@ void BackgroundMap::render(const GbRenderer& renderer) const {
             renderer.draw(backgroundMap[x][y].getVertexBuffer());
         }
     }
+}
+
+void BackgroundMap::initialize() {
+    _program = std::make_unique<GLProgram>();
+    _program->loadShader("vertex.shader", GL_VERTEX_SHADER);
+    _program->loadShader("fragment.shader", GL_FRAGMENT_SHADER);
+    _program->link();
+    _program->bind();
+
+    _program->setUniform("u_TilePatterns", Video::TextureSlot::Background);
+    _program->setUniform("u_TilemapHeight",
+                         static_cast<float>(Video::kBackgroundTableSize));
+
+    _program->unbind();
 }
