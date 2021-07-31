@@ -4,10 +4,11 @@
 
 class GLTexture : public Texture {
    public:
-    explicit GLTexture(const std::string& iPath, unsigned int iChannels,
-                       unsigned int iTextureSlot);
+    GLTexture(const std::string& iPath, unsigned int iTextureSlot,
+              unsigned int iInputChannels, unsigned int iOutputChannels);
     GLTexture(std::shared_ptr<unsigned char[]> iData, int iWidth, int iHeight,
-              unsigned int iTextureSlot, unsigned int channels);
+              unsigned int iTextureSlot, unsigned int iInputChannels,
+              unsigned int iOutputChannels);
     ~GLTexture() override;
 
     void bind() const override;
@@ -15,9 +16,10 @@ class GLTexture : public Texture {
 
    private:
     void loadFromFile(const std::string& iPath);
-    void initTexture(unsigned int channels);
+    void initTexture(unsigned int iInputChannels, unsigned int iOutputChannels);
 
-    static GLenum GetGlFormatFromChannels(unsigned int channels);
+    static GLenum GetGlFormatFromInputChannels(unsigned int iInputChannels);
+    static GLenum GetGlFormatFromOutputChannels(unsigned int iOutputChannels);
 
    private:
     GLuint _ref = 0;

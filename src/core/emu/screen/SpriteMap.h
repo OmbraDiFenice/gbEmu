@@ -1,8 +1,9 @@
 #pragma once
 
+#include <core/emu/screen/ColorPalette.h>
+#include <core/emu/screen/ObjectAttributeMemory.h>
 #include <core/emu/screen/TileBuffer.h>
 #include <core/emu/screen/VideoItem.h>
-#include <core/emu/screen/ObjectAttributeMemory.h>
 #include <core/ui/Program.h>
 #include <core/ui/Texture.h>
 #include <utility>
@@ -27,6 +28,7 @@ class SpriteMap : public VideoItem {
 
    private:
     TileBuffer spriteMap[16][16];
+    ColorPalette _colorMap;
     TileBuffer _sprites[40];
     ObjectAttributeMemory _oam;
     std::shared_ptr<Texture> _spriteTableTexture;

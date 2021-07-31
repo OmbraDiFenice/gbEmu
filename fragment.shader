@@ -6,9 +6,11 @@ in vec3 v_Position;
 in vec2 v_TexCoord;
 
 uniform sampler2D u_TilePatterns;
+uniform mat4 u_Palette;
 
 void main()
 {
-    color = texture(u_TilePatterns, v_TexCoord);
+    int index = int(texture(u_TilePatterns, v_TexCoord) * 255);
+    color = u_Palette[index];
     //color = vec4(v_TexCoord, 0.0, 1.0);
 }

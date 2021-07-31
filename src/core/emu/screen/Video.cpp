@@ -47,7 +47,6 @@ void Video::render(const GbRenderer& renderer) const {
 
 std::shared_ptr<Texture> Video::decodeTileMapPatterns(
     CompressedTileData* iBackgroundPatterns) {
-    _adapter.setTransparentColorIndex(-1);
 
     TileData tileMapData[kBackgroundTableSize];
 
@@ -60,7 +59,6 @@ std::shared_ptr<Texture> Video::decodeTileMapPatterns(
 
 std::shared_ptr<Texture> Video::decodeSpritePatterns(
     CompressedTileData* iSpritePatterns) {
-    _adapter.setTransparentColorIndex(0);
 
     TileData spriteMapData[kSpriteTableSize];
 

@@ -7,18 +7,18 @@
 
 #include <utility>
 
-GLTexture::GLTexture(const std::string& iPath, unsigned int iChannels,
-                     unsigned int iTextureSlot)
+GLTexture::GLTexture(const std::string& iPath, unsigned int iTextureSlot,
+                     unsigned int iInputChannels, unsigned int iOutputChannels)
     : Texture(iPath, iTextureSlot) {
     loadFromFile(iPath);
-    initTexture(iChannels);
+    initTexture(iInputChannels, iOutputChannels);
 }
 
 GLTexture::GLTexture(std::shared_ptr<unsigned char[]> iData, int iWidth,
                      int iHeight, unsigned int iTextureSlot,
-                     unsigned int channels)
+                     unsigned int iInputChannels, unsigned int iOutputChannels)
     : Texture(std::move(iData), iWidth, iHeight, iTextureSlot), _ref(0) {
-    initTexture(channels);
+    initTexture(iInputChannels, iOutputChannels);
 }
 
 GLTexture::~GLTexture() {
@@ -28,7 +28,8 @@ GLTexture::~GLTexture() {
     glDeleteTextures(1, &_ref);
 }
 
-void GLTexture::initTexture(unsigned int channels) {
+void GLTexture::initTexture(unsigned int iInputChannels,
+                            unsigned int iOutputChannels) {
     GLCall(glGenTextures(1, &_ref));
     bind();
 
@@ -37,14 +38,15 @@ void GLTexture::initTexture(unsigned int channels) {
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-    GLenum internalFormat = GetGlFormatFromChannels(channels);
+    GLenum internalFormat = GetGlFormatFromInputChannels(iInputChannels);
+    GLenum format         = GetGlFormatFromOutputChannels(iOutputChannels);
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _width, _height, 0,
-                        GL_RGBA, GL_UNSIGNED_BYTE, _data.get()));
+                        format, GL_UNSIGNED_BYTE, _data.get()));
     unbind();
 }
 
-GLenum GLTexture::GetGlFormatFromChannels(unsigned int channels) {
-    switch (channels) {
+GLenum GLTexture::GetGlFormatFromInputChannels(unsigned int iInputChannels) {
+    switch (iInputChannels) {
         case 1:
             return GL_R8;
         case 2:
@@ -55,6 +57,17 @@ GLenum GLTexture::GetGlFormatFromChannels(unsigned int channels) {
             return GL_RGBA8;
         default:
             return GL_RGBA8;
+    }
+}
+
+GLenum GLTexture::GetGlFormatFromOutputChannels(unsigned int iOutputChannels) {
+    switch (iOutputChannels) {
+        case 1:
+            return GL_RED;
+        case 4:
+            return GL_RGBA;
+        default:
+            return GL_RGBA;
     }
 }
 

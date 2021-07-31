@@ -4,7 +4,12 @@
 #include <core/emu/screen/Video.h>
 #include <core/ui/opengl/GLProgram.h>
 
-BackgroundMap::BackgroundMap() : _program(nullptr) {
+BackgroundMap::BackgroundMap()
+    : _program(nullptr),
+      _colorMap({{0xD0, 0xE0, 0xF0, 0xFF},
+                 {0x98, 0x98, 0x98, 0xFF},
+                 {0x68, 0x68, 0x68, 0xFF},
+                 {0x38, 0x38, 0x38, 0xFF}}) {
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {
             backgroundMap[x][y].setPosition(x - 16, 16 - y);
@@ -12,7 +17,8 @@ BackgroundMap::BackgroundMap() : _program(nullptr) {
     }
 }
 
-void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap, bool iSignedIndexes) {
+void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap,
+                            bool iSignedIndexes) {
     int offset = iSignedIndexes ? 128 : 0;
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {
@@ -42,6 +48,7 @@ void BackgroundMap::initialize() {
     _program->setUniform("u_TilePatterns", Video::TextureSlot::Background);
     _program->setUniform("u_TilemapHeight",
                          static_cast<float>(Video::kBackgroundTableSize));
+    _program->setUniformMatrix4("u_Palette", _colorMap);
 
     _program->unbind();
 }

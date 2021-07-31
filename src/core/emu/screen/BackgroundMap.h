@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/emu/screen/ColorPalette.h>
 #include <core/emu/screen/TileBuffer.h>
 #include <core/emu/screen/VideoItem.h>
 #include <core/ui/Program.h>
@@ -25,6 +26,7 @@ class BackgroundMap : VideoItem {
 
    private:
     TileBuffer backgroundMap[32][32];
+    ColorPalette _colorMap;
     std::shared_ptr<Texture> _backgroundTableTexture;
     std::unique_ptr<Program> _program;
 };
