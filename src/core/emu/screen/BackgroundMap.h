@@ -25,7 +25,7 @@ class BackgroundMap : VideoItem {
     void initialize() override;
 
    private:
-    TileBuffer backgroundMap[32][32];
+    TileBuffer _backgroundPatternTable[32 * 32];
     ColorPalette _colorMap;
     std::shared_ptr<Texture> _backgroundTableTexture;
     std::unique_ptr<Program> _program;

@@ -27,9 +27,12 @@ class SpriteMap : public VideoItem {
     void initialize() override;
 
    private:
-    TileBuffer spriteMap[16][16];
+    TileBuffer _spritePatternTable[16 * 16];
     ColorPalette _colorMap;
-    TileBuffer _sprites[40];
+    TileBuffer _spritesToBeDrawn[40];  // we need to keep a buffer different
+                                       // from the spritePatternTable because
+                                       // the same pattern could be drawn
+                                       // multiple times at different locations
     ObjectAttributeMemory _oam;
     std::shared_ptr<Texture> _spriteTableTexture;
     std::unique_ptr<Program> _program;

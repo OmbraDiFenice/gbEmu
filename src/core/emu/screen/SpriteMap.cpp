@@ -12,18 +12,22 @@ SpriteMap::SpriteMap()
                  {0x38, 0x38, 0x38, 0xFF}}) {
     for (int y = 0; y < 16; ++y) {
         for (int x = 0; x < 16; ++x) {
-            spriteMap[x][y].setTileIndex(x + 16 * y);
-            spriteMap[x][y].setPosition(x - 16, 16 - y);
+            _spritePatternTable[x + 16 * y].setTileIndex(x + 16 * y);
+            _spritePatternTable[x + 16 * y].setPosition(x - 16, 16 - y);
         }
     }
 }
 
 void SpriteMap::update() {
     for (unsigned int spriteIndex = 0; spriteIndex < 40; ++spriteIndex) {
-        _sprites[spriteIndex].setPosition(
-            (_oam[spriteIndex].getX() - 8) / 8 - 16,
-            16 - (_oam[spriteIndex].getY() - 16) / 8);
-        _sprites[spriteIndex].setTileIndex(_oam[spriteIndex].getPatternIndex());
+        const ObjectAttributeMemoryElement& spriteAttribute = _oam[spriteIndex];
+
+        _spritesToBeDrawn[spriteIndex].setPosition(
+            (spriteAttribute.getX() - 8) / 8 - 16,
+            16 - (spriteAttribute.getY() - 16) / 8);
+
+        _spritesToBeDrawn[spriteIndex].setTileIndex(
+            spriteAttribute.getPatternIndex());
     }
 }
 
@@ -31,7 +35,7 @@ void SpriteMap::render(const GbRenderer& renderer) const {
     _program->bind();
     _spriteTableTexture->bind();
     for (unsigned int spriteIndex = 0; spriteIndex < 40; ++spriteIndex) {
-        renderer.draw(_sprites[spriteIndex].getVertexBuffer());
+        renderer.draw(_spritesToBeDrawn[spriteIndex].getVertexBuffer());
     }
 }
 

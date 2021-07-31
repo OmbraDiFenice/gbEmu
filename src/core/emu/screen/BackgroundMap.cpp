@@ -12,7 +12,7 @@ BackgroundMap::BackgroundMap()
                  {0x38, 0x38, 0x38, 0xFF}}) {
     for (int y = 0; y < 32; ++y) {
         for (int x = 0; x < 32; ++x) {
-            backgroundMap[x][y].setPosition(x - 16, 16 - y);
+            _backgroundPatternTable[x + 32 * y].setPosition(x - 16, 16 - y);
         }
     }
 }
@@ -20,21 +20,17 @@ BackgroundMap::BackgroundMap()
 void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap,
                             bool iSignedIndexes) {
     int offset = iSignedIndexes ? 128 : 0;
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 32; ++x) {
-            backgroundMap[x][y].setTileIndex(
-                (char)(iBackgroundTileMap[x + 32 * y]) + offset);
-        }
+    for (int patternIndex = 0; patternIndex < 32 * 32; ++patternIndex) {
+        _backgroundPatternTable[patternIndex].setTileIndex(
+            static_cast<char>(iBackgroundTileMap[patternIndex]) + offset);
     }
 }
 
 void BackgroundMap::render(const GbRenderer& renderer) const {
     _program->bind();
     _backgroundTableTexture->bind();
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 32; ++x) {
-            renderer.draw(backgroundMap[x][y].getVertexBuffer());
-        }
+    for (int patternIndex = 0; patternIndex < 32 * 32; ++patternIndex) {
+        renderer.draw(_backgroundPatternTable[patternIndex].getVertexBuffer());
     }
 }
 
