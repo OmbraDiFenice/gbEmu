@@ -12,7 +12,8 @@ SpriteMap::SpriteMap() {
     _program->bind();
 
     _program->setUniform("u_TilePatterns", Video::TextureSlot::Sprites);
-    _program->setUniform("u_TilemapWidth", static_cast<float>(Video::kSpriteTableSize));
+    _program->setUniform("u_TilemapHeight",
+                         static_cast<float>(Video::kSpriteTableSize));
 
     _program->unbind();
 

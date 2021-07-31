@@ -12,7 +12,8 @@ BackgroundMap::BackgroundMap() {
     _program->bind();
 
     _program->setUniform("u_TilePatterns", Video::TextureSlot::Background);
-    _program->setUniform("u_TilemapWidth", static_cast<float>(Video::kBackgroundTableSize));
+    _program->setUniform("u_TilemapHeight",
+                         static_cast<float>(Video::kBackgroundTableSize));
 
     _program->unbind();
 

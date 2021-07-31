@@ -54,8 +54,7 @@ std::shared_ptr<Texture> Video::decodeTileMapPatterns(
     decodeTilePatterns(iBackgroundPatterns, kBackgroundTableSize, tileMapData);
 
     return _adapter.toTexture(reinterpret_cast<unsigned char*>(tileMapData),
-                              kTileWidth * kBackgroundTableSize, kTileHeight,
-                              kTileWidth, kTileHeight,
+                              kTileWidth, kTileHeight * kBackgroundTableSize,
                               Video::TextureSlot::Background);
 }
 
@@ -68,8 +67,7 @@ std::shared_ptr<Texture> Video::decodeSpritePatterns(
     decodeTilePatterns(iSpritePatterns, kSpriteTableSize, spriteMapData);
 
     return _adapter.toTexture(reinterpret_cast<unsigned char*>(spriteMapData),
-                              kTileWidth * kSpriteTableSize, kTileHeight,
-                              kTileWidth, kTileHeight,
+                              kTileWidth, kTileHeight * kSpriteTableSize,
                               Video::TextureSlot::Sprites);
 }
 

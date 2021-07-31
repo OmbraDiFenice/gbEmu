@@ -10,5 +10,5 @@ uniform sampler2D u_TilePatterns;
 void main()
 {
     color = texture(u_TilePatterns, v_TexCoord);
-    //color = vec4(v_Position + 0.5, 1.0);
+    //color = vec4(v_TexCoord, 0.0, 1.0);
 }

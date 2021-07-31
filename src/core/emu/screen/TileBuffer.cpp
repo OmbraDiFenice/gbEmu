@@ -7,7 +7,7 @@
 const std::vector<unsigned int> TileBuffer::_indices{0, 1, 2, 2, 3, 0};
 const VertexLayout TileBuffer::_layout{
     {3, GL_FLOAT},  // coords
-    {1, GL_FLOAT}   // texture coords
+    {1, GL_FLOAT}   // tile id
 };
 // clang-format on
 
