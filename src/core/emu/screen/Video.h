@@ -20,11 +20,18 @@ class Video : public VideoItem {
     using CompressedTileData = unsigned char[kTileDataSize];
     using TileData           = unsigned char[kDecodedTileSize];
 
-    enum TextureSlot {
-        Transparent = 0,
-        Background = 1,
-        Sprites = 2
+    class TilePatternDecoder {
+       public:
+        void decodeTilePatterns(
+            const CompressedTileData* iCompressedTilePatterns,
+            unsigned int iSize, TileData* oDecodedTilePatterns);
+
+       private:
+        void decodeTile(const CompressedTileData& iTileData,
+                        TileData& oDecodedTile);
     };
+
+    enum TextureSlot { Transparent = 0, Background = 1, Sprites = 2 };
 
    public:
     explicit Video(TilePatternAdapter& adapter);
@@ -33,25 +40,19 @@ class Video : public VideoItem {
     void update();
 
     void render(const GbRenderer& renderer) const;
-    void initialize() override;
 
     const BackgroundMap& getBackground() const { return _background; };
     const SpriteMap& getSprites() const { return _sprites; };
-
-   protected:
-    void decodeTilePatterns(const CompressedTileData* iCompressedTilePatterns,
-                            unsigned int iSize, TileData* oDecodedTilePatterns);
 
    private:
     std::shared_ptr<Texture> decodeTileMapPatterns(CompressedTileData* iBackgroundPatterns);
     std::shared_ptr<Texture> decodeSpritePatterns(
         CompressedTileData* iSpritePatterns);
-    void decodeTile(const CompressedTileData& iTileData,
-                    TileData& oDecodedTile);
     void setCommonUniforms(const std::unique_ptr<Program>& iProgram) const;
 
    private:
     TilePatternAdapter& _adapter;
+    TilePatternDecoder _decoder;
 
     BackgroundMap _background;
     SpriteMap _sprites;

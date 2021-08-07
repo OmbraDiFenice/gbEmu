@@ -6,6 +6,8 @@
 
 Video::Video(TilePatternAdapter& adapter) : _adapter(adapter) {
     _proj = glm::ortho(0.0f, 160.0f, 144.0f, 0.0f);
+    setCommonUniforms(_background.getProgram());
+    setCommonUniforms(_sprites.getProgram());
 }
 
 void Video::update() {
@@ -44,7 +46,8 @@ std::shared_ptr<Texture> Video::decodeTileMapPatterns(
     CompressedTileData* iBackgroundPatterns) {
     TileData tileMapData[kBackgroundTableSize];
 
-    decodeTilePatterns(iBackgroundPatterns, kBackgroundTableSize, tileMapData);
+    _decoder.decodeTilePatterns(iBackgroundPatterns, kBackgroundTableSize,
+                                tileMapData);
 
     return _adapter.toTexture(reinterpret_cast<unsigned char*>(tileMapData),
                               kTileWidth, kTileHeight * kBackgroundTableSize,
@@ -55,14 +58,15 @@ std::shared_ptr<Texture> Video::decodeSpritePatterns(
     CompressedTileData* iSpritePatterns) {
     TileData spriteMapData[kSpriteTableSize];
 
-    decodeTilePatterns(iSpritePatterns, kSpriteTableSize, spriteMapData);
+    _decoder.decodeTilePatterns(iSpritePatterns, kSpriteTableSize,
+                                spriteMapData);
 
     return _adapter.toTexture(reinterpret_cast<unsigned char*>(spriteMapData),
                               kTileWidth, kTileHeight * kSpriteTableSize,
                               Video::TextureSlot::Sprites);
 }
 
-void Video::decodeTilePatterns(
+void Video::TilePatternDecoder::decodeTilePatterns(
     const Video::CompressedTileData* iCompressedTilePatterns,
     const unsigned int iSize, Video::TileData* oDecodedTilePatterns) {
     for (int tileIndex = 0; tileIndex < iSize; ++tileIndex) {
@@ -71,8 +75,8 @@ void Video::decodeTilePatterns(
     }
 }
 
-void Video::decodeTile(const Video::CompressedTileData& iTileData,
-                       Video::TileData& oDecodedTile) {
+void Video::TilePatternDecoder::decodeTile(
+    const Video::CompressedTileData& iTileData, Video::TileData& oDecodedTile) {
     for (int row = 0; row < kTileDataSize; row += 2) {  // 2 bytes per pixel row
         unsigned char lsbyte = iTileData[row];
         unsigned char msbyte = iTileData[row + 1];
@@ -87,11 +91,4 @@ void Video::decodeTile(const Video::CompressedTileData& iTileData,
 void Video::setCommonUniforms(const std::unique_ptr<Program>& iProgram) const {
     iProgram->bind();
     iProgram->setUniformMatrix4("u_Proj", &_proj[0][0]);
-}
-
-void Video::initialize() {
-    _background.initialize();
-    setCommonUniforms(_background.getProgram());
-    _sprites.initialize();
-    setCommonUniforms(_sprites.getProgram());
 }

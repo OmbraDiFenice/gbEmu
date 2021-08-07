@@ -22,7 +22,9 @@ class BackgroundMap : VideoItem {
     }
 
     void render(const GbRenderer& renderer) const override;
-    void initialize() override;
+
+   private:
+    void initializeProgram();
 
    private:
     TileBuffer _backgroundPatternTable[32 * 32];

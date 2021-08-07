@@ -22,7 +22,6 @@ void Application::run() {
 
     TilePatternAdapter tileMapPatternAdapter;
     Video video(tileMapPatternAdapter);
-    video.initialize();
     video.update();
 
     GbRenderer renderer = GbRenderer();

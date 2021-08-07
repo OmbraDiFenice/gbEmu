@@ -8,5 +8,4 @@ class Video;
 class VideoItem {
    public:
     virtual void render(const GbRenderer& renderer) const = 0;
-    virtual void initialize()                             = 0;
 };

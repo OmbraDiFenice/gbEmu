@@ -10,7 +10,9 @@ BackgroundMap::BackgroundMap()
       _colorMap({{0xD0, 0xE0, 0xF0, 0xFF},
                  {0x98, 0x98, 0x98, 0xFF},
                  {0x68, 0x68, 0x68, 0xFF},
-                 {0x38, 0x38, 0x38, 0xFF}}) {}
+                 {0x38, 0x38, 0x38, 0xFF}}) {
+    initializeProgram();
+}
 
 void BackgroundMap::reindex(const unsigned char* iBackgroundTileMap,
                             bool iSignedIndexes) {
@@ -48,7 +50,7 @@ void BackgroundMap::render(const GbRenderer& renderer) const {
     }
 }
 
-void BackgroundMap::initialize() {
+void BackgroundMap::initializeProgram() {
     _program = std::make_unique<GLProgram>();
     _program->loadShader("vertex.shader", GL_VERTEX_SHADER);
     _program->loadShader("fragment.shader", GL_FRAGMENT_SHADER);

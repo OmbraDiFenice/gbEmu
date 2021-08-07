@@ -3,20 +3,21 @@
 #include <core/emu/screen/TilePatternAdapter.h>
 #include <core/emu/screen/Video.h>
 
-class TestVideo : public Video, public ::testing::Test {
+class TestTilePatternDecoder : public ::testing::Test {
    protected:
-    static TilePatternAdapter tileMapPatternAdapter;
-    CompressedTileData testTileData;
-    TileData expectedTestTile;
+    Video::TilePatternDecoder decoder;
 
-    TestVideo() : Video(tileMapPatternAdapter) {
+    Video::CompressedTileData testTileData;
+    Video::TileData expectedTestTile;
+
+    TestTilePatternDecoder() {
         // clang-format off
-        CompressedTileData testTileDataTmp = {
+        Video::CompressedTileData testTileDataTmp = {
             0x7C, 0x7C, 0x00, 0xC6, 0xC6, 0x00, 0x00, 0xFE,
             0xC6, 0xC6, 0x00, 0xC6, 0xC6, 0x00, 0x00, 0x00,
         };
 
-        TileData expectedTestTileTmp = {
+        Video::TileData expectedTestTileTmp = {
             0, 3, 3, 3, 3, 3, 0, 0,
             2, 2, 0, 0, 0, 2, 2, 0,
             1, 1, 0, 0, 0, 1, 1, 0,
@@ -44,22 +45,22 @@ class TestVideo : public Video, public ::testing::Test {
     }
 };
 
-TilePatternAdapter TestVideo::tileMapPatternAdapter;
-
-TEST_F(TestVideo, decodeTilePatterns) {
-    CompressedTileData tileMapData[kBackgroundTableSize];
-    TileData uncompressedTileMapData[kBackgroundTableSize];
+TEST_F(TestTilePatternDecoder, decodeTilePatterns) {
+    Video::CompressedTileData tileMapData[Video::kBackgroundTableSize];
+    Video::TileData uncompressedTileMapData[Video::kBackgroundTableSize];
 
     // set tile at the beginning of the tileMapData
-    memcpy(&tileMapData[0], testTileData, kTileDataSize);
+    memcpy(&tileMapData[0], testTileData, Video::kTileDataSize);
 
     // set tile at the end of the tileMapData
-    memcpy(&tileMapData[kBackgroundTableSize - 1], testTileData, kTileDataSize);
+    memcpy(&tileMapData[Video::kBackgroundTableSize - 1], testTileData,
+           Video::kTileDataSize);
 
-    decodeTilePatterns(tileMapData, kBackgroundTableSize,
-                       uncompressedTileMapData);
+    decoder.decodeTilePatterns(tileMapData, Video::kBackgroundTableSize,
+                               uncompressedTileMapData);
 
     checkTile(expectedTestTile, uncompressedTileMapData[0], "first tile");
     checkTile(expectedTestTile,
-              uncompressedTileMapData[kBackgroundTableSize - 1], "last tile");
+              uncompressedTileMapData[Video::kBackgroundTableSize - 1],
+              "last tile");
 }
