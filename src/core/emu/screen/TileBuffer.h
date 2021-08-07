@@ -1,7 +1,13 @@
 #pragma once
 
-#include <vector>
 #include <core/ui/Buffer.h>
+#include <glm/vec3.hpp>
+#include <vector>
+
+struct TileVertex {
+    glm::vec3 position;
+    float tileId;
+};
 
 class TileBuffer {
    public:
@@ -17,16 +23,9 @@ class TileBuffer {
     void initBuffers(int iX, int iY, int iIndex);
 
    private:
-    // clang-format off
-    float _vertices[4 * 4] = {  // TODO: the size should somehow depend on the layout, at least having a check on the size to signal potential errors when we add new data
-        0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f
-    };
-    // clang-format on
-
+    static constexpr size_t vertexCount = 4;
     const static std::vector<unsigned int> _indices;
     const static VertexLayout _layout;
+    TileVertex _vertices[vertexCount];
     std::shared_ptr<Buffer> _vb;
 };

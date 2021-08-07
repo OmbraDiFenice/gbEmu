@@ -20,34 +20,29 @@ TileBuffer::TileBuffer(int iX, int iY, int iIndex) {
 void TileBuffer::bind() const { _vb->bind(); }
 
 void TileBuffer::setPosition(float iX, float iY) {
-    _vb->setVertexElement(0, 0, 0, iX + _vertices[0 + _layout.getCount() * 0]);
-    _vb->setVertexElement(1, 0, 0, iX + _vertices[0 + _layout.getCount() * 1]);
-    _vb->setVertexElement(2, 0, 0, iX + _vertices[0 + _layout.getCount() * 2]);
-    _vb->setVertexElement(3, 0, 0, iX + _vertices[0 + _layout.getCount() * 3]);
-
-    _vb->setVertexElement(0, 0, 1, iY + _vertices[1 + _layout.getCount() * 0]);
-    _vb->setVertexElement(1, 0, 1, iY + _vertices[1 + _layout.getCount() * 1]);
-    _vb->setVertexElement(2, 0, 1, iY + _vertices[1 + _layout.getCount() * 2]);
-    _vb->setVertexElement(3, 0, 1, iY + _vertices[1 + _layout.getCount() * 3]);
+    _vertices[0].position = glm::vec3(iX + 0.0f, iY + 0.0f, 0.0f);
+    _vertices[1].position = glm::vec3(iX + 1.0f, iY + 0.0f, 0.0f);
+    _vertices[2].position = glm::vec3(iX + 1.0f, iY + 1.0f, 0.0f);
+    _vertices[3].position = glm::vec3(iX + 0.0f, iY + 1.0f, 0.0f);
 }
 
 void TileBuffer::setTileIndex(int iIndex) {
-    _vb->setVertexElement(0, 1, 0, static_cast<float>(iIndex));
-    _vb->setVertexElement(1, 1, 0, static_cast<float>(iIndex));
-    _vb->setVertexElement(2, 1, 0, static_cast<float>(iIndex));
-    _vb->setVertexElement(3, 1, 0, static_cast<float>(iIndex));
+    _vertices[0].tileId = iIndex;
+    _vertices[1].tileId = iIndex;
+    _vertices[2].tileId = iIndex;
+    _vertices[3].tileId = iIndex;
 }
 
 void TileBuffer::initBuffers(int iX, int iY, int iIndex) {
-    _vb = std::make_shared<GLVertexBuffer>();
-    _vb->setVertexBuffer(
-        _vertices,
-        sizeof(float) *
-            _layout.getCount());  // TODO sizeof(float) should be computed out
-                                  // of type size of each layout element
-    _vb->setVertexLayout(_layout);
-    _vb->setIndexBuffer(_indices);
+    ASSERT(_layout.getStride() == sizeof(TileVertex),
+           "TileVertex struct needs to have the same size as a single vertex");
 
     setPosition(iX, iY);
     setTileIndex(iIndex);
+
+    _vb = std::make_shared<GLVertexBuffer>();
+    _vb->setVertexBuffer((float*)(&_vertices[0]),
+                         vertexCount * sizeof(TileVertex));
+    _vb->setVertexLayout(_layout);
+    _vb->setIndexBuffer(_indices);
 }

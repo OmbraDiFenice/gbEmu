@@ -29,8 +29,12 @@ class VertexLayout {
     VertexLayout(std::initializer_list<VertexElement> iElements);
 
     inline size_t getElementCount() const { return _elements.size(); }
-    inline int getStride() const { return _stride; }
-    inline int getCount() const { return _count; }
+    inline int getStride() const {
+        return _stride;
+    }  ///< how many bytes a single vertex takes
+    inline int getCount() const {
+        return _count;
+    }  ///< how many total elements a single vertex contains
     inline const std::vector<VertexElement>& getElements() const {
         return _elements;
     }
