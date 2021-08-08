@@ -106,11 +106,17 @@ TEST_F(TestGLVertexBufferBatch, addBuffer_correctlyLayoutTheData) {
 
     float batchBuf[bufferNum * vertexNum];
     _batch.setVertexBuffer(batchBuf, bufferNum * vertexNum);
+    _batch.reset();
+    EXPECT_EQ(0, _batch.getVertexBufferCount())
+        << "batch buffer should start with 0 vertexes set at the beginning";
+    EXPECT_TRUE(_batch.getIndexBuffer().empty())
+        << "batch buffer should start with no indexes in its index buffer";
     for (int i = 0; i < bufferNum; ++i) {
         _batch.addBuffer(buffers[i]);
     }
 
     EXPECT_EQ(layout, _batch.getLayout());
+    EXPECT_EQ(bufferNum, _batch.getVertexCount());
     EXPECT_EQ(expectedIndexes, _batch.getIndexBuffer());
     for (int i = 0; i < bufferNum * vertexNum; ++i) {
         EXPECT_FLOAT_EQ(static_cast<float*>(&data[0][0])[i],

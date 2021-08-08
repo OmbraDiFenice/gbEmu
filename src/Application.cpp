@@ -27,7 +27,7 @@ void Application::run() {
     GbRenderer renderer = GbRenderer();
 
     while (keepRunning()) {
-        renderer.render(video);
+        renderer.draw(video);
 
         for (auto c : _components) {
             c->update();

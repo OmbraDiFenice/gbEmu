@@ -37,8 +37,8 @@ void Video::update() {
 
 void Video::render(const GbRenderer& renderer) const {
     renderer.clear(0.15f, 0.15f, 0.15f, 1);
-    renderer.render(_background);
-    renderer.render(_sprites);
+    renderer.draw(_background);
+    renderer.draw(_sprites);
     renderer.flush();
 }
 

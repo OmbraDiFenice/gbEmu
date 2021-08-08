@@ -42,5 +42,6 @@ void GLBatchRenderer::initialize(const Buffer& iBuffer) const {
     const size_t maxSize = _batchSize * iBuffer.getVertexBufferCount();
     auto vertexBuffer = new float[maxSize];
     _batchBuffer.setVertexBuffer(vertexBuffer, maxSize);
+    _batchBuffer.reset();
     _initialized = true;
 }
