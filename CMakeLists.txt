@@ -28,3 +28,4 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_lib)
 
 add_subdirectory(test)
+add_subdirectory(sandbox)
