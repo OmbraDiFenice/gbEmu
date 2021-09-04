@@ -1,8 +1,8 @@
-#include <Application.h>
+#include <EmuApplication.h>
 
 int main(int argc, char **argv) {
     try {
-        Application app;
+        EmuApplication app;
         app.run();
     } catch (...) {
         return 1;

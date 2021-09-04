@@ -11,12 +11,18 @@ class Application {
     Application() : _windowManager(new GLWindowManager()){};
 
     void run();
-    inline bool keepRunning();
 
-   private:
+   protected:
     void onEvent(Event& e);
     void onKeyEvent(KeyEvent& e);
     void onMouseEvent(MouseEvent& e);
+
+   private:
+    virtual void init()       = 0;
+    virtual void drawScreen() = 0;
+
+    Window* createWindow();
+    inline bool keepRunning();
 
    private:
     std::vector<Component*> _components;

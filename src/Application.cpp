@@ -2,32 +2,18 @@
 
 #include "Application.h"
 
-#include <core/emu/screen/GbRenderer.h>
-#include <core/emu/screen/TilePatternAdapter.h>
-#include <core/emu/screen/Video.h>
-
 void Application::run() {
     LOG_DBG("start app");
 
-    float scalingFactor = 2;
-
-    WindowProp prop;
-    prop.width  = 160 * scalingFactor;
-    prop.height = 144 * scalingFactor;
-
-    Window* window = _windowManager->createWindow(prop);
+    Window* window = createWindow();
     _components.push_back(window);
 
     window->setEventCallback(BIND_FN(Application::onEvent));
 
-    TilePatternAdapter tileMapPatternAdapter;
-    Video video(tileMapPatternAdapter);
-    video.update();
-
-    GbRenderer renderer = GbRenderer();
+    init();
 
     while (keepRunning()) {
-        renderer.draw(video);
+        drawScreen();
 
         for (auto c : _components) {
             c->update();
@@ -35,6 +21,17 @@ void Application::run() {
     }
 
     LOG_DBG("end app");
+}
+
+Window* Application::createWindow() {
+    float scalingFactor = 2;
+
+    WindowProp prop;
+    prop.width  = 160 * scalingFactor;
+    prop.height = 144 * scalingFactor;
+
+    Window* window = _windowManager->createWindow(prop);
+    return window;
 }
 
 void Application::onEvent(Event& e) {
