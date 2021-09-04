@@ -24,6 +24,8 @@ class Texture {
     virtual void unbind() const                                             = 0;
     virtual void associateToWritableBuffer(GLuint iWritableBufferRef) const = 0;
     inline unsigned int getTextureSlot() const { return _textureSlot; };
+    inline int getWidth() const { return _width; }
+    inline int getHeight() const { return _height; }
 
    protected:
     std::shared_ptr<unsigned char[]> _data;
