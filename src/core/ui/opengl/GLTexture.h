@@ -13,6 +13,7 @@ class GLTexture : public Texture {
 
     void bind() const override;
     void unbind() const override;
+    inline const GLuint& getRef() const { return _ref; }
 
     void associateToWritableBuffer(GLuint iWritableBufferRef) const override;
 
