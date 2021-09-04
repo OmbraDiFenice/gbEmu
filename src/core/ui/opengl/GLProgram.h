@@ -5,7 +5,7 @@
 
 class GLProgram : public Program {
    public:
-    GLProgram();
+    GLProgram() = default;
     ~GLProgram() override;
 
     void addShader(const std::string& iSrc, unsigned int iType) override;
@@ -25,5 +25,5 @@ class GLProgram : public Program {
                            const float* iData) const override;
 
    private:
-    GLuint _ref;
+    mutable GLuint _ref;
 };

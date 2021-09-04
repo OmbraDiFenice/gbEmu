@@ -6,8 +6,6 @@
 #include <glad/gl.h>
 #include <utils/GLErrorMacros.h>
 
-GLProgram::GLProgram() { GLCall(_ref = glCreateProgram()); }
-
 GLProgram::~GLProgram() {
     // TODO: should wrap this in GLCall but as of now it triggers an infinite
     // loop on program termination because this object has longer scope than the
@@ -33,6 +31,8 @@ void GLProgram::loadShader(const std::string& iFilePath, GLenum iType) {
 }
 
 bool GLProgram::link() const {
+    GLCall(_ref = glCreateProgram());
+
     for (auto& shader : _shaderList) {
         if (!shader->compile()) return false;
         GLCall(glAttachShader(
@@ -45,15 +45,18 @@ bool GLProgram::link() const {
     GLCall(glGetProgramiv(_ref, GL_LINK_STATUS, &linkingSuccessful));
 
     if (linkingSuccessful == GL_FALSE) {
+        LOG_ERROR("Shader link error");
+
         GLint logLength = 0;
         GLCall(glGetShaderiv(_ref, GL_INFO_LOG_LENGTH, &logLength));
 
-        GLchar* log = new GLchar[logLength];
-        GLCall(glGetProgramInfoLog(_ref, logLength, &logLength, log));
+        if (logLength != 0) {
+            GLchar* log = new GLchar[logLength];
+            GLCall(glGetProgramInfoLog(_ref, logLength, &logLength, log));
 
-        LOG_ERROR("Shader link error");
-        LOG_ERROR(log);
-        delete[] log;
+            LOG_ERROR(log);
+            delete[] log;
+        }
 
         GLCall(glDeleteProgram(_ref));
         for (auto& shader : _shaderList) {
