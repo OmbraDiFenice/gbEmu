@@ -44,8 +44,7 @@ void BackgroundMap::render(const GbRenderer& renderer) const {
             _program->setUniformMatrix4("u_Transform",
                                         &(position * scale)[0][0]);
 
-            renderer.draw(
-                _backgroundPatternTable[x + 32 * y].getVertexBuffer());
+            renderer.draw(_backgroundPatternTable[x + 32 * y].getBuffer());
         }
     }
 }

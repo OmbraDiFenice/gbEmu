@@ -56,7 +56,7 @@ void SpriteMap::render(const GbRenderer& renderer) const {
         glm::mat4 scale    = glm::scale(identity, scalingVec);
         _program->setUniformMatrix4("u_Transform", &(position * scale)[0][0]);
 
-        renderer.draw(_spritesToBeDrawn[spriteIndex].getVertexBuffer());
+        renderer.draw(_spritesToBeDrawn[spriteIndex].getBuffer());
     }
 }
 
