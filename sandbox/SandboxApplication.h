@@ -34,4 +34,5 @@ class SandboxApplication : public Application {
     std::unique_ptr<Program> _computeProgram;
     std::unique_ptr<Renderer> _renderer;
     std::unique_ptr<Texture> _texture;
+    GLuint _compressedDataRef;
 };
