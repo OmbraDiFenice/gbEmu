@@ -1,9 +1,11 @@
 #pragma once
 
+#include <glm/mat4x4.hpp>
+
 class ColorPalette {
    public:
-    explicit ColorPalette(
-        std::initializer_list<std::initializer_list<unsigned int>> data);
+    explicit ColorPalette(const glm::mat4& data);
+    explicit ColorPalette(const glm::mat4&& data);
 
     void setRed(unsigned int iIndex, unsigned int iValue);
     void setGreen(unsigned int iIndex, unsigned int iValue);
@@ -13,8 +15,9 @@ class ColorPalette {
     operator float*() { return &_data[0][0]; }
 
    private:
-    inline float normalize(unsigned int iValue) { return iValue / 255.0f; }
+    inline float normalize(unsigned int iValue);
+    inline void normalize();
 
    private:
-    float _data[4][4];
+    glm::mat4 _data;
 };

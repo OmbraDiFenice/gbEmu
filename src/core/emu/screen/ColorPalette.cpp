@@ -2,18 +2,14 @@
 
 #include <core/emu/screen/ColorPalette.h>
 
-ColorPalette::ColorPalette(
-    std::initializer_list<std::initializer_list<unsigned int>> data) {
-    ASSERT(data.size() == 4, "color palette requires 4 colors");
-    auto colorIt = data.begin();
-    for (int color = 0; color < 4; ++color, ++colorIt) {
-        ASSERT(colorIt->size() == 4,
-               "color palette requires 4 component per color");
-        auto componentIt = colorIt->begin();
-        for (int component = 0; component < 4; ++component, ++componentIt) {
-            _data[color][component] = normalize(*componentIt);
-        }
-    }
+ColorPalette::ColorPalette(const glm::mat4& data) {
+    _data = data;
+    normalize();
+}
+
+ColorPalette::ColorPalette(const glm::mat4&& data) {
+    _data = std::move(data);
+    normalize();
 }
 
 void ColorPalette::setRed(unsigned int iIndex, unsigned int iValue) {
@@ -31,3 +27,7 @@ void ColorPalette::setBlue(unsigned int iIndex, unsigned int iValue) {
 void ColorPalette::setAlpha(unsigned int iIndex, unsigned int iValue) {
     _data[iIndex][3] = normalize(iValue);
 }
+
+float ColorPalette::normalize(unsigned int iValue) { return iValue / 255.0f; }
+
+void ColorPalette::normalize() { _data /= 255.0f; }
