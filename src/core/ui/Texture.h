@@ -21,7 +21,8 @@ class Texture {
     virtual ~Texture() = default;
 
     virtual void bind() const   = 0;
-    virtual void unbind() const = 0;
+    virtual void unbind() const                                             = 0;
+    virtual void associateToWritableBuffer(GLuint iWritableBufferRef) const = 0;
     inline unsigned int getTextureSlot() const { return _textureSlot; };
 
    protected:

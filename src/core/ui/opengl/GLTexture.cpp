@@ -28,6 +28,11 @@ GLTexture::~GLTexture() {
     glDeleteTextures(1, &_ref);
 }
 
+void GLTexture::associateToWritableBuffer(GLuint iWritableBufferRef) const {
+    GLCall(glBindImageTexture(iWritableBufferRef, _ref, 0, GL_FALSE, 0,
+                              GL_WRITE_ONLY, _internalFormat));
+}
+
 void GLTexture::initTexture(unsigned int iInputChannels,
                             unsigned int iOutputChannels) {
     GLCall(glGenTextures(1, &_ref));
@@ -38,9 +43,9 @@ void GLTexture::initTexture(unsigned int iInputChannels,
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-    GLenum internalFormat = GetGlFormatFromInputChannels(iInputChannels);
-    GLenum format         = GetGlFormatFromOutputChannels(iOutputChannels);
-    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _width, _height, 0,
+    _internalFormat = GetGlFormatFromInputChannels(iInputChannels);
+    GLenum format   = GetGlFormatFromOutputChannels(iOutputChannels);
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0,
                         format, GL_UNSIGNED_BYTE, _data.get()));
     unbind();
 }

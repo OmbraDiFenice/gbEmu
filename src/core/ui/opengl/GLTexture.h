@@ -14,6 +14,8 @@ class GLTexture : public Texture {
     void bind() const override;
     void unbind() const override;
 
+    void associateToWritableBuffer(GLuint iWritableBufferRef) const override;
+
    private:
     void loadFromFile(const std::string& iPath);
     void initTexture(unsigned int iInputChannels, unsigned int iOutputChannels);
@@ -23,4 +25,5 @@ class GLTexture : public Texture {
 
    private:
     GLuint _ref = 0;
+    GLenum _internalFormat;
 };
