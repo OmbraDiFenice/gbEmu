@@ -24,6 +24,9 @@ class GLProgram : public Program {
     void setUniformMatrix4(const std::string& iName,
                            const float* iData) const override;
 
+    void execute(unsigned int iWorkGroupX, unsigned int iWorkGroupY,
+                 unsigned int iWorkGroupZ) const override;
+
    private:
     mutable GLuint _ref;
 };

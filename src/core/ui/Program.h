@@ -21,6 +21,9 @@ class Program {
     virtual void setUniformMatrix4(const std::string& iName,
                                    const float* iData) const              = 0;
 
+    virtual void execute(unsigned int iWorkGroupX, unsigned int iWorkGroupY,
+                         unsigned int iWorkGroupZ) const = 0;
+
    protected:
     void addShader(std::shared_ptr<const Shader> iShader) {
         _shaderList.emplace_back(iShader);

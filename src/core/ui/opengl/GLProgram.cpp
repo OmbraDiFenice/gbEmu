@@ -125,3 +125,8 @@ void GLProgram::setUniformMatrix4(const std::string& iName,
         GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, iData));
     }
 }
+
+void GLProgram::execute(unsigned int iWorkGroupX, unsigned int iWorkGroupY,
+                        unsigned int iWorkGroupZ) const {
+    GLCall(glDispatchCompute(iWorkGroupX, iWorkGroupY, iWorkGroupZ));
+}

@@ -1,6 +1,7 @@
 #pragma once
 #include <core/ui/Shader.h>
 #include <glad/gl.h>
+#include <glm/vec3.hpp>
 #include <string>
 
 class GLShader : public Shader {
