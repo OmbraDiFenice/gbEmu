@@ -7,7 +7,11 @@
 
 #include "SandboxApplication.h"
 
-SandboxApplication::SandboxApplication() {
+SandboxApplication::SandboxApplication()
+    : _colorPalette({{0xD0, 0xE0, 0xF0, 0xFF},
+                     {0x98, 0x98, 0x98, 0xFF},
+                     {0x68, 0x68, 0x68, 0xFF},
+                     {0x38, 0x38, 0x38, 0xFF}}) {
     _renderer       = std::make_unique<GLRenderer>();
     _renderProgram  = std::make_unique<GLProgram>();
     _computeProgram = std::make_unique<GLProgram>();
@@ -37,12 +41,14 @@ void SandboxApplication::init() {
     GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
     delete[] tileMapPatterns;
 }
+
 void SandboxApplication::drawScreen() {
     _computeProgram->bind();
     GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, _compressedDataRef));
     int textureRef       = _texture->getTextureSlot();
     int textureBufferRef = 0;
-    _computeProgram->setUniform("img_output", textureBufferRef);
+    _computeProgram->setUniform("u_ImageOutput", textureBufferRef);
+    _computeProgram->setUniformMatrix4("u_Palette", _colorPalette);
 
     GLCall(glBindImageTexture(textureBufferRef, textureRef, 0, GL_FALSE, 0,
                               GL_WRITE_ONLY, GL_RGBA8));

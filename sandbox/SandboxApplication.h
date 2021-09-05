@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Application.h>
+#include <core/emu/screen/ColorPalette.h>
 #include <core/ui/Program.h>
 #include <core/ui/Renderer.h>
 #include <core/ui/Texture.h>
@@ -35,4 +36,5 @@ class SandboxApplication : public Application {
     std::unique_ptr<Renderer> _renderer;
     std::unique_ptr<Texture> _texture;
     GLuint _compressedDataRef;
+    ColorPalette _colorPalette;
 };

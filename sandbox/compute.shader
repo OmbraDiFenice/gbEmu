@@ -1,10 +1,11 @@
 #version 430
 
 layout(local_size_x = 1) in;
-layout(rgba8) uniform image2D img_output;
+layout(rgba8) uniform image2D u_ImageOutput;
 layout(binding = 0) buffer cd {
     uint data[];
 } compressedData;
+uniform mat4 u_Palette;
 
 // lineIdx should be 0 or 1
 // n should be in [0, 8)
@@ -28,10 +29,6 @@ ivec2 toTextureCoords(uint tileIndex, ivec2 tileCoords) {
 }
 
 void main() {
-    vec4 pixel = vec4(0.0f, 0.2f, 0.5f, 1.0f);
-    ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
-    imageStore(img_output, pixelCoords, pixel);
-
     uint tileIndex = gl_WorkGroupID.x;
     for (int doubleLineIdx = 0; doubleLineIdx < 4; ++doubleLineIdx)// 4 pairs of lines in each compressed tile data
     {
@@ -39,12 +36,12 @@ void main() {
         for (int lineIdx = 0; lineIdx < 2; ++lineIdx) { // 2 lines each 32 bits
             for (int n = 0; n < 8; ++n) {
                 uint colorIndex = decompressNth(doubleLine, lineIdx, n);
+                vec4 pixel = u_Palette[colorIndex];
 
-                vec4 pixel = vec4(colorIndex * 0.25f, 0.0f, 0.0f, 1.0f);
                 ivec2 tileCoords = ivec2(n, doubleLineIdx * 2 + lineIdx);
-
                 ivec2 textureCoords = toTextureCoords(tileIndex, tileCoords);
-                imageStore(img_output, textureCoords, pixel);
+
+                imageStore(u_ImageOutput, textureCoords, pixel);
             }
         }
     }
