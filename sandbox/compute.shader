@@ -1,6 +1,6 @@
 #version 430
 
-layout(local_size_x = 1) in;
+layout(local_size_x = 4) in;
 layout(rgba8) uniform image2D u_ImageOutput;
 layout(binding = 0) buffer cd {
     uint data[];
@@ -30,19 +30,18 @@ ivec2 toTextureCoords(uint tileIndex, ivec2 tileCoords) {
 
 void main() {
     uint tileIndex = gl_WorkGroupID.x;
-    for (int doubleLineIdx = 0; doubleLineIdx < 4; ++doubleLineIdx)// 4 pairs of lines in each compressed tile data
-    {
-        uint doubleLine = compressedData.data[tileIndex * 4 + doubleLineIdx];
-        for (int lineIdx = 0; lineIdx < 2; ++lineIdx) { // 2 lines each 32 bits
-            for (int n = 0; n < 8; ++n) {
-                uint colorIndex = decompressNth(doubleLine, lineIdx, n);
-                vec4 pixel = u_Palette[colorIndex];
+    uint doubleLineIdx = gl_LocalInvocationID.x;
 
-                ivec2 tileCoords = ivec2(n, doubleLineIdx * 2 + lineIdx);
-                ivec2 textureCoords = toTextureCoords(tileIndex, tileCoords);
+    uint doubleLine = compressedData.data[tileIndex * 4 + doubleLineIdx];
+    for (int lineIdx = 0; lineIdx < 2; ++lineIdx) { // 2 lines each 32 bits
+        for (int n = 0; n < 8; ++n) {
+            uint colorIndex = decompressNth(doubleLine, lineIdx, n);
+            vec4 pixel = u_Palette[colorIndex];
 
-                imageStore(u_ImageOutput, textureCoords, pixel);
-            }
+            ivec2 tileCoords = ivec2(n, doubleLineIdx * 2 + lineIdx);
+            ivec2 textureCoords = toTextureCoords(tileIndex, tileCoords);
+
+            imageStore(u_ImageOutput, textureCoords, pixel);
         }
     }
 }
