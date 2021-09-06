@@ -2,7 +2,9 @@
 #include <core/emu/utils.h>
 #include <core/ui/opengl/GLProgram.h>
 #include <core/ui/opengl/GLRenderer.h>
+#include <core/ui/opengl/GLShaderStorageBuffer.h>
 #include <core/ui/opengl/GLTexture.h>
+#include <core/ui/opengl/Synchronization.h>
 #include <utils/GLErrorMacros.h>
 
 #include "SandboxApplication.h"
@@ -33,29 +35,24 @@ void SandboxApplication::init() {
     _texture = std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
 
     unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
-    GLCall(glGenBuffers(1, &_compressedDataRef));
-    GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, _compressedDataRef));
-    GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, 4096, tileMapPatterns,
-                        GL_STATIC_READ));
-    GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, _compressedDataRef));
-    GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
+    _compressedTileData            = std::make_unique<GLShaderStorageBuffer>();
+    _compressedTileData->uploadData(tileMapPatterns, 4096, GL_STATIC_READ);
     delete[] tileMapPatterns;
 }
 
 void SandboxApplication::drawScreen() {
     _computeProgram->bind();
-    GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, _compressedDataRef));
+    _compressedTileData->bind();
     int textureRef       = _texture->getTextureSlot();
     int textureBufferRef = 0;
     _computeProgram->setUniform("u_ImageOutput", textureBufferRef);
     _computeProgram->setUniformMatrix4("u_Palette", _colorPalette);
 
-    GLCall(glBindImageTexture(textureBufferRef, textureRef, 0, GL_FALSE, 0,
-                              GL_WRITE_ONLY, GL_RGBA8));
+    _texture->associateToWritableBuffer(0);
 
-    GLCall(glDispatchCompute(256, 1, 1));
+    _computeProgram->execute(256, 1, 1);
 
-    GLCall(glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT));
+    SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
     _renderProgram->bind();
     _renderProgram->setUniform("u_Texture", textureRef);

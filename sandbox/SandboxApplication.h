@@ -4,6 +4,7 @@
 #include <core/emu/screen/ColorPalette.h>
 #include <core/ui/Program.h>
 #include <core/ui/Renderer.h>
+#include <core/ui/ShaderStorageBuffer.h>
 #include <core/ui/Texture.h>
 #include <glm/vec3.hpp>
 #include "Quad.h"
@@ -35,6 +36,6 @@ class SandboxApplication : public Application {
     std::unique_ptr<Program> _computeProgram;
     std::unique_ptr<Renderer> _renderer;
     std::unique_ptr<Texture> _texture;
-    GLuint _compressedDataRef;
+    std::unique_ptr<ShaderStorageBuffer> _compressedTileData;
     ColorPalette _colorPalette;
 };
