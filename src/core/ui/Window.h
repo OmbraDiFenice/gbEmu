@@ -1,11 +1,11 @@
 #pragma once
 
+#include <core/Component.h>
 #include <core/Event.h>
 #include <functional>
 #include <string>
 #include <utility>
 #include <vector>
-#include "core/Component.h"
 
 struct WindowProp {
     std::string title{"Title"};

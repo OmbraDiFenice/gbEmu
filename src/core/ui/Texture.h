@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "glad/gl.h"
+#include <glad/gl.h>
 
 class Texture {
    public:

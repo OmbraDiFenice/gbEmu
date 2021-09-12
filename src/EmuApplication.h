@@ -1,8 +1,7 @@
 #pragma once
 
 #include <Application.h>
-#include <core/emu/screen/GbRenderer.h>
-#include <core/emu/screen/Video.h>
+#include <core/ui/Renderer.h>
 
 class EmuApplication : public Application {
    private:
@@ -10,6 +9,5 @@ class EmuApplication : public Application {
     void drawScreen() override;
 
    private:
-    std::unique_ptr<GbRenderer> _renderer;
-    std::unique_ptr<Video> _video;
+    std::unique_ptr<Renderer> _renderer;
 };

@@ -12,7 +12,7 @@ class ColorPalette {
     void setBlue(unsigned int iIndex, unsigned int iValue);
     void setAlpha(unsigned int iIndex, unsigned int iValue);
 
-    operator float*() { return &_data[0][0]; }
+    operator const float*() const { return &_data[0][0]; }
 
    private:
     inline float normalize(unsigned int iValue);

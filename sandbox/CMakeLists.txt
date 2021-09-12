@@ -1,4 +1,4 @@
-add_executable(sandbox main.cpp SandboxApplication.cpp SandboxApplication.h Quad.h)
+add_executable(sandbox main.cpp SandboxApplication.cpp SandboxApplication.h)
 
 target_link_libraries(sandbox PUBLIC ${PROJECT_NAME}_lib)
 

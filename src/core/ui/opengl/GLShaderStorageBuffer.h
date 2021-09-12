@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/ui/ShaderStorageBuffer.h>
-#include "glad/gl.h"
+#include <glad/gl.h>
 
 class GLShaderStorageBuffer : public ShaderStorageBuffer {
    public:

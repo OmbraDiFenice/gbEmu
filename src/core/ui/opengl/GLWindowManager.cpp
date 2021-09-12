@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include "GLWindowManager.h"
+#include <core/ui/opengl/GLWindowManager.h>
 
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>

@@ -1,7 +1,7 @@
 #include <Pch.h>
 
+#include <core/ui/opengl/GLShaderStorageBuffer.h>
 #include <utils/GLErrorMacros.h>
-#include "GLShaderStorageBuffer.h"
 
 GLShaderStorageBuffer::GLShaderStorageBuffer() { init(); }
 

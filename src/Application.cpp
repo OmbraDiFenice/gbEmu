@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include "Application.h"
+#include <Application.h>
 
 void Application::run() {
     LOG_DBG("start app");

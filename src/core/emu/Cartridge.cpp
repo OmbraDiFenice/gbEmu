@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include "Cartridge.h"
+#include <core/emu/Cartridge.h>
 
 #include <core/emu/utils.h>
 

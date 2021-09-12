@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include "Memory.h"
+#include <core/emu/Memory.h>
 
 Memory::Memory(size_t bytes) : size(bytes) { _data = new Byte[bytes]; }
 

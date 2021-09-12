@@ -1,22 +1,6 @@
 #include <Pch.h>
 
-#include "Buffer.h"
-
-void Buffer::setVertexElement(unsigned int iVertex, unsigned int iElement,
-                              unsigned int iElementOffset, float iValue) {
-    ASSERT(iVertex < _vbCount, "invalid vertex selected");
-    int vertexIndex = iVertex * _layout.getCount();
-
-    ASSERT(iElement < _layout.getElements().size(), "invalid element selected");
-    int elementIndex = 0;
-    if (iElement > 0) {
-        ASSERT(iElementOffset < _layout.getElements().at(iElement - 1).count,
-               "invalid element offset");
-        elementIndex = iElement * _layout.getElements().at(iElement - 1).count;
-    }
-
-    _vb[vertexIndex + elementIndex + iElementOffset] = iValue;
-}
+#include <core/ui/Buffer.h>
 
 VertexLayout::VertexLayout(std::initializer_list<VertexElement> iElements)
     : _elements(iElements) {

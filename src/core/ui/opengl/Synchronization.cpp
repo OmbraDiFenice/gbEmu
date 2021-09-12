@@ -1,7 +1,7 @@
 #include <Pch.h>
 
+#include <core/ui/opengl/Synchronization.h>
 #include <utils/GLErrorMacros.h>
-#include "Synchronization.h"
 
 void SynchronizeOn(const SynchroItem& iSynchroItem) {
     GLCall(glMemoryBarrier(iSynchroItem));
