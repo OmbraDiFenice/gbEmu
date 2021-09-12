@@ -14,6 +14,8 @@ struct VertexElement {
         switch (type) {
             case GL_FLOAT:
                 return count * sizeof(float);
+            case GL_UNSIGNED_INT:
+                return count * sizeof(uint32_t);
         }
         return 0;
     }

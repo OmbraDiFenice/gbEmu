@@ -5,7 +5,7 @@
 
 class GLShaderStorageBuffer : public ShaderStorageBuffer {
    public:
-    GLShaderStorageBuffer();
+    GLShaderStorageBuffer(GLuint iBindingIndex);
     virtual ~GLShaderStorageBuffer() = default;
 
     void bind() const override;
@@ -13,8 +13,6 @@ class GLShaderStorageBuffer : public ShaderStorageBuffer {
     void uploadData(void* iData, size_t iSize, GLenum iMode) const override;
 
    private:
-    void init();
-
-   private:
-    GLuint _ref = 0;
+    GLuint _ref          = 0;
+    GLuint _bindingIndex = 0;
 };

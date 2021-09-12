@@ -13,4 +13,5 @@ class Renderer {
     virtual void flush() const                                       = 0;
     virtual const glm::mat4& getProjectionMatrix() const             = 0;
     virtual void setScale(float iScale)                              = 0;
+    virtual void setSignedBackgroundTileMap(bool iSigned) const      = 0;
 };

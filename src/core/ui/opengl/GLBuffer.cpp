@@ -7,13 +7,13 @@
 
 GLVertexBuffer::GLVertexBuffer(size_t iSize) { init(nullptr, iSize); }
 
-GLVertexBuffer::GLVertexBuffer(void *iData, size_t iSize) {
+GLVertexBuffer::GLVertexBuffer(void* iData, size_t iSize) {
     init(iData, iSize);
 }
 
 GLVertexBuffer::~GLVertexBuffer() { GLCall(glDeleteBuffers(1, &_id)); }
 
-void GLVertexBuffer::setData(void *iData, size_t iSize) const {
+void GLVertexBuffer::setData(void* iData, size_t iSize) const {
     bind();
     GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, iSize, iData));
 }
@@ -26,7 +26,7 @@ void GLVertexBuffer::unbind() const {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void GLVertexBuffer::init(void *iData, size_t iSize) {
+void GLVertexBuffer::init(void* iData, size_t iSize) {
     GLCall(glGenBuffers(1, &_id));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, _id));
     GLCall(glBufferData(GL_ARRAY_BUFFER, iSize, iData, GL_STATIC_DRAW));
@@ -34,7 +34,7 @@ void GLVertexBuffer::init(void *iData, size_t iSize) {
 
 // ----------------- Index buffer -----------------
 
-IndexBuffer::IndexBuffer(uint32_t *iData, size_t iCount) : _count(iCount) {
+IndexBuffer::IndexBuffer(uint32_t* iData, size_t iCount) : _count(iCount) {
     GLCall(glGenBuffers(1, &_id));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, _id));
     GLCall(glBufferData(GL_ARRAY_BUFFER, iCount * sizeof(uint32_t), iData,
@@ -76,9 +76,19 @@ void GLVertexArray::addVertexBuffer(
     size_t pos = 0;
     for (const VertexElement& element : vbLayout.getElements()) {
         GLCall(glEnableVertexAttribArray(_lastVertexBufferIndex));
-        GLCall(glVertexAttribPointer(_lastVertexBufferIndex, element.count,
-                                     element.type, GL_FALSE,
-                                     vbLayout.getStride(), (const void*)(pos)));
+        switch (element.type) {
+            case GL_FLOAT:
+                GLCall(glVertexAttribPointer(
+                    _lastVertexBufferIndex, element.count, element.type,
+                    GL_FALSE, vbLayout.getStride(), (const void*)(pos)));
+                break;
+            case GL_UNSIGNED_INT:
+            case GL_INT:
+                GLCall(glVertexAttribIPointer(
+                    _lastVertexBufferIndex, element.count, element.type,
+                    vbLayout.getStride(), (const void*)(pos)));
+                break;
+        }
         ++_lastVertexBufferIndex;
         pos += element.size();
     }

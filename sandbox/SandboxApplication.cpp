@@ -13,6 +13,11 @@ void SandboxApplication::init() {
     unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
     _renderer->setBackgroundTileData(tileMapPatterns, 4096);
     delete[] tileMapPatterns;
+
+    unsigned char* tileMap = loadData("tileMap_9800.DMP");
+    _renderer->setBackgroundTileMapData(tileMap, 1024);
+    _renderer->setSignedBackgroundTileMap(true);
+    delete[] tileMap;
 }
 
 void SandboxApplication::drawScreen() { _renderer->drawBackground(); }

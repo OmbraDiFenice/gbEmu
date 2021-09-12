@@ -19,6 +19,7 @@ class GLRenderer : public Renderer {
     void flush() const override;
     const glm::mat4& getProjectionMatrix() const override;
     void setScale(float iScale) override;
+    void setSignedBackgroundTileMap(bool iSigned) const override;
 
    private:
     void initBackround();
@@ -34,6 +35,7 @@ class GLRenderer : public Renderer {
     std::unique_ptr<ShaderStorageBuffer> _compressedTileData;
 
     std::unique_ptr<Program> _renderProgram;
+    std::unique_ptr<ShaderStorageBuffer> _rendererShaderData;
 
     glm::mat4 _scale;
 };

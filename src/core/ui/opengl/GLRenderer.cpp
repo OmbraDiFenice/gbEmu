@@ -11,10 +11,10 @@
 
 struct BackgroundTileVertex {
     glm::vec3 position;
-    float tileId;
+    uint32_t tileId;
 
     static const VertexLayout& ToLayout() {
-        static VertexLayout Layout{{3, GL_FLOAT}, {1, GL_FLOAT}};
+        static VertexLayout Layout{{3, GL_FLOAT}, {1, GL_UNSIGNED_INT}};
         return Layout;
     }
 };
@@ -34,11 +34,13 @@ GLRenderer::GLRenderer()
     _tileDecoderProgram->loadShader("sandbox/compute.shader",
                                     GL_COMPUTE_SHADER);
     _tileDecoderProgram->link();
-    _compressedTileData = std::make_unique<GLShaderStorageBuffer>();
+    _compressedTileData = std::make_unique<GLShaderStorageBuffer>(0);
 
     _renderProgram->loadShader("sandbox/vertex.shader", GL_VERTEX_SHADER);
     _renderProgram->loadShader("sandbox/fragment.shader", GL_FRAGMENT_SHADER);
     _renderProgram->link();
+
+    _rendererShaderData = std::make_unique<GLShaderStorageBuffer>(0);
 }
 
 void GLRenderer::clear(float iRed, float iGreen, float iBlue,
@@ -55,8 +57,7 @@ void GLRenderer::setBackgroundTileData(void* iData, size_t iSize) {
 }
 
 void GLRenderer::setBackgroundTileMapData(void* iData, size_t iSize) {
-    _backgroundVertexArray.getVertexBuffers().front()->setData(iData, iSize);
-    _backgroundDataDirty = true;
+    _rendererShaderData->uploadData(iData, iSize, GL_STATIC_READ);
 }
 
 void GLRenderer::drawBackground() const {
@@ -76,6 +77,7 @@ void GLRenderer::drawBackground() const {
 
     int textureRef = _backgroundTileTexture->getTextureSlot();
     _renderProgram->bind();
+    _rendererShaderData->bind();
     _renderProgram->setUniform("u_Texture", textureRef);
     _renderProgram->setUniformMatrix4("u_Proj", &(getProjectionMatrix())[0][0]);
     _renderProgram->setUniformMatrix4("u_Scale", &(_scale)[0][0]);
@@ -93,6 +95,12 @@ const glm::mat4& GLRenderer::getProjectionMatrix() const {
 
 void GLRenderer::setScale(float iScale) {
     _scale = glm::scale(glm::mat4(1.0f), glm::vec3(iScale, iScale, 1));
+}
+
+void GLRenderer::setSignedBackgroundTileMap(bool iSigned) const {
+    _renderProgram->bind();
+    _renderProgram->setUniform("u_SignedTileIndexOffset", (iSigned ? 128 : 0));
+    _renderProgram->unbind();
 }
 
 void GLRenderer::initBackround() {
