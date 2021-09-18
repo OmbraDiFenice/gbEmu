@@ -19,6 +19,20 @@ class GLTileDecoder {
     std::unique_ptr<ShaderStorageBuffer> _compressedTileData;
 };
 
+struct BackgroundData {
+    BackgroundData();
+
+    GLVertexArray vertexArray;
+    std::unique_ptr<Texture> texture;
+    std::unique_ptr<Program> renderProgram;
+    std::unique_ptr<ShaderStorageBuffer> renderShaderData;
+
+   private:
+    std::shared_ptr<GLVertexBuffer> createTileGridVertexBuffer(
+        const uint32_t iTilePerColumn,
+        const uint32_t iTotalNumberOfTiles) const;
+};
+
 class GLRenderer : public Renderer {
    public:
     GLRenderer();
@@ -38,36 +52,24 @@ class GLRenderer : public Renderer {
     void setOam(void* iData, size_t iSize) override;
 
    private:
-    void initBackround();
     void initOam();
-
-    std::shared_ptr<IndexBuffer> createTileGridIndexBuffer(
-        const uint32_t iTotalNumberOfTiles) const;
-    std::shared_ptr<GLVertexBuffer> createTileGridVertexBuffer(
-        const uint32_t iTilePerColumn,
-        const uint32_t iTotalNumberOfTiles) const;
 
     std::shared_ptr<GLVertexBuffer> createSpritesVertexBuffer(
         uint32_t iTotalSprites);
 
    private:
     GLTileDecoder _tileDecoder;
+    glm::mat4 _scale;
 
-    GLVertexArray _backgroundVertexArray;
-    std::unique_ptr<Texture> _backgroundTileTexture;
+    BackgroundData _background;
 
     ColorPalette _colorPalette;
-
-    std::unique_ptr<Program> _renderProgram;
-    std::unique_ptr<ShaderStorageBuffer> _rendererShaderData;
-
-    glm::mat4 _scale;
+    ColorPalette _obj0ColorPalette;
+    ColorPalette _obj1ColorPalette;
 
    private:
     GLVertexArray _spriteVertexArray;
     std::unique_ptr<Program> _spriteRenderProgram;
     std::unique_ptr<Texture> _spriteTileTexture;
-    ColorPalette _obj0ColorPalette;
-    ColorPalette _obj1ColorPalette;
     std::unique_ptr<ShaderStorageBuffer> _oam;
 };
