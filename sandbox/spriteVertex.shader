@@ -28,13 +28,12 @@ uint getByte(const uint iSpriteData, const uint iByteIndex) {
     return (iSpriteData >> (iByteIndex * 8u)) & 0xFFu;
 }
 
-vec4 getPosition(uint iSpriteData) {
+vec4 getPosition(const uint iSpriteData) {
     return vec4(
     float(getByte(iSpriteData, 1)) + k_TileCoordSquare[gl_VertexID % 4].x - 8,
     float(getByte(iSpriteData, 0)) + k_TileCoordSquare[gl_VertexID % 4].y - 16,
     0.0f,
-    1.0f
-    );
+    1.0f);
 }
 
 uint getTileIndex(const uint iSpriteData) {

@@ -33,6 +33,19 @@ struct BackgroundData {
         const uint32_t iTotalNumberOfTiles) const;
 };
 
+struct SpriteData {
+    SpriteData();
+
+    GLVertexArray vertexArray;
+    std::unique_ptr<Program> renderProgram;
+    std::unique_ptr<Texture> texture;
+    std::unique_ptr<ShaderStorageBuffer> oam;
+
+   private:
+    std::shared_ptr<GLVertexBuffer> createSpritesVertexBuffer(
+        uint32_t iTotalSprites);
+};
+
 class GLRenderer : public Renderer {
    public:
     GLRenderer();
@@ -52,24 +65,13 @@ class GLRenderer : public Renderer {
     void setOam(void* iData, size_t iSize) override;
 
    private:
-    void initOam();
-
-    std::shared_ptr<GLVertexBuffer> createSpritesVertexBuffer(
-        uint32_t iTotalSprites);
-
-   private:
     GLTileDecoder _tileDecoder;
     glm::mat4 _scale;
 
     BackgroundData _background;
+    SpriteData _sprite;
 
     ColorPalette _colorPalette;
     ColorPalette _obj0ColorPalette;
     ColorPalette _obj1ColorPalette;
-
-   private:
-    GLVertexArray _spriteVertexArray;
-    std::unique_ptr<Program> _spriteRenderProgram;
-    std::unique_ptr<Texture> _spriteTileTexture;
-    std::unique_ptr<ShaderStorageBuffer> _oam;
 };

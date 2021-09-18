@@ -55,11 +55,9 @@ GLRenderer::GLRenderer()
                          {0x68, 0x68, 0x68, 0xFF},
                          {0x38, 0x38, 0x38, 0xFF}}),
       _scale(1.0f) {
-    initOam();
-
     _background.renderProgram = std::make_unique<GLProgram>();
 
-    _background.renderProgram->loadShader("sandbox/vertex.shader",
+    _background.renderProgram->loadShader("sandbox/backgroundVertex.shader",
                                           GL_VERTEX_SHADER);
     _background.renderProgram->loadShader("sandbox/fragment.shader",
                                           GL_FRAGMENT_SHADER);
@@ -117,35 +115,34 @@ void GLRenderer::setSignedBackgroundTileMap(bool iSigned) const {
     _background.renderProgram->unbind();
 }
 
-
-// ------------------- Sprites -------------------
-
 void GLRenderer::setSpriteTileData(void* iData, size_t iSize) {
-    _tileDecoder.decode(iData, iSize, _spriteTileTexture, _obj0ColorPalette);
+    _tileDecoder.decode(iData, iSize, _sprite.texture, _obj0ColorPalette);
 }
 
 void GLRenderer::setOam(void* iData, size_t iSize) {
-    _oam->uploadData(iData, iSize, GL_STATIC_READ);
+    _sprite.oam->uploadData(iData, iSize, GL_STATIC_READ);
 }
 
 void GLRenderer::drawSprites() const {
     SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
-    _spriteRenderProgram->bind();
-    _oam->bind();
-    _spriteTileTexture->bind();
-    _spriteRenderProgram->setUniform(
-        "u_Texture", static_cast<int>(_spriteTileTexture->getTextureSlot()));
-    _spriteRenderProgram->setUniformMatrix4("u_Proj",
-                                            &(getProjectionMatrix())[0][0]);
-    _spriteRenderProgram->setUniformMatrix4("u_Scale", &(_scale)[0][0]);
-    _spriteVertexArray.bind();
+    _sprite.renderProgram->bind();
+    _sprite.oam->bind();
+    _sprite.texture->bind();
+    _sprite.renderProgram->setUniform(
+        "u_Texture", static_cast<int>(_sprite.texture->getTextureSlot()));
+    _sprite.renderProgram->setUniformMatrix4("u_Proj",
+                                             &(getProjectionMatrix())[0][0]);
+    _sprite.renderProgram->setUniformMatrix4("u_Scale", &(_scale)[0][0]);
+    _sprite.vertexArray.bind();
     GLCall(glDrawElements(GL_TRIANGLES,
-                          _spriteVertexArray.getIndexBuffer()->getCount(),
+                          _sprite.vertexArray.getIndexBuffer()->getCount(),
                           GL_UNSIGNED_INT, nullptr));
 }
 
-std::shared_ptr<GLVertexBuffer> GLRenderer::createSpritesVertexBuffer(
+// ---------------- SpriteData ----------------
+
+std::shared_ptr<GLVertexBuffer> SpriteData::createSpritesVertexBuffer(
     const uint32_t iTotalSprites) {
     uint32_t iTotalNumberOfVertices = iTotalSprites * 4;
     auto sprites                    = new uint32_t[iTotalNumberOfVertices];
@@ -163,18 +160,15 @@ std::shared_ptr<GLVertexBuffer> GLRenderer::createSpritesVertexBuffer(
     return vb;
 }
 
-void GLRenderer::initOam() {
+SpriteData::SpriteData() {
     constexpr uint32_t kTotalNumberOfSprites = 40;
 
-    _spriteRenderProgram = std::make_unique<GLProgram>();
-    _spriteRenderProgram->loadShader("sandbox/spriteVertex.shader",
-                                     GL_VERTEX_SHADER);
-    _spriteRenderProgram->loadShader("sandbox/spriteFragment.shader",
-                                     GL_FRAGMENT_SHADER);
-    _spriteRenderProgram->link();
+    renderProgram = std::make_unique<GLProgram>();
+    renderProgram->loadShader("sandbox/spriteVertex.shader", GL_VERTEX_SHADER);
+    renderProgram->loadShader("sandbox/fragment.shader", GL_FRAGMENT_SHADER);
+    renderProgram->link();
 
-    _spriteTileTexture =
-        std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
+    texture = std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
 
     std::shared_ptr<GLVertexBuffer> vb =
         createSpritesVertexBuffer(kTotalNumberOfSprites);
@@ -182,10 +176,10 @@ void GLRenderer::initOam() {
     std::shared_ptr<IndexBuffer> ib =
         generateTileSequenceIndexBuffer(kTotalNumberOfSprites);
 
-    _spriteVertexArray.setIndexBuffer(ib);
-    _spriteVertexArray.addVertexBuffer(vb);
+    vertexArray.setIndexBuffer(ib);
+    vertexArray.addVertexBuffer(vb);
 
-    _oam = std::make_unique<GLShaderStorageBuffer>(0);
+    oam = std::make_unique<GLShaderStorageBuffer>(0);
 }
 
 // ---------------- Tile Decoder ----------------
