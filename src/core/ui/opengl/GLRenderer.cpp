@@ -29,8 +29,7 @@ struct SpriteTileVertex {
 };
 
 GLRenderer::GLRenderer()
-    : _backgroundDataDirty(false),
-      _colorPalette({{0xD0, 0xE0, 0xF0, 0xFF},
+    : _colorPalette({{0xD0, 0xE0, 0xF0, 0xFF},
                      {0x98, 0x98, 0x98, 0xFF},
                      {0x68, 0x68, 0x68, 0xFF},
                      {0x38, 0x38, 0x38, 0xFF}}),
@@ -71,7 +70,15 @@ void GLRenderer::flush() const {}
 
 void GLRenderer::setBackgroundTileData(void* iData, size_t iSize) {
     _compressedTileData->uploadData(iData, iSize, GL_STATIC_READ);
-    _backgroundDataDirty = true;
+    _tileDecoderProgram->bind();
+    _compressedTileData->bind();
+    int textureBufferRef = 0;
+    _tileDecoderProgram->setUniform("u_ImageOutput", textureBufferRef);
+    _tileDecoderProgram->setUniformMatrix4("u_Palette", _colorPalette);
+
+    _backgroundTileTexture->associateToWritableBuffer(0);
+
+    _tileDecoderProgram->execute(256, 1, 1);
 }
 
 void GLRenderer::setBackgroundTileMapData(void* iData, size_t iSize) {
@@ -79,19 +86,7 @@ void GLRenderer::setBackgroundTileMapData(void* iData, size_t iSize) {
 }
 
 void GLRenderer::drawBackground() const {
-    if (_backgroundDataDirty) {
-        _tileDecoderProgram->bind();
-        _compressedTileData->bind();
-        int textureBufferRef = 0;
-        _tileDecoderProgram->setUniform("u_ImageOutput", textureBufferRef);
-        _tileDecoderProgram->setUniformMatrix4("u_Palette", _colorPalette);
-
-        _backgroundTileTexture->associateToWritableBuffer(0);
-
-        _tileDecoderProgram->execute(256, 1, 1);
-        SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-        _backgroundDataDirty = false;
-    }
+    SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
     int textureRef = _backgroundTileTexture->getTextureSlot();
     _renderProgram->bind();
@@ -184,7 +179,18 @@ std::shared_ptr<IndexBuffer> GLRenderer::createTileGridIndexBuffer(
 
 void GLRenderer::setSpriteTileData(void* iData, size_t iSize) {
     _spriteCompressedTileData->uploadData(iData, iSize, GL_STATIC_READ);
-    _spriteDataDirty = true;
+    _spriteTileDecoderProgram->bind();
+    _spriteCompressedTileData->bind();
+
+    int textureWritableBufferRef = 1;
+    _spriteTileDecoderProgram->setUniform("u_ImageOutput",
+                                          textureWritableBufferRef);
+    _spriteTileDecoderProgram->setUniformMatrix4("u_Palette",
+                                                 _obj0ColorPalette);
+
+    _spriteTileTexture->associateToWritableBuffer(textureWritableBufferRef);
+
+    _spriteTileDecoderProgram->execute(256, 1, 1);
 }
 
 void GLRenderer::setOam(void* iData, size_t iSize) {
@@ -192,23 +198,7 @@ void GLRenderer::setOam(void* iData, size_t iSize) {
 }
 
 void GLRenderer::drawSprites() const {
-    if (_spriteDataDirty) {
-        _spriteTileDecoderProgram->bind();
-        _spriteCompressedTileData->bind();
-
-        int textureWritableBufferRef = 1;
-        _spriteTileDecoderProgram->setUniform("u_ImageOutput",
-                                              textureWritableBufferRef);
-        _spriteTileDecoderProgram->setUniformMatrix4("u_Palette",
-                                                     _obj0ColorPalette);
-
-        _spriteTileTexture->associateToWritableBuffer(textureWritableBufferRef);
-
-        _spriteTileDecoderProgram->execute(256, 1, 1);
-
-        SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-        _spriteDataDirty = false;
-    }
+    SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
     _spriteRenderProgram->bind();
     _oam->bind();

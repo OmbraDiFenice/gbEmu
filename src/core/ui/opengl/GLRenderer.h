@@ -40,7 +40,6 @@ class GLRenderer : public Renderer {
 
    private:
     GLVertexArray _backgroundVertexArray;
-    mutable bool _backgroundDataDirty;
     std::unique_ptr<Texture> _backgroundTileTexture;
 
     ColorPalette _colorPalette;
@@ -59,7 +58,6 @@ class GLRenderer : public Renderer {
     std::unique_ptr<Texture> _spriteTileTexture;
     std::unique_ptr<Program> _spriteTileDecoderProgram;
     std::unique_ptr<ShaderStorageBuffer> _spriteCompressedTileData;
-    mutable bool _spriteDataDirty;
     ColorPalette _obj0ColorPalette;
     ColorPalette _obj1ColorPalette;
     std::unique_ptr<ShaderStorageBuffer> _oam;
