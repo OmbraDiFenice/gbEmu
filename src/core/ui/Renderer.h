@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/emu/screen/ColorPalette.h>
 #include <core/ui/Buffer.h>
 #include <glm/mat4x4.hpp>
 
@@ -18,4 +19,8 @@ class Renderer {
     virtual void drawSprites() const                          = 0;
     virtual void setSpriteTileData(void* iData, size_t iSize) = 0;
     virtual void setOam(void* iData, size_t iSize)            = 0;
+
+    virtual void setBackgroundPalette(const ColorPalette& iPalette) = 0;
+    virtual void setObjectPalette0(const ColorPalette& iPalette)    = 0;
+    virtual void setObjectPalette1(const ColorPalette& iPalette)    = 0;
 };

@@ -4,6 +4,7 @@
 
 class ColorPalette {
    public:
+    ColorPalette() = default;
     explicit ColorPalette(const glm::mat4& data);
     explicit ColorPalette(const glm::mat4&& data);
 

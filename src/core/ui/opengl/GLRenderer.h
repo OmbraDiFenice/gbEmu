@@ -1,6 +1,5 @@
 #pragma once
 
-#include <core/emu/screen/ColorPalette.h>
 #include <core/ui/Program.h>
 #include <core/ui/Renderer.h>
 #include <core/ui/ShaderStorageBuffer.h>
@@ -31,6 +30,8 @@ struct BackgroundData {
     std::shared_ptr<GLVertexBuffer> createTileGridVertexBuffer(
         const uint32_t iTilePerColumn,
         const uint32_t iTotalNumberOfTiles) const;
+
+    static constexpr uint32_t kTextureSlot = 1;
 };
 
 struct SpriteData {
@@ -38,12 +39,16 @@ struct SpriteData {
 
     GLVertexArray vertexArray;
     std::unique_ptr<Program> renderProgram;
-    std::unique_ptr<Texture> texture;
+    std::unique_ptr<Texture> texturePalette0;
+    std::unique_ptr<Texture> texturePalette1;
     std::unique_ptr<ShaderStorageBuffer> oam;
 
    private:
     std::shared_ptr<GLVertexBuffer> createSpritesVertexBuffer(
         uint32_t iTotalSprites);
+
+    static constexpr uint32_t kTexturePalette0Slot = 1;
+    static constexpr uint32_t kTexturePalette1Slot = 2;
 };
 
 class GLRenderer : public Renderer {
@@ -65,6 +70,23 @@ class GLRenderer : public Renderer {
 
     void setScale(float iScale) override;
     const glm::mat4& getProjectionMatrix() const override;
+
+    /** Note: manually call setBackgroundTileData after this to update the
+     * texture
+     *
+     * @param iPalette
+     */
+    void setBackgroundPalette(const ColorPalette& iPalette) override;
+    /** Note: manually call setSpriteTileData after this to update the texture
+     *
+     * @param iPalette
+     */
+    void setObjectPalette0(const ColorPalette& iPalette) override;
+    /** Note: manually call setSpriteTileData after this to update the texture
+     *
+     * @param iPalette
+     */
+    void setObjectPalette1(const ColorPalette& iPalette) override;
 
    private:
     GLTileDecoder _tileDecoder;

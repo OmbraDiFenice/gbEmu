@@ -11,6 +11,7 @@ uniform mat4 u_Scale;
 uniform int u_SignedTileIndexOffset = 128;
 
 out vec2 v_TexCoord;
+flat out uint v_TextureIndex;
 
 const mat4x2 k_Square = {
 { 0.0f, 0.0f },
@@ -21,7 +22,6 @@ const mat4x2 k_Square = {
 const float k_TotalTilesInTileMap = 256.0f;
 
 int getTileIndex(uint iTileNumber) {
-    uint x = 67305985u;
     uint intIndex = iTileNumber / 4u;
     uint byteInInt = iTileNumber % 4u;
     return int((data.backgroundTileMap[intIndex] >> (byteInInt * 8u)) & 0xFFu) + u_SignedTileIndexOffset;
@@ -34,4 +34,6 @@ void main()
     vec2 corner = k_Square[gl_VertexID % 4];
     int tileId = getTileIndex(uint(a_TileId));
     v_TexCoord = vec2(corner.x, (tileId + corner.y) / k_TotalTilesInTileMap);
+
+    v_TextureIndex = 0;
 }

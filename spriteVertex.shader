@@ -9,6 +9,7 @@ uniform mat4 u_Proj;
 uniform mat4 u_Scale;
 
 out vec2 v_TexCoord;
+flat out uint v_TextureIndex;
 
 const float kTotalSprites = 256.0f;
 const mat4x2 k_TexCoordSquare = {
@@ -40,6 +41,10 @@ uint getTileIndex(const uint iSpriteData) {
     return getByte(iSpriteData, 2);
 }
 
+uint getPaletteNumber(const uint iSpriteData) {
+    return (getByte(iSpriteData, 3) >> 4) & 0x01u;
+}
+
 void main()
 {
     const uint spriteData = oam.data[a_TileId];
@@ -49,4 +54,6 @@ void main()
 
     vec2 corner = k_TexCoordSquare[gl_VertexID % 4];
     v_TexCoord = vec2(corner.x, (tileId + corner.y) / kTotalSprites);
+
+    v_TextureIndex = getPaletteNumber(spriteData);
 }

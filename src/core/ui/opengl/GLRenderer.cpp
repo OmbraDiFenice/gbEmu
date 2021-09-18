@@ -41,20 +41,7 @@ std::shared_ptr<IndexBuffer> generateTileSequenceIndexBuffer(
     return ib;
 }
 
-GLRenderer::GLRenderer()
-    : _colorPalette({{0xD0, 0xE0, 0xF0, 0xFF},
-                     {0x98, 0x98, 0x98, 0xFF},
-                     {0x68, 0x68, 0x68, 0xFF},
-                     {0x38, 0x38, 0x38, 0xFF}}),
-      _obj0ColorPalette({{0xD0, 0xE0, 0xF0, 0x00},
-                         {0x98, 0x98, 0x98, 0xFF},
-                         {0x68, 0x68, 0x68, 0xFF},
-                         {0x38, 0x38, 0x38, 0xFF}}),
-      _obj1ColorPalette({{0xD0, 0xE0, 0xF0, 0x00},
-                         {0x98, 0x98, 0x98, 0xFF},
-                         {0x68, 0x68, 0x68, 0xFF},
-                         {0x38, 0x38, 0x38, 0xFF}}),
-      _scale(1.0f) {}
+GLRenderer::GLRenderer() : _scale(1.0f) {}
 
 void GLRenderer::clear(float iRed, float iGreen, float iBlue,
                        float iAlpha) const {
@@ -78,7 +65,8 @@ void GLRenderer::drawBackground() const {
     int textureRef = _background.texture->getTextureSlot();
     _background.renderProgram->bind();
     _background.renderShaderData->bind();
-    _background.renderProgram->setUniform("u_Texture", textureRef);
+    int textures[2] = {textureRef, textureRef};
+    _background.renderProgram->setUniform("u_Texture", 2, textures);
     _background.renderProgram->setUniformMatrix4(
         "u_Proj", &(getProjectionMatrix())[0][0]);
     _background.renderProgram->setUniformMatrix4("u_Scale", &(_scale)[0][0]);
@@ -106,7 +94,11 @@ void GLRenderer::setSignedBackgroundTileMap(bool iSigned) const {
 }
 
 void GLRenderer::setSpriteTileData(void* iData, size_t iSize) {
-    _tileDecoder.decode(iData, iSize, _sprite.texture, _obj0ColorPalette);
+    _tileDecoder.decode(iData, iSize, _sprite.texturePalette0,
+                        _obj0ColorPalette);
+    SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    _tileDecoder.decode(iData, iSize, _sprite.texturePalette1,
+                        _obj1ColorPalette);
 }
 
 void GLRenderer::setOam(void* iData, size_t iSize) {
@@ -118,9 +110,12 @@ void GLRenderer::drawSprites() const {
 
     _sprite.renderProgram->bind();
     _sprite.oam->bind();
-    _sprite.texture->bind();
-    _sprite.renderProgram->setUniform(
-        "u_Texture", static_cast<int>(_sprite.texture->getTextureSlot()));
+    _sprite.texturePalette0->bind();
+    _sprite.texturePalette1->bind();
+    int textures[2] = {
+        static_cast<int>(_sprite.texturePalette0->getTextureSlot()),
+        static_cast<int>(_sprite.texturePalette1->getTextureSlot())};
+    _sprite.renderProgram->setUniform("u_Texture", 2, textures);
     _sprite.renderProgram->setUniformMatrix4("u_Proj",
                                              &(getProjectionMatrix())[0][0]);
     _sprite.renderProgram->setUniformMatrix4("u_Scale", &(_scale)[0][0]);
@@ -128,6 +123,18 @@ void GLRenderer::drawSprites() const {
     GLCall(glDrawElements(GL_TRIANGLES,
                           _sprite.vertexArray.getIndexBuffer()->getCount(),
                           GL_UNSIGNED_INT, nullptr));
+}
+
+void GLRenderer::setBackgroundPalette(const ColorPalette& iPalette) {
+    _colorPalette = iPalette;
+}
+
+void GLRenderer::setObjectPalette0(const ColorPalette& iPalette) {
+    _obj0ColorPalette = iPalette;
+}
+
+void GLRenderer::setObjectPalette1(const ColorPalette& iPalette) {
+    _obj1ColorPalette = iPalette;
 }
 
 // ---------------- SpriteData ----------------
@@ -158,7 +165,10 @@ SpriteData::SpriteData() {
     renderProgram->loadShader("fragment.shader", GL_FRAGMENT_SHADER);
     renderProgram->link();
 
-    texture = std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
+    texturePalette0 = std::make_unique<GLTexture>(nullptr, 8, 8 * 256,
+                                                  kTexturePalette0Slot, 4, 4);
+    texturePalette1 = std::make_unique<GLTexture>(nullptr, 8, 8 * 256,
+                                                  kTexturePalette1Slot, 4, 4);
 
     std::shared_ptr<GLVertexBuffer> vb =
         createSpritesVertexBuffer(kTotalNumberOfSprites);
@@ -208,7 +218,8 @@ BackgroundData::BackgroundData() {
     renderProgram->loadShader("fragment.shader", GL_FRAGMENT_SHADER);
     renderProgram->link();
 
-    texture = std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
+    texture =
+        std::make_unique<GLTexture>(nullptr, 8, 8 * 256, kTextureSlot, 4, 4);
 
     std::shared_ptr<GLVertexBuffer> vb =
         createTileGridVertexBuffer(kTilesPerSide, kBackgroundTiles);
