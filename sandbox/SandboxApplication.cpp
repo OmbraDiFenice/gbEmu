@@ -6,28 +6,29 @@
 
 SandboxApplication::SandboxApplication() {}
 
+SandboxApplication::~SandboxApplication() {
+    delete[] tileMapPatterns;
+    delete[] tileMap;
+    delete[] spritePatterns;
+    delete[] oam;
+}
+
 void SandboxApplication::init() {
     _renderer = std::make_unique<GLRenderer>();
     _renderer->setScale(1.f);
 
-    // load background data
-    unsigned char* tileMapPatterns = loadData("tileDataTable_8800.DMP");
-    _renderer->setBackgroundTileData(tileMapPatterns, 4096);
-    delete[] tileMapPatterns;
+    tileMapPatterns = loadData("tileDataTable_8800.DMP");
+    tileMap         = loadData("tileMap_9800.DMP");
+    spritePatterns  = loadData("spriteDataTable_8000.DMP");
+    oam             = loadData("OAM_FE00.DMP");
+}
 
-    unsigned char* tileMap = loadData("tileMap_9800.DMP");
+void SandboxApplication::update() {
+    _renderer->setBackgroundTileData(tileMapPatterns, 4096);
     _renderer->setBackgroundTileMapData(tileMap, 1024);
     _renderer->setSignedBackgroundTileMap(true);
-    delete[] tileMap;
-
-    // load sprite data
-    unsigned char* spritePatterns = loadData("spriteDataTable_8000.DMP");
     _renderer->setSpriteTileData(spritePatterns, 4096);
-    delete[] spritePatterns;
-
-    unsigned char* oam = loadData("OAM_FE00.DMP");
     _renderer->setOam(oam, 40 * 4);
-    delete[] oam;
 }
 
 void SandboxApplication::drawScreen() {

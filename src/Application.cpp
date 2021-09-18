@@ -13,6 +13,7 @@ void Application::run() {
     init();
 
     while (keepRunning()) {
+        update();
         drawScreen();
 
         for (auto c : _components) {

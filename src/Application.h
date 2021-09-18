@@ -19,6 +19,7 @@ class Application {
 
    private:
     virtual void init()       = 0;
+    virtual void update()     = 0;
     virtual void drawScreen() = 0;
 
     Window* createWindow();

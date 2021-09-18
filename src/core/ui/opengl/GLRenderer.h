@@ -52,17 +52,19 @@ class GLRenderer : public Renderer {
 
     void setBackgroundTileData(void* iData, size_t iSize) override;
     void setBackgroundTileMapData(void* iData, size_t iSize) override;
+    void setSignedBackgroundTileMap(bool iSigned) const override;
+
+    void setSpriteTileData(void* iData, size_t iSize) override;
+    void setOam(void* iData, size_t iSize) override;
+
     void drawBackground() const override;
+    void drawSprites() const override;
     void clear(float iRed, float iGreen, float iBlue,
                float iAlpha) const override;
     void flush() const override;
-    const glm::mat4& getProjectionMatrix() const override;
-    void setScale(float iScale) override;
-    void setSignedBackgroundTileMap(bool iSigned) const override;
 
-    void drawSprites() const override;
-    void setSpriteTileData(void* iData, size_t iSize) override;
-    void setOam(void* iData, size_t iSize) override;
+    void setScale(float iScale) override;
+    const glm::mat4& getProjectionMatrix() const override;
 
    private:
     GLTileDecoder _tileDecoder;
