@@ -54,17 +54,7 @@ GLRenderer::GLRenderer()
                          {0x98, 0x98, 0x98, 0xFF},
                          {0x68, 0x68, 0x68, 0xFF},
                          {0x38, 0x38, 0x38, 0xFF}}),
-      _scale(1.0f) {
-    _background.renderProgram = std::make_unique<GLProgram>();
-
-    _background.renderProgram->loadShader("backgroundVertex.shader",
-                                          GL_VERTEX_SHADER);
-    _background.renderProgram->loadShader("fragment.shader",
-                                          GL_FRAGMENT_SHADER);
-    _background.renderProgram->link();
-
-    _background.renderShaderData = std::make_unique<GLShaderStorageBuffer>(0);
-}
+      _scale(1.0f) {}
 
 void GLRenderer::clear(float iRed, float iGreen, float iBlue,
                        float iAlpha) const {
@@ -213,6 +203,11 @@ BackgroundData::BackgroundData() {
     constexpr uint32_t kTilesPerSide    = 32;
     constexpr uint32_t kBackgroundTiles = kTilesPerSide * kTilesPerSide;
 
+    renderProgram = std::make_unique<GLProgram>();
+    renderProgram->loadShader("backgroundVertex.shader", GL_VERTEX_SHADER);
+    renderProgram->loadShader("fragment.shader", GL_FRAGMENT_SHADER);
+    renderProgram->link();
+
     texture = std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
 
     std::shared_ptr<GLVertexBuffer> vb =
@@ -223,6 +218,8 @@ BackgroundData::BackgroundData() {
 
     vertexArray.setIndexBuffer(ib);
     vertexArray.addVertexBuffer(vb);
+
+    renderShaderData = std::make_unique<GLShaderStorageBuffer>(0);
 }
 
 std::shared_ptr<GLVertexBuffer> BackgroundData::createTileGridVertexBuffer(
