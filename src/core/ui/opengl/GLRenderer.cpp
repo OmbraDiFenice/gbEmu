@@ -9,12 +9,21 @@
 #include <glm/vec3.hpp>
 #include <utils/GLErrorMacros.h>
 
-struct IndexedTileVertex {
+struct BackgroundTileVertex {
     glm::vec3 position;
     uint32_t tileIndex;
 
     static const VertexLayout& ToLayout() {
         static VertexLayout Layout{{3, GL_FLOAT}, {1, GL_UNSIGNED_INT}};
+        return Layout;
+    }
+};
+
+struct SpriteTileVertex {
+    uint32_t spriteIndex;
+
+    static const VertexLayout& ToLayout() {
+        static VertexLayout Layout{{1, GL_UNSIGNED_INT}};
         return Layout;
     }
 };
@@ -132,7 +141,8 @@ std::shared_ptr<GLVertexBuffer> GLRenderer::createTileGridVertexBuffer(
     const uint32_t iTilePerColumn, const uint32_t iTotalNumberOfTiles) const {
     const uint32_t totalBackgroundTilesVertices =
         iTotalNumberOfTiles * 4;  // 4 vertices per tile
-    auto backgroundTiles = new IndexedTileVertex[totalBackgroundTilesVertices];
+    auto backgroundTiles =
+        new BackgroundTileVertex[totalBackgroundTilesVertices];
     glm::vec2 positionPattern[4] = {
         // ortho projection has (0,0) on top left
         {0, 1},
@@ -153,7 +163,7 @@ std::shared_ptr<GLVertexBuffer> GLRenderer::createTileGridVertexBuffer(
         backgroundTiles,
         sizeof(*backgroundTiles) * totalBackgroundTilesVertices);
     delete[] backgroundTiles;
-    vb->setLayout(IndexedTileVertex::ToLayout());
+    vb->setLayout(BackgroundTileVertex::ToLayout());
     return vb;
 }
 
@@ -177,6 +187,10 @@ void GLRenderer::setSpriteTileData(void* iData, size_t iSize) {
     _spriteDataDirty = true;
 }
 
+void GLRenderer::setOam(void* iData, size_t iSize) {
+    _oam->uploadData(iData, iSize, GL_STATIC_READ);
+}
+
 void GLRenderer::drawSprites() const {
     if (_spriteDataDirty) {
         _spriteTileDecoderProgram->bind();
@@ -197,6 +211,7 @@ void GLRenderer::drawSprites() const {
     }
 
     _spriteRenderProgram->bind();
+    _oam->bind();
     _spriteTileTexture->bind();
     _spriteRenderProgram->setUniform(
         "u_Texture", static_cast<int>(_spriteTileTexture->getTextureSlot()));
@@ -209,8 +224,26 @@ void GLRenderer::drawSprites() const {
                           GL_UNSIGNED_INT, nullptr));
 }
 
+std::shared_ptr<GLVertexBuffer> GLRenderer::createSpritesVertexBuffer(
+    const uint32_t iTotalSprites) {
+    uint32_t iTotalNumberOfVertices = iTotalSprites * 4;
+    auto sprites                    = new uint32_t[iTotalNumberOfVertices];
+
+    for (uint32_t tileId = 0; tileId < iTotalSprites; ++tileId) {
+        for (uint32_t vertex = 0; vertex < 4; ++vertex) {
+            sprites[tileId * 4 + vertex] = tileId;
+        }
+    }
+
+    auto vb = std::make_shared<GLVertexBuffer>(
+        sprites, sizeof(*sprites) * iTotalNumberOfVertices);
+    vb->setLayout(SpriteTileVertex::ToLayout());
+    delete[] sprites;
+    return vb;
+}
+
 void GLRenderer::initOam() {
-    constexpr uint32_t kTotalSprites = 40;
+    constexpr uint32_t kTotalNumberOfSprites = 40;
 
     _spriteRenderProgram = std::make_unique<GLProgram>();
     _spriteRenderProgram->loadShader("sandbox/spriteVertex.shader",
@@ -228,10 +261,13 @@ void GLRenderer::initOam() {
     _spriteTileDecoderProgram->link();
 
     std::shared_ptr<GLVertexBuffer> vb =
-        createTileGridVertexBuffer(16, 16 * 16);
+        createSpritesVertexBuffer(kTotalNumberOfSprites);
 
-    std::shared_ptr<IndexBuffer> ib = createTileGridIndexBuffer(16 * 16);
+    std::shared_ptr<IndexBuffer> ib =
+        createTileGridIndexBuffer(kTotalNumberOfSprites);
 
     _spriteVertexArray.setIndexBuffer(ib);
     _spriteVertexArray.addVertexBuffer(vb);
+
+    _oam = std::make_unique<GLShaderStorageBuffer>(0);
 }

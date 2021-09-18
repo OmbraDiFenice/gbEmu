@@ -24,6 +24,10 @@ void SandboxApplication::init() {
     unsigned char* spritePatterns = loadData("spriteDataTable_8000.DMP");
     _renderer->setSpriteTileData(spritePatterns, 4096);
     delete[] spritePatterns;
+
+    unsigned char* oam = loadData("OAM_FE00.DMP");
+    _renderer->setOam(oam, 40 * 4);
+    delete[] oam;
 }
 
 void SandboxApplication::drawScreen() {

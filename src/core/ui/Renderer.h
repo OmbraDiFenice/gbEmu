@@ -17,4 +17,5 @@ class Renderer {
 
     virtual void drawSprites() const                          = 0;
     virtual void setSpriteTileData(void* iData, size_t iSize) = 0;
+    virtual void setOam(void* iData, size_t iSize)            = 0;
 };

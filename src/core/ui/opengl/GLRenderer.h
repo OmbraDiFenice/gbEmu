@@ -23,6 +23,7 @@ class GLRenderer : public Renderer {
 
     void drawSprites() const override;
     void setSpriteTileData(void* iData, size_t iSize) override;
+    void setOam(void* iData, size_t iSize) override;
 
    private:
     void initBackround();
@@ -33,6 +34,9 @@ class GLRenderer : public Renderer {
     std::shared_ptr<GLVertexBuffer> createTileGridVertexBuffer(
         const uint32_t iTilePerColumn,
         const uint32_t iTotalNumberOfTiles) const;
+
+    std::shared_ptr<GLVertexBuffer> createSpritesVertexBuffer(
+        uint32_t iTotalSprites);
 
    private:
     GLVertexArray _backgroundVertexArray;
@@ -58,4 +62,5 @@ class GLRenderer : public Renderer {
     mutable bool _spriteDataDirty;
     ColorPalette _obj0ColorPalette;
     ColorPalette _obj1ColorPalette;
+    std::unique_ptr<ShaderStorageBuffer> _oam;
 };
