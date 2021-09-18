@@ -15,5 +15,6 @@ class Renderer {
     virtual void setScale(float iScale)                              = 0;
     virtual void setSignedBackgroundTileMap(bool iSigned) const      = 0;
 
-    virtual void drawSprites() const = 0;
+    virtual void drawSprites() const                          = 0;
+    virtual void setSpriteTileData(void* iData, size_t iSize) = 0;
 };

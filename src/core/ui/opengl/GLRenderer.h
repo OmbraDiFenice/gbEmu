@@ -22,6 +22,7 @@ class GLRenderer : public Renderer {
     void setSignedBackgroundTileMap(bool iSigned) const override;
 
     void drawSprites() const override;
+    void setSpriteTileData(void* iData, size_t iSize) override;
 
    private:
     void initBackround();
@@ -51,4 +52,10 @@ class GLRenderer : public Renderer {
    private:
     GLVertexArray _spriteVertexArray;
     std::unique_ptr<Program> _spriteRenderProgram;
+    std::unique_ptr<Texture> _spriteTileTexture;
+    std::unique_ptr<Program> _spriteTileDecoderProgram;
+    std::unique_ptr<ShaderStorageBuffer> _spriteCompressedTileData;
+    mutable bool _spriteDataDirty;
+    ColorPalette _obj0ColorPalette;
+    ColorPalette _obj1ColorPalette;
 };

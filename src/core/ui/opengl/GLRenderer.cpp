@@ -25,6 +25,14 @@ GLRenderer::GLRenderer()
                      {0x98, 0x98, 0x98, 0xFF},
                      {0x68, 0x68, 0x68, 0xFF},
                      {0x38, 0x38, 0x38, 0xFF}}),
+      _obj0ColorPalette({{0xD0, 0xE0, 0xF0, 0x00},
+                         {0x98, 0x98, 0x98, 0xFF},
+                         {0x68, 0x68, 0x68, 0xFF},
+                         {0x38, 0x38, 0x38, 0xFF}}),
+      _obj1ColorPalette({{0xD0, 0xE0, 0xF0, 0x00},
+                         {0x98, 0x98, 0x98, 0xFF},
+                         {0x68, 0x68, 0x68, 0xFF},
+                         {0x38, 0x38, 0x38, 0xFF}}),
       _scale(1.0f) {
     initBackround();
     initOam();
@@ -162,8 +170,36 @@ std::shared_ptr<IndexBuffer> GLRenderer::createTileGridIndexBuffer(
     return ib;
 }
 
+// ------------------- Sprites -------------------
+
+void GLRenderer::setSpriteTileData(void* iData, size_t iSize) {
+    _spriteCompressedTileData->uploadData(iData, iSize, GL_STATIC_READ);
+    _spriteDataDirty = true;
+}
+
 void GLRenderer::drawSprites() const {
+    if (_spriteDataDirty) {
+        _spriteTileDecoderProgram->bind();
+        _spriteCompressedTileData->bind();
+
+        int textureWritableBufferRef = 1;
+        _spriteTileDecoderProgram->setUniform("u_ImageOutput",
+                                              textureWritableBufferRef);
+        _spriteTileDecoderProgram->setUniformMatrix4("u_Palette",
+                                                     _obj0ColorPalette);
+
+        _spriteTileTexture->associateToWritableBuffer(textureWritableBufferRef);
+
+        _spriteTileDecoderProgram->execute(256, 1, 1);
+
+        SynchronizeOn(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+        _spriteDataDirty = false;
+    }
+
     _spriteRenderProgram->bind();
+    _spriteTileTexture->bind();
+    _spriteRenderProgram->setUniform(
+        "u_Texture", static_cast<int>(_spriteTileTexture->getTextureSlot()));
     _spriteRenderProgram->setUniformMatrix4("u_Proj",
                                             &(getProjectionMatrix())[0][0]);
     _spriteRenderProgram->setUniformMatrix4("u_Scale", &(_scale)[0][0]);
@@ -183,10 +219,18 @@ void GLRenderer::initOam() {
                                      GL_FRAGMENT_SHADER);
     _spriteRenderProgram->link();
 
-    std::shared_ptr<GLVertexBuffer> vb =
-        createTileGridVertexBuffer(2, kTotalSprites);
+    _spriteTileTexture =
+        std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
+    _spriteCompressedTileData = std::make_unique<GLShaderStorageBuffer>(0);
+    _spriteTileDecoderProgram = std::make_unique<GLProgram>();
+    _spriteTileDecoderProgram->loadShader("sandbox/compute.shader",
+                                          GL_COMPUTE_SHADER);
+    _spriteTileDecoderProgram->link();
 
-    std::shared_ptr<IndexBuffer> ib = createTileGridIndexBuffer(kTotalSprites);
+    std::shared_ptr<GLVertexBuffer> vb =
+        createTileGridVertexBuffer(16, 16 * 16);
+
+    std::shared_ptr<IndexBuffer> ib = createTileGridIndexBuffer(16 * 16);
 
     _spriteVertexArray.setIndexBuffer(ib);
     _spriteVertexArray.addVertexBuffer(vb);
