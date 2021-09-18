@@ -45,13 +45,7 @@ GLRenderer::GLRenderer()
     initBackround();
     initOam();
 
-    _tileDecoderProgram = std::make_unique<GLProgram>();
-    _renderProgram      = std::make_unique<GLProgram>();
-
-    _tileDecoderProgram->loadShader("sandbox/compute.shader",
-                                    GL_COMPUTE_SHADER);
-    _tileDecoderProgram->link();
-    _compressedTileData = std::make_unique<GLShaderStorageBuffer>(0);
+    _renderProgram = std::make_unique<GLProgram>();
 
     _renderProgram->loadShader("sandbox/vertex.shader", GL_VERTEX_SHADER);
     _renderProgram->loadShader("sandbox/fragment.shader", GL_FRAGMENT_SHADER);
@@ -69,16 +63,7 @@ void GLRenderer::clear(float iRed, float iGreen, float iBlue,
 void GLRenderer::flush() const {}
 
 void GLRenderer::setBackgroundTileData(void* iData, size_t iSize) {
-    _compressedTileData->uploadData(iData, iSize, GL_STATIC_READ);
-    _tileDecoderProgram->bind();
-    _compressedTileData->bind();
-    int textureBufferRef = 0;
-    _tileDecoderProgram->setUniform("u_ImageOutput", textureBufferRef);
-    _tileDecoderProgram->setUniformMatrix4("u_Palette", _colorPalette);
-
-    _backgroundTileTexture->associateToWritableBuffer(0);
-
-    _tileDecoderProgram->execute(256, 1, 1);
+    _tileDecoder.decode(iData, iSize, _backgroundTileTexture, _colorPalette);
 }
 
 void GLRenderer::setBackgroundTileMapData(void* iData, size_t iSize) {
@@ -178,19 +163,7 @@ std::shared_ptr<IndexBuffer> GLRenderer::createTileGridIndexBuffer(
 // ------------------- Sprites -------------------
 
 void GLRenderer::setSpriteTileData(void* iData, size_t iSize) {
-    _spriteCompressedTileData->uploadData(iData, iSize, GL_STATIC_READ);
-    _spriteTileDecoderProgram->bind();
-    _spriteCompressedTileData->bind();
-
-    int textureWritableBufferRef = 1;
-    _spriteTileDecoderProgram->setUniform("u_ImageOutput",
-                                          textureWritableBufferRef);
-    _spriteTileDecoderProgram->setUniformMatrix4("u_Palette",
-                                                 _obj0ColorPalette);
-
-    _spriteTileTexture->associateToWritableBuffer(textureWritableBufferRef);
-
-    _spriteTileDecoderProgram->execute(256, 1, 1);
+    _tileDecoder.decode(iData, iSize, _spriteTileTexture, _obj0ColorPalette);
 }
 
 void GLRenderer::setOam(void* iData, size_t iSize) {
@@ -244,11 +217,6 @@ void GLRenderer::initOam() {
 
     _spriteTileTexture =
         std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
-    _spriteCompressedTileData = std::make_unique<GLShaderStorageBuffer>(0);
-    _spriteTileDecoderProgram = std::make_unique<GLProgram>();
-    _spriteTileDecoderProgram->loadShader("sandbox/compute.shader",
-                                          GL_COMPUTE_SHADER);
-    _spriteTileDecoderProgram->link();
 
     std::shared_ptr<GLVertexBuffer> vb =
         createSpritesVertexBuffer(kTotalNumberOfSprites);
@@ -260,4 +228,28 @@ void GLRenderer::initOam() {
     _spriteVertexArray.addVertexBuffer(vb);
 
     _oam = std::make_unique<GLShaderStorageBuffer>(0);
+}
+
+GLTileDecoder::GLTileDecoder() {
+    _tileDecoderProgram = std::make_unique<GLProgram>();
+    _tileDecoderProgram->loadShader("sandbox/compute.shader",
+                                    GL_COMPUTE_SHADER);
+    _tileDecoderProgram->link();
+    _compressedTileData = std::make_unique<GLShaderStorageBuffer>(0);
+}
+
+void GLTileDecoder::decode(void* iData, size_t iSize,
+                           const std::unique_ptr<Texture>& iDestTexture,
+                           const ColorPalette& iPalette) const {
+    _compressedTileData->uploadData(iData, iSize, GL_STATIC_READ);
+    _compressedTileData->bind();
+
+    _tileDecoderProgram->bind();
+    int textureBufferRef = 0;
+    _tileDecoderProgram->setUniform("u_ImageOutput", textureBufferRef);
+    _tileDecoderProgram->setUniformMatrix4("u_Palette", iPalette);
+
+    iDestTexture->associateToWritableBuffer(0);
+
+    _tileDecoderProgram->execute(256, 1, 1);
 }

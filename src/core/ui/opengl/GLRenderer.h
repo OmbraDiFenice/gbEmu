@@ -7,6 +7,18 @@
 #include <core/ui/Texture.h>
 #include <core/ui/opengl/GLBuffer.h>
 
+class GLTileDecoder {
+   public:
+    GLTileDecoder();
+    void decode(void* iData, size_t iSize,
+                const std::unique_ptr<Texture>& iDestTexture,
+                const ColorPalette& iPalette) const;
+
+   private:
+    std::unique_ptr<Program> _tileDecoderProgram;
+    std::unique_ptr<ShaderStorageBuffer> _compressedTileData;
+};
+
 class GLRenderer : public Renderer {
    public:
     GLRenderer();
@@ -39,13 +51,12 @@ class GLRenderer : public Renderer {
         uint32_t iTotalSprites);
 
    private:
+    GLTileDecoder _tileDecoder;
+
     GLVertexArray _backgroundVertexArray;
     std::unique_ptr<Texture> _backgroundTileTexture;
 
     ColorPalette _colorPalette;
-
-    std::unique_ptr<Program> _tileDecoderProgram;
-    std::unique_ptr<ShaderStorageBuffer> _compressedTileData;
 
     std::unique_ptr<Program> _renderProgram;
     std::unique_ptr<ShaderStorageBuffer> _rendererShaderData;
@@ -56,8 +67,6 @@ class GLRenderer : public Renderer {
     GLVertexArray _spriteVertexArray;
     std::unique_ptr<Program> _spriteRenderProgram;
     std::unique_ptr<Texture> _spriteTileTexture;
-    std::unique_ptr<Program> _spriteTileDecoderProgram;
-    std::unique_ptr<ShaderStorageBuffer> _spriteCompressedTileData;
     ColorPalette _obj0ColorPalette;
     ColorPalette _obj1ColorPalette;
     std::unique_ptr<ShaderStorageBuffer> _oam;
