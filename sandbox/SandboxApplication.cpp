@@ -20,4 +20,7 @@ void SandboxApplication::init() {
     delete[] tileMap;
 }
 
-void SandboxApplication::drawScreen() { _renderer->drawBackground(); }
+void SandboxApplication::drawScreen() {
+    _renderer->drawBackground();
+    _renderer->drawSprites();
+}

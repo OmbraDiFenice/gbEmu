@@ -21,8 +21,11 @@ class GLRenderer : public Renderer {
     void setScale(float iScale) override;
     void setSignedBackgroundTileMap(bool iSigned) const override;
 
+    void drawSprites() const override;
+
    private:
     void initBackround();
+    void initOam();
 
     std::shared_ptr<IndexBuffer> createTileGridIndexBuffer(
         const uint32_t iTotalNumberOfTiles) const;
@@ -44,4 +47,8 @@ class GLRenderer : public Renderer {
     std::unique_ptr<ShaderStorageBuffer> _rendererShaderData;
 
     glm::mat4 _scale;
+
+   private:
+    GLVertexArray _spriteVertexArray;
+    std::unique_ptr<Program> _spriteRenderProgram;
 };
