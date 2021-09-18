@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Application.h>
-#include <core/emu/screen/ColorPalette.h>
-#include <core/ui/Program.h>
-#include <core/ui/Renderer.h>
-#include <core/ui/ShaderStorageBuffer.h>
-#include <core/ui/Texture.h>
+#include <core/graphics/ColorPalette.h>
+#include <core/graphics/Program.h>
+#include <core/graphics/Renderer.h>
+#include <core/graphics/ShaderStorageBuffer.h>
+#include <core/graphics/Texture.h>
 #include <glm/vec3.hpp>
 
 class SandboxApplication : public Application {

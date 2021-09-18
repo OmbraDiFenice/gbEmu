@@ -1,5 +1,5 @@
 #pragma once
-#include <core/ui/Shader.h>
+#include <core/graphics/Shader.h>
 #include <vector>
 
 class Program {

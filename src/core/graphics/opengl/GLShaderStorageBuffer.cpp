@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/ui/opengl/GLShaderStorageBuffer.h>
+#include <core/graphics/opengl/GLShaderStorageBuffer.h>
 #include <utils/GLErrorMacros.h>
 
 GLShaderStorageBuffer::GLShaderStorageBuffer(GLuint iBindingIndex) {

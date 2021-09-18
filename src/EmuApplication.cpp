@@ -2,7 +2,7 @@
 
 #include <EmuApplication.h>
 #include <core/emu/utils.h>
-#include <core/ui/opengl/GLRenderer.h>
+#include <core/graphics/opengl/GLRenderer.h>
 
 EmuApplication::~EmuApplication() {
     delete[] tileMapPatterns;

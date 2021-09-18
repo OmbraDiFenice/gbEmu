@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/ui/opengl/Synchronization.h>
+#include <core/graphics/opengl/Synchronization.h>
 #include <utils/GLErrorMacros.h>
 
 void SynchronizeOn(const SynchroItem& iSynchroItem) {

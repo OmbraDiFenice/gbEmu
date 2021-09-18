@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/emu/screen/ColorPalette.h>
+#include <core/graphics/ColorPalette.h>
 
 ColorPalette::ColorPalette(const glm::mat4& data) {
     _data = data;

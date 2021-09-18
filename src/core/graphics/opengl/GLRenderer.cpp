@@ -1,10 +1,10 @@
 #include <Pch.h>
 
-#include <core/ui/opengl/GLProgram.h>
-#include <core/ui/opengl/GLRenderer.h>
-#include <core/ui/opengl/GLShaderStorageBuffer.h>
-#include <core/ui/opengl/GLTexture.h>
-#include <core/ui/opengl/Synchronization.h>
+#include <core/graphics/opengl/GLProgram.h>
+#include <core/graphics/opengl/GLRenderer.h>
+#include <core/graphics/opengl/GLShaderStorageBuffer.h>
+#include <core/graphics/opengl/GLTexture.h>
+#include <core/graphics/opengl/Synchronization.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/vec3.hpp>
 #include <utils/GLErrorMacros.h>

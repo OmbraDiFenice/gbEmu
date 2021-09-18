@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/ui/opengl/GLTexture.h>
+#include <core/graphics/opengl/GLTexture.h>
 
 #include <stbi/stbi_image.h>
 #include <utils/GLErrorMacros.h>

@@ -1,6 +1,6 @@
 #pragma once
-#include <core/ui/Program.h>
-#include <core/ui/Shader.h>
+#include <core/graphics/Program.h>
+#include <core/graphics/Shader.h>
 #include <glad/gl.h>
 
 class GLProgram : public Program {

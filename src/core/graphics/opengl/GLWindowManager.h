@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/ui/Window.h>
+#include <core/graphics/Window.h>
 
 class GLFWwindow;
 

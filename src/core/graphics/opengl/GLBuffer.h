@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/ui/Buffer.h>
+#include <core/graphics/Buffer.h>
 
 /** Represents an OpenGl vertex buffer loaded on the GPU
  *

@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/ui/Buffer.h>
+#include <core/graphics/Buffer.h>
 
 VertexLayout::VertexLayout(std::initializer_list<VertexElement> iElements)
     : _elements(iElements) {

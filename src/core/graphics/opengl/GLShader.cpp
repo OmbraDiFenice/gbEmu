@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/ui/opengl/GLShader.h>
+#include <core/graphics/opengl/GLShader.h>
 
 #include <glad/gl.h>
 #include <utils/GLErrorMacros.h>

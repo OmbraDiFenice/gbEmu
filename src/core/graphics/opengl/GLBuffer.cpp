@@ -1,6 +1,6 @@
 #include <Pch.h>
 
-#include <core/ui/opengl/GLBuffer.h>
+#include <core/graphics/opengl/GLBuffer.h>
 #include <utils/GLErrorMacros.h>
 
 // ----------------- Vertex buffer -----------------

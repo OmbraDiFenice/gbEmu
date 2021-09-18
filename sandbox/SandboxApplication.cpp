@@ -1,6 +1,6 @@
 #include <Pch.h>
 #include <core/emu/utils.h>
-#include <core/ui/opengl/GLRenderer.h>
+#include <core/graphics/opengl/GLRenderer.h>
 
 #include "SandboxApplication.h"
 

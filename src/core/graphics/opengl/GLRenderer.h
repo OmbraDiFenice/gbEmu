@@ -1,10 +1,10 @@
 #pragma once
 
-#include <core/ui/Program.h>
-#include <core/ui/Renderer.h>
-#include <core/ui/ShaderStorageBuffer.h>
-#include <core/ui/Texture.h>
-#include <core/ui/opengl/GLBuffer.h>
+#include <core/graphics/Program.h>
+#include <core/graphics/Renderer.h>
+#include <core/graphics/ShaderStorageBuffer.h>
+#include <core/graphics/Texture.h>
+#include <core/graphics/opengl/GLBuffer.h>
 
 class GLTileDecoder {
    public:

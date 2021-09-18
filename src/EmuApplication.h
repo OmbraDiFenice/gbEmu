@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Application.h>
-#include <core/ui/Renderer.h>
+#include <core/graphics/Renderer.h>
 
 class EmuApplication : public Application {
    public:

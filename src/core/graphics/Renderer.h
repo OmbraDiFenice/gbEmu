@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/emu/screen/ColorPalette.h>
-#include <core/ui/Buffer.h>
+#include <core/graphics/Buffer.h>
+#include <core/graphics/ColorPalette.h>
 #include <glm/mat4x4.hpp>
 
 class Renderer {
