@@ -57,9 +57,9 @@ GLRenderer::GLRenderer()
       _scale(1.0f) {
     _background.renderProgram = std::make_unique<GLProgram>();
 
-    _background.renderProgram->loadShader("sandbox/backgroundVertex.shader",
+    _background.renderProgram->loadShader("backgroundVertex.shader",
                                           GL_VERTEX_SHADER);
-    _background.renderProgram->loadShader("sandbox/fragment.shader",
+    _background.renderProgram->loadShader("fragment.shader",
                                           GL_FRAGMENT_SHADER);
     _background.renderProgram->link();
 
@@ -164,8 +164,8 @@ SpriteData::SpriteData() {
     constexpr uint32_t kTotalNumberOfSprites = 40;
 
     renderProgram = std::make_unique<GLProgram>();
-    renderProgram->loadShader("sandbox/spriteVertex.shader", GL_VERTEX_SHADER);
-    renderProgram->loadShader("sandbox/fragment.shader", GL_FRAGMENT_SHADER);
+    renderProgram->loadShader("spriteVertex.shader", GL_VERTEX_SHADER);
+    renderProgram->loadShader("fragment.shader", GL_FRAGMENT_SHADER);
     renderProgram->link();
 
     texture = std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
@@ -186,8 +186,7 @@ SpriteData::SpriteData() {
 
 GLTileDecoder::GLTileDecoder() {
     _tileDecoderProgram = std::make_unique<GLProgram>();
-    _tileDecoderProgram->loadShader("sandbox/compute.shader",
-                                    GL_COMPUTE_SHADER);
+    _tileDecoderProgram->loadShader("compute.shader", GL_COMPUTE_SHADER);
     _tileDecoderProgram->link();
     _compressedTileData = std::make_unique<GLShaderStorageBuffer>(0);
 }
