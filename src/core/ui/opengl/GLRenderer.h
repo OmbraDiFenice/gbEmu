@@ -24,6 +24,12 @@ class GLRenderer : public Renderer {
    private:
     void initBackround();
 
+    std::shared_ptr<IndexBuffer> createTileGridIndexBuffer(
+        const uint32_t iTotalNumberOfTiles) const;
+    std::shared_ptr<GLVertexBuffer> createTileGridVertexBuffer(
+        const uint32_t iTilePerColumn,
+        const uint32_t iTotalNumberOfTiles) const;
+
    private:
     GLVertexArray _backgroundVertexArray;
     mutable bool _backgroundDataDirty;

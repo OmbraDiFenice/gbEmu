@@ -110,8 +110,21 @@ void GLRenderer::initBackround() {
     _backgroundTileTexture =
         std::make_unique<GLTexture>(nullptr, 8, 8 * 256, 1, 4, 4);
 
-    BackgroundTileVertex
-        backgroundTiles[kBackgroundTiles * 4];  // 4 vertices per tile
+    std::shared_ptr<GLVertexBuffer> vb =
+        createTileGridVertexBuffer(kTilesPerSide, kBackgroundTiles);
+
+    std::shared_ptr<IndexBuffer> ib =
+        createTileGridIndexBuffer(kBackgroundTiles);
+
+    _backgroundVertexArray.setIndexBuffer(ib);
+    _backgroundVertexArray.addVertexBuffer(vb);
+}
+std::shared_ptr<GLVertexBuffer> GLRenderer::createTileGridVertexBuffer(
+    const uint32_t iTilePerColumn, const uint32_t iTotalNumberOfTiles) const {
+    const uint32_t totalBackgroundTilesVertices =
+        iTotalNumberOfTiles * 4;  // 4 vertices per tile
+    auto backgroundTiles =
+        new BackgroundTileVertex[totalBackgroundTilesVertices];
     glm::vec2 positionPattern[4] = {
         // ortho projection has (0,0) on top left
         {0, 1},
@@ -119,27 +132,32 @@ void GLRenderer::initBackround() {
         {1, 0},
         {0, 0},
     };
-    for (uint32_t tileId = 0; tileId < kBackgroundTiles; ++tileId) {
+    for (uint32_t tileId = 0; tileId < iTotalNumberOfTiles; ++tileId) {
         for (uint32_t vertex = 0; vertex < 4; ++vertex) {
             backgroundTiles[tileId * 4 + vertex].tileId   = tileId;
             backgroundTiles[tileId * 4 + vertex].position = {
-                (positionPattern[vertex].x + (tileId % kTilesPerSide)) * 8.0f,
-                (positionPattern[vertex].y + (tileId / kTilesPerSide)) * 8.0f,
+                (positionPattern[vertex].x + (tileId % iTilePerColumn)) * 8.0f,
+                (positionPattern[vertex].y + (tileId / iTilePerColumn)) * 8.0f,
                 0.0f};
         }
     }
-    auto vb = std::make_shared<GLVertexBuffer>(backgroundTiles,
-                                               sizeof(backgroundTiles));
+    auto vb = std::make_shared<GLVertexBuffer>(
+        backgroundTiles,
+        sizeof(*backgroundTiles) * totalBackgroundTilesVertices);
+    delete[] backgroundTiles;
     vb->setLayout(BackgroundTileVertex::ToLayout());
+    return vb;
+}
 
-    const uint32_t kBgIndices = kBackgroundTiles * 6;  // 6 indices each tile
-    uint32_t indices[kBgIndices];
-    uint32_t pattern[] = {0, 1, 2, 2, 3, 0};
+std::shared_ptr<IndexBuffer> GLRenderer::createTileGridIndexBuffer(
+    const uint32_t iTotalNumberOfTiles) const {
+    const uint32_t kBgIndices = iTotalNumberOfTiles * 6;  // 6 indices each tile
+    auto indices              = new uint32_t[kBgIndices];
+    uint32_t pattern[]        = {0, 1, 2, 2, 3, 0};
     for (int i = 0; i < kBgIndices; ++i) {
         indices[i] = ((i / 6) * 4) + pattern[i % 6];
     }
     auto ib = std::make_shared<IndexBuffer>(indices, kBgIndices);
-
-    _backgroundVertexArray.setIndexBuffer(ib);
-    _backgroundVertexArray.addVertexBuffer(vb);
+    delete[] indices;
+    return ib;
 }
