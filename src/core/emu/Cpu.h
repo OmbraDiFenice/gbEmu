@@ -20,14 +20,17 @@ class Cpu {
             msb = iOther.msb;
             lsb = iOther.lsb;
         }
-        TwoByteRegister(Word iVal) { *reinterpret_cast<Word*>(this) = iVal; }
+        TwoByteRegister(Word iVal) { *reinterpret_cast<::Word*>(this) = iVal; }
         bool operator==(const TwoByteRegister& iOther) const {
             return msb == iOther.msb && lsb == iOther.lsb;
         }
+        operator Word() { return *reinterpret_cast<::Word*>(this); }
     };
 
     Word PC = 0;
     Byte memory[kMemSize];
+
+    Byte A;
 
     TwoByteRegister BC;
     Byte& B = BC.msb;
