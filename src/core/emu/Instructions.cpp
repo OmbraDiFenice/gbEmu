@@ -135,3 +135,13 @@ LD_REGaddr_REG(0x12, DE, A);  // LD (DE), A
 LD_REGaddr_REG(0x77, HL, A);  // LD (HL), A
 
 LD_IMMaddr_REG(0xEA, A);  // LD (nn), A
+
+CPU_INSTRUCTION(0xF2) {  // LD A, (C)
+    Byte value = cpu.memory[0xFF00 | cpu.C];
+    cpu.A      = value;
+}
+
+CPU_INSTRUCTION(0xE2) {  // LD (C), A
+    Byte addr        = 0x0FF00 | cpu.C;
+    cpu.memory[addr] = cpu.A;
+}

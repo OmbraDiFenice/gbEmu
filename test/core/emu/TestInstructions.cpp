@@ -225,3 +225,25 @@ LD_REGaddr_REG(0x12, DE, A);
 LD_REGaddr_REG(0x77, HL, A);
 
 LD_IMMaddr_REG(0xEA, A);
+
+TEST_F(LD, LD_A__C_) {
+    setNextInstruction(0xF2);
+    cpu.C              = Byte{0x01};
+    cpu.memory[0xFF01] = Byte{0x67};
+    cpu.A              = Byte{0x00};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.A = Byte{0x67};
+    });
+}
+
+TEST_F(LD, LD__C__A) {
+    setNextInstruction(0xE2);
+    cpu.C              = Byte(0x10);
+    cpu.memory[0xFF10] = Byte{0x00};
+    cpu.A              = Byte{0x67};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.memory[0xFF10] = Byte{0x67};
+    });
+}
