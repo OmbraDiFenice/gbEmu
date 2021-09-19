@@ -8,6 +8,7 @@
         cpu.reg        = immediate;            \
     }
 
+LD_REG_IMM(0x3E, A);  // LD A, n
 LD_REG_IMM(0x06, B);  // LD B, n
 LD_REG_IMM(0x0E, C);  // LD C, n
 LD_REG_IMM(0x16, D);  // LD D, n
@@ -37,6 +38,13 @@ LD_REG_IMM(0x2E, L);  // LD L, n
     CPU_INSTRUCTION(opcode) {                           \
         Byte value              = cpu.memory[cpu.PC++]; \
         cpu.memory[cpu.regaddr] = value;                \
+    }
+
+#define LD_REG_IMMaddr(opcode, reg)                                      \
+    CPU_INSTRUCTION(opcode) {                                            \
+        Word addr  = cpu.memory[cpu.PC++] | (cpu.memory[cpu.PC++] << 8); \
+        Byte value = cpu.memory[addr];                                   \
+        cpu.reg    = value;                                              \
     }
 
 LD_REG_REG(0x7F, A, A);       // LD A, A
@@ -103,3 +111,8 @@ LD_REGaddr_REG(0x73, HL, E);  // LD HL, E
 LD_REGaddr_REG(0x74, HL, H);  // LD HL, H
 LD_REGaddr_REG(0x75, HL, L);  // LD HL, L
 LD_REGaddr_IMM(0x36, HL);     // LD (HL), n
+
+LD_REG_REGaddr(0x0A, A, BC);  // LD A, (BC)
+LD_REG_REGaddr(0x1A, A, DE);  // LD A, (DE)
+
+LD_REG_IMMaddr(0xFA, A);  // LD A, (nn)

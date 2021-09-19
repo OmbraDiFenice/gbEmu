@@ -53,7 +53,7 @@ void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
 class LD : public TestInstruction {};
 
 #define LD_REG8_IMM(opcode, reg, value)          \
-    TEST_F(LD, LD_##reg##_imm) {                 \
+    TEST_F(LD, LD_##opcode##_##reg##_imm) {      \
         setNextInstruction(opcode, Byte{value}); \
         runAndCheck([](Cpu& cpu) {               \
             cpu.PC += 2;                         \
@@ -61,6 +61,7 @@ class LD : public TestInstruction {};
         });                                      \
     }
 
+LD_REG8_IMM(0x3E, A, 0x04);
 LD_REG8_IMM(0x06, B, 0x04);
 LD_REG8_IMM(0x0E, C, 0x04);
 LD_REG8_IMM(0x16, D, 0x04);
@@ -68,51 +69,64 @@ LD_REG8_IMM(0x1E, E, 0x04);
 LD_REG8_IMM(0x26, H, 0x04);
 LD_REG8_IMM(0x2E, L, 0x04);
 
-#define LD_REG_REG(opcode, dst, src) \
-    TEST_F(LD, LD_##dst##_##src) {   \
-        setNextInstruction(opcode);  \
-        cpu.dst = Byte{0x00};        \
-        cpu.src = Byte{0x67};        \
-        runAndCheck([](Cpu& cpu) {   \
-            cpu.PC += 1;             \
-            cpu.dst = Byte{0x67};    \
-        });                          \
+#define LD_REG_REG(opcode, dst, src)          \
+    TEST_F(LD, LD_##opcode##_##dst##_##src) { \
+        setNextInstruction(opcode);           \
+        cpu.dst = Byte{0x00};                 \
+        cpu.src = Byte{0x67};                 \
+        runAndCheck([](Cpu& cpu) {            \
+            cpu.PC += 1;                      \
+            cpu.dst = Byte{0x67};             \
+        });                                   \
     }
 
-#define LD_REG_REGaddr(opcode, dst, regaddr)    \
-    TEST_F(LD, LD_##dst##__##regaddr__) {       \
-        setNextInstruction(opcode);             \
-        cpu.dst                 = Byte{0x00};   \
-        cpu.regaddr             = Word{0x10A0}; \
-        cpu.memory[cpu.regaddr] = Byte{0x67};   \
-        runAndCheck([](Cpu& cpu) {              \
-            cpu.PC += 1;                        \
-            cpu.dst = Byte{0x67};               \
-        });                                     \
+#define LD_REG_REGaddr(opcode, dst, regaddr)           \
+    TEST_F(LD, LD_##opcode##_##dst##__##regaddr##__) { \
+        setNextInstruction(opcode);                    \
+        cpu.dst                 = Byte{0x00};          \
+        cpu.regaddr             = Word{0x10A0};        \
+        cpu.memory[cpu.regaddr] = Byte{0x67};          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 1;                               \
+            cpu.dst = Byte{0x67};                      \
+        });                                            \
     }
 
-#define LD_REGaddr_REG(opcode, regaddr, src)      \
-    TEST_F(LD, LD__##regaddr##__##src) {          \
-        setNextInstruction(opcode);               \
-        cpu.regaddr             = Word{0x10A0};   \
-        cpu.src                 = Byte{0x67};     \
-        cpu.memory[cpu.regaddr] = Byte{0x00};     \
-        runAndCheck([](Cpu& cpu) {                \
-            cpu.PC += 1;                          \
-            cpu.memory[cpu.regaddr] = Byte{0x67}; \
-        });                                       \
+#define LD_REGaddr_REG(opcode, regaddr, src)        \
+    TEST_F(LD, LD_##opcode##__##regaddr##__##src) { \
+        setNextInstruction(opcode);                 \
+        cpu.regaddr             = Word{0x10A0};     \
+        cpu.src                 = Byte{0x67};       \
+        cpu.memory[cpu.regaddr] = Byte{0x00};       \
+        runAndCheck([](Cpu& cpu) {                  \
+            cpu.PC += 1;                            \
+            cpu.memory[cpu.regaddr] = Byte{0x67};   \
+        });                                         \
     }
 
-#define LD_REGaddr_IMM(opcode, regaddr, value)  \
-    TEST_F(LD, LD__##regaddr##_imm) {           \
-        setNextInstruction(opcode);             \
-        cpu.regaddr             = Word{0x10A0}; \
-        cpu.memory[cpu.regaddr] = Byte{0x00};   \
-        cpu.memory[cpu.PC + 1]  = value;        \
-        runAndCheck([](Cpu& cpu) {              \
-            cpu.PC += 2;                        \
-            cpu.memory[0x10A0] = Byte{value};   \
-        });                                     \
+#define LD_REGaddr_IMM(opcode, regaddr, value)   \
+    TEST_F(LD, LD_##opcode##__##regaddr##_imm) { \
+        setNextInstruction(opcode);              \
+        cpu.regaddr             = Word{0x10A0};  \
+        cpu.memory[cpu.regaddr] = Byte{0x00};    \
+        cpu.memory[cpu.PC + 1]  = value;         \
+        runAndCheck([](Cpu& cpu) {               \
+            cpu.PC += 2;                         \
+            cpu.memory[0x10A0] = Byte{value};    \
+        });                                      \
+    }
+
+#define LD_REG_IMMaddr(opcode, reg, immaddr)            \
+    TEST_F(LD, LD_##opcode##__##regaddr##_immaddr) {    \
+        setNextInstruction(opcode);                     \
+        cpu.memory[cpu.PC + 1] = (immaddr >> 0) & 0xFF; \
+        cpu.memory[cpu.PC + 2] = (immaddr >> 8) & 0xFF; \
+        cpu.memory[immaddr]    = Byte{0x67};            \
+        cpu.reg                = Byte{0x00};            \
+        runAndCheck([](Cpu& cpu) {                      \
+            cpu.PC += 3;                                \
+            cpu.reg = Byte{0x67};                       \
+        });                                             \
     }
 
 LD_REG_REG(0X7F, A, A);
@@ -179,3 +193,8 @@ LD_REGaddr_REG(0X73, HL, E);
 LD_REGaddr_REG(0X74, HL, H);
 LD_REGaddr_REG(0X75, HL, L);
 LD_REGaddr_IMM(0x36, HL, 0x67);
+
+LD_REG_REGaddr(0x0A, A, BC);
+LD_REG_REGaddr(0x1A, A, DE);
+
+LD_REG_IMMaddr(0xFA, A, 0x10A0);
