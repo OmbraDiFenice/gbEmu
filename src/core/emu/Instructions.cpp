@@ -163,3 +163,9 @@ CPU_INSTRUCTION(0x2A) {  // LD A, (HLI)
     cpu.A     = cpu.memory[addr];
     ++cpu.HL;
 }
+
+CPU_INSTRUCTION(0x22) {  // LD (HLI), A
+    size_t addr      = cpu.HL;
+    cpu.memory[addr] = cpu.A;
+    ++cpu.HL;
+}
