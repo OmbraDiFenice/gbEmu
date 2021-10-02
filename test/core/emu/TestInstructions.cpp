@@ -295,3 +295,23 @@ TEST_F(LD, LD__HLI__A) {
         cpu.memory[0x10] = Byte{0x67};
     });
 }
+
+TEST_F(LD, LD__IMMaddrRel__A) {  // LD (n), A
+    setNextInstruction(0xE0, 0x10);
+    cpu.A              = Byte{0x67};
+    cpu.memory[0xFF10] = Byte{0x00};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 2;
+        cpu.memory[0xFF10] = Byte{0x67};
+    });
+}
+
+TEST_F(LD, LD_A__IMMaddrRel_) {  // LD A, (n)
+    setNextInstruction(0xF0, 0x10);
+    cpu.memory[0xFF10] = Byte{0x67};
+    cpu.A              = Byte{0x00};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 2;
+        cpu.A = Byte{0x67};
+    });
+}

@@ -169,3 +169,15 @@ CPU_INSTRUCTION(0x22) {  // LD (HLI), A
     cpu.memory[addr] = cpu.A;
     ++cpu.HL;
 }
+
+CPU_INSTRUCTION(0xE0) {  // LD (n), A
+    Byte immediate   = cpu.memory[cpu.PC++];
+    size_t addr      = 0xFF00 + immediate;
+    cpu.memory[addr] = cpu.A;
+}
+
+CPU_INSTRUCTION(0xF0) {  // LD A, (n)
+    Byte immediate = cpu.memory[cpu.PC++];
+    size_t addr    = 0xFF00 + immediate;
+    cpu.A          = cpu.memory[addr];
+}
