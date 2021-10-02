@@ -260,6 +260,18 @@ TEST_F(LD, LD_A__HLD__) {
     });
 }
 
+TEST_F(LD, LD__HLD__A) {
+    setNextInstruction(0x32);
+    cpu.A            = Byte{0x67};
+    cpu.HL           = Word{0x10};
+    cpu.memory[0x10] = Byte{0x00};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.HL           = cpu.HL - Word{1};
+        cpu.memory[0x10] = Byte{0x67};
+    });
+}
+
 TEST_F(LD, LD_A__HLI__) {
     setNextInstruction(0x2A);
     cpu.HL           = Word{0x10};

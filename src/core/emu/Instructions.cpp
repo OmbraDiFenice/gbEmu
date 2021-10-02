@@ -152,6 +152,12 @@ CPU_INSTRUCTION(0x3A) {  // LD A, (HLD)
     --cpu.HL;
 }
 
+CPU_INSTRUCTION(0x32) {  // LD (HLD), A
+    size_t addr      = cpu.HL;
+    cpu.memory[addr] = cpu.A;
+    --cpu.HL;
+}
+
 CPU_INSTRUCTION(0x2A) {  // LD A, (HLI)
     Word addr = cpu.HL;
     cpu.A     = cpu.memory[addr];
