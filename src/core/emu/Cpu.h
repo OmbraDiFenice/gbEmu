@@ -56,6 +56,7 @@ class Cpu {
     };
 
     Word PC = 0;
+    Word SP = 0;
     Byte memory[kMemSize];
 
     Byte A;

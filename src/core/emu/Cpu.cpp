@@ -13,6 +13,7 @@ void Cpu::Add(Byte iOpcode, Instruction&& iCode) {
 
 Cpu::Cpu(const Cpu& iCpu) {
     PC = iCpu.PC;
+    SP = iCpu.SP;
     BC = iCpu.BC;
     DE = iCpu.DE;
     HL = iCpu.HL;

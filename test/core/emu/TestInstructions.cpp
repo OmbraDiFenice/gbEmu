@@ -6,6 +6,7 @@ class TestInstruction : public ::testing::Test {
     TestInstruction();
     void setNextInstruction(Byte opcode);
     void setNextInstruction(Byte opcode, Byte data);
+    void setNextInstruction(Byte opcode, Word data);
     void runAndCheck(std::function<void(Cpu&)>&& setupExpected);
 
    protected:
@@ -14,6 +15,7 @@ class TestInstruction : public ::testing::Test {
 
 TestInstruction::TestInstruction() {
     cpu.PC = 0;
+    cpu.SP = 0;
     cpu.BC = 0;
     cpu.DE = 0;
     cpu.HL = 0;
@@ -30,12 +32,19 @@ void TestInstruction::setNextInstruction(Byte opcode, Byte data) {
     cpu.memory[cpu.PC + 1] = data;
 }
 
+void TestInstruction::setNextInstruction(Byte opcode, Word data) {
+    setNextInstruction(opcode);
+    cpu.memory[cpu.PC + 1] = (data >> 8) & 0xFF;
+    cpu.memory[cpu.PC + 2] = data & 0xFF;
+}
+
 void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
     Cpu expectedCpu{cpu};
     setupExpected(expectedCpu);
     cpu.tick();
 
     EXPECT_EQ(expectedCpu.PC, cpu.PC);
+    EXPECT_EQ(expectedCpu.SP, cpu.SP);
     EXPECT_EQ(expectedCpu.A, cpu.A);
     EXPECT_EQ(expectedCpu.B, cpu.B);
     EXPECT_EQ(expectedCpu.C, cpu.C);
@@ -52,22 +61,22 @@ void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
 
 class LD : public TestInstruction {};
 
-#define LD_REG8_IMM(opcode, reg, value)          \
-    TEST_F(LD, LD_##opcode##_##reg##_imm) {      \
-        setNextInstruction(opcode, Byte{value}); \
-        runAndCheck([](Cpu& cpu) {               \
-            cpu.PC += 2;                         \
-            cpu.reg = Byte{value};               \
-        });                                      \
+#define LD_REG_IMM(opcode, reg, value)      \
+    TEST_F(LD, LD_##opcode##_##reg##_imm) { \
+        setNextInstruction(opcode, value);  \
+        runAndCheck([](Cpu& cpu) {          \
+            cpu.PC += sizeof(value) + 1;    \
+            cpu.reg = value;                \
+        });                                 \
     }
 
-LD_REG8_IMM(0x3E, A, 0x04);
-LD_REG8_IMM(0x06, B, 0x04);
-LD_REG8_IMM(0x0E, C, 0x04);
-LD_REG8_IMM(0x16, D, 0x04);
-LD_REG8_IMM(0x1E, E, 0x04);
-LD_REG8_IMM(0x26, H, 0x04);
-LD_REG8_IMM(0x2E, L, 0x04);
+LD_REG_IMM(0x3E, A, Byte{0x04});
+LD_REG_IMM(0x06, B, Byte{0x04});
+LD_REG_IMM(0x0E, C, Byte{0x04});
+LD_REG_IMM(0x16, D, Byte{0x04});
+LD_REG_IMM(0x1E, E, Byte{0x04});
+LD_REG_IMM(0x26, H, Byte{0x04});
+LD_REG_IMM(0x2E, L, Byte{0x04});
 
 #define LD_REG_REG(opcode, dst, src)          \
     TEST_F(LD, LD_##opcode##_##dst##_##src) { \
@@ -297,7 +306,7 @@ TEST_F(LD, LD__HLI__A) {
 }
 
 TEST_F(LD, LD__IMMaddrRel__A) {  // LD (n), A
-    setNextInstruction(0xE0, 0x10);
+    setNextInstruction(0xE0, Byte{0x10});
     cpu.A              = Byte{0x67};
     cpu.memory[0xFF10] = Byte{0x00};
     runAndCheck([](Cpu& cpu) {
@@ -307,7 +316,7 @@ TEST_F(LD, LD__IMMaddrRel__A) {  // LD (n), A
 }
 
 TEST_F(LD, LD_A__IMMaddrRel_) {  // LD A, (n)
-    setNextInstruction(0xF0, 0x10);
+    setNextInstruction(0xF0, Byte{0x10});
     cpu.memory[0xFF10] = Byte{0x67};
     cpu.A              = Byte{0x00};
     runAndCheck([](Cpu& cpu) {
@@ -315,3 +324,8 @@ TEST_F(LD, LD_A__IMMaddrRel_) {  // LD A, (n)
         cpu.A = Byte{0x67};
     });
 }
+
+LD_REG_IMM(0x01, BC, Word{0x6789});
+LD_REG_IMM(0x11, DE, Word{0x6789});
+LD_REG_IMM(0x21, HL, Word{0x6789});
+LD_REG_IMM(0x31, SP, Word{0x6789});

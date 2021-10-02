@@ -8,6 +8,14 @@
         cpu.reg        = immediate;            \
     }
 
+#define LD_REG16_IMM(opcode, reg)                               \
+    CPU_INSTRUCTION(opcode) {                                   \
+        Byte immediateMsb = cpu.memory[cpu.PC++];               \
+        Byte immediateLsb = cpu.memory[cpu.PC++];               \
+        Word immediate    = (immediateMsb << 8) | immediateLsb; \
+        cpu.reg           = immediate;                          \
+    }
+
 LD_REG_IMM(0x3E, A);  // LD A, n
 LD_REG_IMM(0x06, B);  // LD B, n
 LD_REG_IMM(0x0E, C);  // LD C, n
@@ -181,3 +189,8 @@ CPU_INSTRUCTION(0xF0) {  // LD A, (n)
     size_t addr    = 0xFF00 + immediate;
     cpu.A          = cpu.memory[addr];
 }
+
+LD_REG16_IMM(0x01, BC);  // LD BC, nn
+LD_REG16_IMM(0x11, DE);  // LD DE, nn
+LD_REG16_IMM(0x21, HL);  // LD HL, nn
+LD_REG16_IMM(0x31, SP);  // LD SP, nn
