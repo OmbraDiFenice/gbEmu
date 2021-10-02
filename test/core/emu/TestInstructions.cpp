@@ -89,6 +89,17 @@ LD_REG_IMM(0x2E, L, Byte{0x04});
         });                                   \
     }
 
+#define LD_REG16_REG16(opcode, dst, src)      \
+    TEST_F(LD, LD_##opcode##_##dst##_##src) { \
+        setNextInstruction(opcode);           \
+        cpu.dst = Word{0x00};                 \
+        cpu.src = Word{0x6789};               \
+        runAndCheck([](Cpu& cpu) {            \
+            cpu.PC += 1;                      \
+            cpu.dst = Word{0x6789};           \
+        });                                   \
+    }
+
 #define LD_REG_REGaddr(opcode, dst, regaddr)           \
     TEST_F(LD, LD_##opcode##_##dst##__##regaddr##__) { \
         setNextInstruction(opcode);                    \
@@ -329,3 +340,5 @@ LD_REG_IMM(0x01, BC, Word{0x6789});
 LD_REG_IMM(0x11, DE, Word{0x6789});
 LD_REG_IMM(0x21, HL, Word{0x6789});
 LD_REG_IMM(0x31, SP, Word{0x6789});
+
+LD_REG16_REG16(0xF9, SP, HL);

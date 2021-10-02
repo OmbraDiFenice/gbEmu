@@ -25,10 +25,7 @@ LD_REG_IMM(0x26, H);  // LD H, n
 LD_REG_IMM(0x2E, L);  // LD L, n
 
 #define LD_REG_REG(opcode, dst, src) \
-    CPU_INSTRUCTION(opcode) {        \
-        Byte value = cpu.src;        \
-        cpu.dst    = value;          \
-    }
+    CPU_INSTRUCTION(opcode) { cpu.dst = cpu.src; }
 
 #define LD_REG_REGaddr(opcode, dst, regaddr)  \
     CPU_INSTRUCTION(opcode) {                 \
@@ -194,3 +191,5 @@ LD_REG16_IMM(0x01, BC);  // LD BC, nn
 LD_REG16_IMM(0x11, DE);  // LD DE, nn
 LD_REG16_IMM(0x21, HL);  // LD HL, nn
 LD_REG16_IMM(0x31, SP);  // LD SP, nn
+
+LD_REG_REG(0xF9, SP, HL);  // LD SP, HL
