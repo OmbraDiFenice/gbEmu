@@ -44,7 +44,7 @@ void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
     EXPECT_EQ(expectedCpu.H, cpu.H);
     EXPECT_EQ(expectedCpu.L, cpu.L);
 
-    for (uint32_t addr = 0; addr < Cpu::kMemSize; ++addr) {
+    for (size_t addr = 0; addr < Cpu::kMemSize; ++addr) {
         EXPECT_EQ(expectedCpu.memory[addr], cpu.memory[addr])
             << "memory values differ at address: " << addr;
     }

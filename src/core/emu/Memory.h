@@ -1,7 +1,7 @@
 #pragma once
 
-using Byte = uint32_t;
-using Word = uint32_t;
+using Byte  = uint8_t;
+using Word  = uint32_t;
 using Dword = uint32_t;
 
 #define LEN_BYTE 8u

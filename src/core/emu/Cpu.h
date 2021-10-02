@@ -20,11 +20,39 @@ class Cpu {
             msb = iOther.msb;
             lsb = iOther.lsb;
         }
-        TwoByteRegister(Word iVal) { *reinterpret_cast<::Word*>(this) = iVal; }
+        TwoByteRegister(Word iVal) { assign(iVal); }
+        TwoByteRegister& operator=(Word iVal) {
+            assign(iVal);
+            return *this;
+        }
+        TwoByteRegister operator+=(Word iVal) {
+            assign(Word{*this} + iVal);
+            return *this;
+        }
         bool operator==(const TwoByteRegister& iOther) const {
             return msb == iOther.msb && lsb == iOther.lsb;
         }
-        operator Word() { return *reinterpret_cast<::Word*>(this); }
+        TwoByteRegister operator-(::Word iVal) {
+            *this = Word{*this} - iVal;
+            return *this;
+        }
+        TwoByteRegister& operator--() {
+            assign(*this - Word{1});
+            return *this;
+        }
+        TwoByteRegister& operator++() {
+            assign(*this + Word{1});
+            return *this;
+        }
+        operator Word() { return msb << 8 | lsb; }
+
+       private:
+        void assign(Word iVal) {
+            msb = getMsb(iVal);
+            lsb = getLsb(iVal);
+        }
+        Byte getMsb(const Word& iWord) { return (iWord >> 8) & 0xFF; }
+        Byte getLsb(const Word& iWord) { return iWord & 0xFF; }
     };
 
     Word PC = 0;
