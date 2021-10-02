@@ -247,3 +247,15 @@ TEST_F(LD, LD__C__A) {
         cpu.memory[0xFF10] = Byte{0x67};
     });
 }
+
+TEST_F(LD, LD_A__HLD__) {
+    setNextInstruction(0x3A);
+    cpu.HL             = Word{0xFF10};
+    cpu.memory[0xFF10] = Byte{0x67};
+    cpu.A              = Byte{0x00};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.A  = Byte{0x67};
+        cpu.HL = cpu.HL - Word{1};
+    });
+}

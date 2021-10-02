@@ -145,3 +145,9 @@ CPU_INSTRUCTION(0xE2) {  // LD (C), A
     size_t addr      = 0x0FF00 + cpu.C;
     cpu.memory[addr] = cpu.A;
 }
+
+CPU_INSTRUCTION(0x3A) {  // LD A, (HLD)
+    Word addr = cpu.HL;
+    cpu.A     = cpu.memory[addr];
+    --cpu.HL;
+}
