@@ -96,7 +96,7 @@ class Cpu {
 
     static void Add(Byte iOpcode, Instruction&& iCode);
 
-    Byte sum(Byte iVal1, Byte iVal2);
+    Byte sum(Byte iVal1, Byte iVal2, bool withCarry = false);
     Word sum(Word iVal1, Word iVal2);
     Byte sub(Byte iVal1, Byte iVal2);
     Word sub(Word iVal1, Word iVal2);

@@ -76,8 +76,9 @@ void Cpu::setFlags(const std::string& iFlags) {
     }
 }
 
-Byte Cpu::sum(Byte iVal1, Byte iVal2) {
-    auto [result, halfCarry, fullCarry] = adder(iVal1, iVal2, false);
+Byte Cpu::sum(Byte iVal1, Byte iVal2, bool withCarry) {
+    auto [result, halfCarry, fullCarry] =
+        adder(iVal1, iVal2, withCarry && getFlag(Flag::C));
     setFlag(Flag::H, halfCarry);
     setFlag(Flag::C, fullCarry);
     return result;

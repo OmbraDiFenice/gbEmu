@@ -247,3 +247,20 @@ ADD(0x84, H);                 // ADD A, H
 ADD(0x85, L);                 // ADD A, L
 ADD(0x86, memory[cpu.HL]);    // ADD A, (HL)
 ADD(0xC6, memory[cpu.PC++]);  // ADD A, #
+
+#define ADC(opcode, reg)                                \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.sum(cpu.A, cpu.reg, true);          \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlag(Cpu::Flag::N, false);               \
+    }
+
+ADC(0x8F, A);                 // ADC A, A
+ADC(0x88, B);                 // ADC A, B
+ADC(0x89, C);                 // ADC A, C
+ADC(0x8A, D);                 // ADC A, D
+ADC(0x8B, E);                 // ADC A, E
+ADC(0x8C, H);                 // ADC A, H
+ADC(0x8D, L);                 // ADC A, L
+ADC(0x8E, memory[cpu.HL]);    // ADC A, (HL)
+ADC(0xCE, memory[cpu.PC++]);  // ADC A, #
