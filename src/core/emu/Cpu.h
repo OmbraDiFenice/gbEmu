@@ -9,6 +9,7 @@ using Instruction = std::function<void(Cpu&)>;
 class Cpu {
    public:
     static constexpr size_t kMemSize = 0x10000;
+    enum class Flag { Z = 7, N = 6, H = 5, C = 4 };
     struct TwoByteRegister {
         Byte msb;
         Byte lsb;
@@ -59,7 +60,9 @@ class Cpu {
     Word SP = 0;
     Byte memory[kMemSize];
 
-    Byte A;
+    TwoByteRegister AF;
+    Byte& A = AF.msb;
+    Byte& F = AF.lsb;
 
     TwoByteRegister BC;
     Byte& B = BC.msb;
@@ -78,7 +81,19 @@ class Cpu {
     Cpu(const Cpu& iCpu);
     void tick();
 
+    bool getFlag(Flag iFlag) const;
+    void setFlag(Cpu::Flag iFlag, bool iValue);
+
     static void Add(Byte iOpcode, Instruction&& iCode);
+
+   protected:
+    Byte sum(Byte iVal1, Byte iVal2);
+    Word sum(Word iVal1, Word iVal2);
+    Byte sub(Byte iVal1, Byte iVal2);
+    Word sub(Word iVal1, Word iVal2);
+
+   private:
+    std::tuple<Byte, bool, bool> adder(Byte iVal1, Byte iVal2, bool c0) const;
 
    private:
     static std::unordered_map<Byte, Instruction> _instructionSet;

@@ -16,10 +16,10 @@ class TestInstruction : public ::testing::Test {
 TestInstruction::TestInstruction() {
     cpu.PC = 0;
     cpu.SP = 0;
+    cpu.AF = 0;
     cpu.BC = 0;
     cpu.DE = 0;
     cpu.HL = 0;
-    cpu.A  = 0;
     std::memset(cpu.memory, 0, Cpu::kMemSize);
 }
 
@@ -57,6 +57,12 @@ void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
         EXPECT_EQ(expectedCpu.memory[addr], cpu.memory[addr])
             << "memory values differ at address: " << addr;
     }
+
+    EXPECT_EQ(expectedCpu.F & 0x0F, cpu.F & 0x0F);
+    EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::Z), cpu.getFlag(Cpu::Flag::Z));
+    EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::N), cpu.getFlag(Cpu::Flag::N));
+    EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::H), cpu.getFlag(Cpu::Flag::H));
+    EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::C), cpu.getFlag(Cpu::Flag::C));
 }
 
 class LD : public TestInstruction {};
@@ -342,3 +348,217 @@ LD_REG_IMM(0x21, HL, Word{0x6789});
 LD_REG_IMM(0x31, SP, Word{0x6789});
 
 LD_REG16_REG16(0xF9, SP, HL);
+
+class TestCarry : public ::testing::Test, public Cpu {};
+
+TEST_F(TestCarry, onAdd) {
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x00}, sum(Byte{0x00}, Byte{0x00}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x01}, sum(Byte{0x00}, Byte{0x01}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x10}, sum(Byte{0x0F}, Byte{0x01}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x10}, sum(Byte{0x0A}, Byte{0x06}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0xF1}, sum(Byte{0xF0}, Byte{0x01}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0x01}, sum(Byte{0xF0}, Byte{0x11}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0x00}, sum(Byte{0xFB}, Byte{0x05}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0xFE}, sum(Byte{0xFF}, Byte{0xFF}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+}
+
+TEST_F(TestCarry, onSub) {
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x00}, sub(Byte{0x00}, Byte{0x00}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0xFF}, sub(Byte{0x00}, Byte{0x01}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x01}, sub(Byte{0x02}, Byte{0x01}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0xF2}, sub(Byte{0x02}, Byte{0x10}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x8E}, sub(Byte{0xA2}, Byte{0x14}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Byte{0x00}, sub(Byte{0xFF}, Byte{0xFF}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+}
+
+TEST_F(TestCarry, onAdd16) {
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x0000}, sum(Word{0x0000}, Word{0x0000}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x0100}, sum(Word{0x0000}, Word{0x0100}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x1000}, sum(Word{0x0F00}, Word{0x0100}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x1000}, sum(Word{0x0A00}, Word{0x0600}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0xF100}, sum(Word{0xF000}, Word{0x0100}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0x0100}, sum(Word{0xF000}, Word{0x1100}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0x0000}, sum(Word{0xFB00}, Word{0x0500}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0xFE00}, sum(Word{0xFF00}, Word{0xFF00}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0xFF00}, sum(Word{0xFEFF}, Word{0x0001}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0x0000}, sum(Word{0xFFFF}, Word{0x0001}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x0100}, sum(Word{0x00F0}, Word{0x0010}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+}
+
+TEST_F(TestCarry, onSub16) {
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x0000}, sub(Word{0x0000}, Word{0x0000}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0xFF00}, sub(Word{0x0000}, Word{0x0100}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x0100}, sub(Word{0x0200}, Word{0x0100}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0xF200}, sub(Word{0x0200}, Word{0x1000}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x8E00}, sub(Word{0xA200}, Word{0x1400}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0x0000}, sub(Word{0xFF00}, Word{0xFF00}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, true);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0xFEF0}, sub(Word{0xFF10}, Word{0x0020}));
+    EXPECT_FALSE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, true);
+    EXPECT_EQ(Word{0xEFF0}, sub(Word{0xF010}, Word{0x0020}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_FALSE(getFlag(Cpu::Flag::C));
+
+    setFlag(Cpu::Flag::H, false);
+    setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Word{0xFFF0}, sub(Word{0x0010}, Word{0x0020}));
+    EXPECT_TRUE(getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(getFlag(Cpu::Flag::C));
+}
