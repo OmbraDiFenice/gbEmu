@@ -30,6 +30,10 @@ class Cpu {
             assign(Word{*this} + iVal);
             return *this;
         }
+        TwoByteRegister operator-=(Word iVal) {
+            assign(Word{*this} - iVal);
+            return *this;
+        }
         bool operator==(const TwoByteRegister& iOther) const {
             return msb == iOther.msb && lsb == iOther.lsb;
         }

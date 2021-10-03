@@ -208,3 +208,14 @@ CPU_INSTRUCTION(0x08) {  // LD (nn), SP
     cpu.memory[addr]     = cpu.SP.msb;
     cpu.memory[addr + 1] = cpu.SP.lsb;
 }
+
+#define PUSH(opcode, reg)                   \
+    CPU_INSTRUCTION(opcode) {               \
+        cpu.memory[--cpu.SP] = cpu.reg.msb; \
+        cpu.memory[--cpu.SP] = cpu.reg.lsb; \
+    }
+
+PUSH(0xF5, AF);  // PUSH AF
+PUSH(0xC5, BC);  // PUSH BC
+PUSH(0xD5, DE);  // PUSH DE
+PUSH(0xE5, HL);  // PUSH HL

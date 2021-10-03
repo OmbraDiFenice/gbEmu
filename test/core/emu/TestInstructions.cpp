@@ -586,3 +586,23 @@ TEST_F(LD, LD__IMMaddr__SP) {
         cpu.memory[0x1123] = Byte{0x89};
     });
 }
+
+#define PUSH(opcode, reg)                    \
+    TEST_F(LD, PUSH_##reg) {                 \
+        setNextInstruction(opcode);          \
+        cpu.SP             = Word{0x1000};   \
+        cpu.reg            = Word{0x6789};   \
+        cpu.memory[0x0FFF] = Byte{0x00};     \
+        cpu.memory[0x0FFE] = Byte{0x00};     \
+        runAndCheck([](Cpu& cpu) {           \
+            cpu.PC += 1;                     \
+            cpu.SP -= 2;                     \
+            cpu.memory[0x0FFF] = Byte{0x67}; \
+            cpu.memory[0x0FFE] = Byte{0x89}; \
+        });                                  \
+    }
+
+PUSH(0xF5, AF);
+PUSH(0xC5, BC);
+PUSH(0xD5, DE);
+PUSH(0xE5, HL);
