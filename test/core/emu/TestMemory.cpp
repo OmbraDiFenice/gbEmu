@@ -1,6 +1,7 @@
-#include <gtest/gtest.h>
+#include <Pch.h>
 
 #include <core/emu/Memory.h>
+#include <gtest/gtest.h>
 
 class TestMemory : public ::testing::Test {};
 
