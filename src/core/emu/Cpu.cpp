@@ -45,6 +45,37 @@ void Cpu::setFlag(Cpu::Flag iFlag, bool iValue) {
     }
 }
 
+void Cpu::setFlags(const std::string& iFlags) {
+    for (char f : iFlags) {
+        switch (f) {
+            case 'z':
+                setFlag(Cpu::Flag::Z, false);
+                break;
+            case 'n':
+                setFlag(Cpu::Flag::N, false);
+                break;
+            case 'h':
+                setFlag(Cpu::Flag::H, false);
+                break;
+            case 'c':
+                setFlag(Cpu::Flag::C, false);
+                break;
+            case 'Z':
+                setFlag(Cpu::Flag::Z, true);
+                break;
+            case 'N':
+                setFlag(Cpu::Flag::N, true);
+                break;
+            case 'H':
+                setFlag(Cpu::Flag::H, true);
+                break;
+            case 'C':
+                setFlag(Cpu::Flag::C, true);
+                break;
+        }
+    }
+}
+
 Byte Cpu::sum(Byte iVal1, Byte iVal2) {
     auto [result, halfCarry, fullCarry] = adder(iVal1, iVal2, false);
     setFlag(Flag::H, halfCarry);

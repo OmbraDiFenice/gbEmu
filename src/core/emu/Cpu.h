@@ -83,10 +83,10 @@ class Cpu {
 
     bool getFlag(Flag iFlag) const;
     void setFlag(Cpu::Flag iFlag, bool iValue);
+    void setFlags(const std::string& iFlags);
 
     static void Add(Byte iOpcode, Instruction&& iCode);
 
-   protected:
     Byte sum(Byte iVal1, Byte iVal2);
     Word sum(Word iVal1, Word iVal2);
     Byte sub(Byte iVal1, Byte iVal2);

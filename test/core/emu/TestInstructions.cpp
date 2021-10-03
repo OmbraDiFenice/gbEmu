@@ -562,3 +562,15 @@ TEST_F(TestCarry, onSub16) {
     EXPECT_TRUE(getFlag(Cpu::Flag::H));
     EXPECT_TRUE(getFlag(Cpu::Flag::C));
 }
+
+TEST_F(LD, LDHL_SP_IMM) {
+    setNextInstruction(0xF8, Byte{0x14});
+    cpu.HL = Word{0x00};
+    cpu.SP = Word{0xFFF0};
+    cpu.setFlags("ZNhc");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 2;
+        cpu.setFlags("znHC");
+        cpu.HL = Word{0x0004};
+    });
+}

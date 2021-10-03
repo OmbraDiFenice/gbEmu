@@ -193,3 +193,10 @@ LD_REG16_IMM(0x21, HL);  // LD HL, nn
 LD_REG16_IMM(0x31, SP);  // LD SP, nn
 
 LD_REG_REG(0xF9, SP, HL);  // LD SP, HL
+
+CPU_INSTRUCTION(0xF8) {  // LD HL, SP+n
+    Word immediate = cpu.memory[cpu.PC++];
+    cpu.HL         = cpu.sum(cpu.SP, immediate);
+    cpu.setFlag(Cpu::Flag::Z, false);
+    cpu.setFlag(Cpu::Flag::N, false);
+}
