@@ -230,3 +230,20 @@ POP(0xF1, AF);  // POP AF
 POP(0xC1, BC);  // POP BC
 POP(0xD1, DE);  // POP DE
 POP(0xE1, HL);  // POP HL
+
+#define ADD(opcode, reg)                                \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.sum(cpu.A, cpu.reg);                \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlag(Cpu::Flag::N, false);               \
+    }
+
+ADD(0x87, A);                 // ADD A, A
+ADD(0x80, B);                 // ADD A, B
+ADD(0x81, C);                 // ADD A, C
+ADD(0x82, D);                 // ADD A, D
+ADD(0x83, E);                 // ADD A, E
+ADD(0x84, H);                 // ADD A, H
+ADD(0x85, L);                 // ADD A, L
+ADD(0x86, memory[cpu.HL]);    // ADD A, (HL)
+ADD(0xC6, memory[cpu.PC++]);  // ADD A, #
