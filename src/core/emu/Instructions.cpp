@@ -219,3 +219,14 @@ PUSH(0xF5, AF);  // PUSH AF
 PUSH(0xC5, BC);  // PUSH BC
 PUSH(0xD5, DE);  // PUSH DE
 PUSH(0xE5, HL);  // PUSH HL
+
+#define POP(opcode, reg)                    \
+    CPU_INSTRUCTION(opcode) {               \
+        cpu.reg.lsb = cpu.memory[cpu.SP++]; \
+        cpu.reg.msb = cpu.memory[cpu.SP++]; \
+    }
+
+POP(0xF1, AF);  // POP AF
+POP(0xC1, BC);  // POP BC
+POP(0xD1, DE);  // POP DE
+POP(0xE1, HL);  // POP HL

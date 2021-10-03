@@ -606,3 +606,22 @@ PUSH(0xF5, AF);
 PUSH(0xC5, BC);
 PUSH(0xD5, DE);
 PUSH(0xE5, HL);
+
+#define POP(opcode, reg)                   \
+    TEST_F(LD, POP_##reg) {                \
+        setNextInstruction(opcode);        \
+        cpu.SP             = Word{0x1000}; \
+        cpu.memory[0x1000] = Byte{0x89};   \
+        cpu.memory[0x1001] = Byte{0x67};   \
+        cpu.reg            = Word{0x0000}; \
+        runAndCheck([](Cpu& cpu) {         \
+            cpu.PC += 1;                   \
+            cpu.SP += 2;                   \
+            cpu.reg = Word{0x6789};        \
+        });                                \
+    }
+
+POP(0xF1, AF);
+POP(0xC1, BC);
+POP(0xD1, DE);
+POP(0xE1, HL);

@@ -49,6 +49,11 @@ class Cpu {
             assign(*this + Word{1});
             return *this;
         }
+        TwoByteRegister operator++(int) {
+            Word ret = *this;
+            assign(*this + Word{1});
+            return ret;
+        }
         operator Word() { return msb << 8 | lsb; }
 
        private:
