@@ -200,3 +200,11 @@ CPU_INSTRUCTION(0xF8) {  // LD HL, SP+n
     cpu.setFlag(Cpu::Flag::Z, false);
     cpu.setFlag(Cpu::Flag::N, false);
 }
+
+CPU_INSTRUCTION(0x08) {  // LD (nn), SP
+    Word immediateMsb    = cpu.memory[cpu.PC++];
+    Word immediateLsb    = cpu.memory[cpu.PC++];
+    Word addr            = (immediateMsb << 8) | immediateLsb;
+    cpu.memory[addr]     = cpu.SP.msb;
+    cpu.memory[addr + 1] = cpu.SP.lsb;
+}

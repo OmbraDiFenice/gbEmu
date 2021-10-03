@@ -574,3 +574,15 @@ TEST_F(LD, LDHL_SP_IMM) {
         cpu.HL = Word{0x0004};
     });
 }
+
+TEST_F(LD, LD__IMMaddr__SP) {
+    setNextInstruction(0x08, Word{0x1122});
+    cpu.SP             = Word{0x6789};
+    cpu.memory[0x1122] = Byte{0x00};
+    cpu.memory[0x1123] = Byte{0x00};
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 3;
+        cpu.memory[0x1122] = Byte{0x67};
+        cpu.memory[0x1123] = Byte{0x89};
+    });
+}

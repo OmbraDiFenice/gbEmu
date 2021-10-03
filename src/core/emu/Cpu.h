@@ -56,8 +56,8 @@ class Cpu {
         Byte getLsb(const Word& iWord) { return iWord & 0xFF; }
     };
 
-    Word PC = 0;
-    Word SP = 0;
+    Word PC            = 0;
+    TwoByteRegister SP = 0;
     Byte memory[kMemSize];
 
     TwoByteRegister AF;
