@@ -86,8 +86,8 @@ Byte Cpu::sum(Byte iVal1, Byte iVal2, bool withCarry) {
 
 Byte Cpu::sub(Byte iVal1, Byte iVal2) {
     auto [result, halfCarry, fullCarry] = adder(iVal1, ~iVal2, true);
-    setFlag(Flag::H, !halfCarry);
-    setFlag(Flag::C, !fullCarry);
+    setFlag(Flag::H, halfCarry);
+    setFlag(Flag::C, fullCarry);
     return result;
 }
 

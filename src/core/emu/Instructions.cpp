@@ -264,3 +264,20 @@ ADC(0x8C, H);                 // ADC A, H
 ADC(0x8D, L);                 // ADC A, L
 ADC(0x8E, memory[cpu.HL]);    // ADC A, (HL)
 ADC(0xCE, memory[cpu.PC++]);  // ADC A, #
+
+#define SUB(opcode, reg)                                \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.sub(cpu.A, cpu.reg);                \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlag(Cpu::Flag::N, true);                \
+    }
+
+SUB(0x97, A);                 // SUB A, A
+SUB(0x90, B);                 // SUB A, B
+SUB(0x91, C);                 // SUB A, C
+SUB(0x92, D);                 // SUB A, D
+SUB(0x93, E);                 // SUB A, E
+SUB(0x94, H);                 // SUB A, H
+SUB(0x95, L);                 // SUB A, L
+SUB(0x96, memory[cpu.HL]);    // SUB A, (HL)
+SUB(0xD6, memory[cpu.PC++]);  // SUB A, #

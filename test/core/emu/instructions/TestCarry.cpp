@@ -56,41 +56,41 @@ TEST_F(TestCarry, onAdd) {
 }
 
 TEST_F(TestCarry, onSub) {
-    cpu.setFlag(Cpu::Flag::H, true);
-    cpu.setFlag(Cpu::Flag::C, true);
+    cpu.setFlag(Cpu::Flag::H, false);
+    cpu.setFlag(Cpu::Flag::C, false);
     EXPECT_EQ(Byte{0x00}, cpu.sub(Byte{0x00}, Byte{0x00}));
-    EXPECT_FALSE(cpu.getFlag(Cpu::Flag::H));
-    EXPECT_FALSE(cpu.getFlag(Cpu::Flag::C));
+    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::C));
 
-    cpu.setFlag(Cpu::Flag::H, false);
-    cpu.setFlag(Cpu::Flag::C, false);
+    cpu.setFlag(Cpu::Flag::H, true);
+    cpu.setFlag(Cpu::Flag::C, true);
     EXPECT_EQ(Byte{0xFF}, cpu.sub(Byte{0x00}, Byte{0x01}));
-    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::H));
-    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::C));
-
-    cpu.setFlag(Cpu::Flag::H, true);
-    cpu.setFlag(Cpu::Flag::C, true);
-    EXPECT_EQ(Byte{0x01}, cpu.sub(Byte{0x02}, Byte{0x01}));
     EXPECT_FALSE(cpu.getFlag(Cpu::Flag::H));
     EXPECT_FALSE(cpu.getFlag(Cpu::Flag::C));
 
-    cpu.setFlag(Cpu::Flag::H, true);
+    cpu.setFlag(Cpu::Flag::H, false);
     cpu.setFlag(Cpu::Flag::C, false);
-    EXPECT_EQ(Byte{0xF2}, cpu.sub(Byte{0x02}, Byte{0x10}));
-    EXPECT_FALSE(cpu.getFlag(Cpu::Flag::H));
+    EXPECT_EQ(Byte{0x01}, cpu.sub(Byte{0x02}, Byte{0x01}));
+    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::H));
     EXPECT_TRUE(cpu.getFlag(Cpu::Flag::C));
 
     cpu.setFlag(Cpu::Flag::H, false);
     cpu.setFlag(Cpu::Flag::C, true);
-    EXPECT_EQ(Byte{0x8E}, cpu.sub(Byte{0xA2}, Byte{0x14}));
+    EXPECT_EQ(Byte{0xF2}, cpu.sub(Byte{0x02}, Byte{0x10}));
     EXPECT_TRUE(cpu.getFlag(Cpu::Flag::H));
     EXPECT_FALSE(cpu.getFlag(Cpu::Flag::C));
 
     cpu.setFlag(Cpu::Flag::H, true);
-    cpu.setFlag(Cpu::Flag::C, true);
-    EXPECT_EQ(Byte{0x00}, cpu.sub(Byte{0xFF}, Byte{0xFF}));
+    cpu.setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0x8E}, cpu.sub(Byte{0xA2}, Byte{0x14}));
     EXPECT_FALSE(cpu.getFlag(Cpu::Flag::H));
-    EXPECT_FALSE(cpu.getFlag(Cpu::Flag::C));
+    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::C));
+
+    cpu.setFlag(Cpu::Flag::H, false);
+    cpu.setFlag(Cpu::Flag::C, false);
+    EXPECT_EQ(Byte{0x00}, cpu.sub(Byte{0xFF}, Byte{0xFF}));
+    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::H));
+    EXPECT_TRUE(cpu.getFlag(Cpu::Flag::C));
 }
 
 TEST_F(TestCarry, onAdd16) {
