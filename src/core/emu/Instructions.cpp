@@ -281,3 +281,19 @@ SUB(0x94, H);                 // SUB A, H
 SUB(0x95, L);                 // SUB A, L
 SUB(0x96, memory[cpu.HL]);    // SUB A, (HL)
 SUB(0xD6, memory[cpu.PC++]);  // SUB A, #
+
+#define SBC(opcode, reg)                                \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.sub(cpu.A, cpu.reg, true);          \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlag(Cpu::Flag::N, true);                \
+    }
+
+SBC(0x9F, A);               // SBC A, A
+SBC(0x98, B);               // SBC A, B
+SBC(0x99, C);               // SBC A, C
+SBC(0x9A, D);               // SBC A, D
+SBC(0x9B, E);               // SBC A, E
+SBC(0x9C, H);               // SBC A, H
+SBC(0x9D, L);               // SBC A, L
+SBC(0x9E, memory[cpu.HL]);  // SBC A, (HL)

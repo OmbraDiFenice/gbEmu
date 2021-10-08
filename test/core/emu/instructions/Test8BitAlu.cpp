@@ -118,6 +118,7 @@ TEST_F(ALU, ADC_A_IMM) {
         cpu.A              = Byte{0x05};            \
         cpu.reg            = Byte{0x06};            \
         Byte expectedValue = cpu.A - cpu.reg;       \
+        cpu.setFlag(Cpu::Flag::N, false);           \
         runAndCheck([&expectedValue](Cpu& cpu) {    \
             cpu.PC += 1;                            \
             cpu.A = expectedValue;                  \
@@ -132,6 +133,7 @@ TEST_F(ALU, ADC_A_IMM) {
         cpu.A   = Byte{0x80};                       \
         cpu.reg = Byte{0x80};                       \
         cpu.setFlag(Cpu::Flag::Z, false);           \
+        cpu.setFlag(Cpu::Flag::N, false);           \
         runAndCheck([](Cpu& cpu) {                  \
             cpu.PC += 1;                            \
             cpu.A = Byte{0x00};                     \
@@ -151,6 +153,7 @@ TEST_F(ALU, SUB_A__HL__) {
     cpu.A              = Byte{0xFF};
     cpu.HL             = Word{0xFF10};
     cpu.memory[0xFF10] = Byte{0x67};
+    cpu.setFlag(Cpu::Flag::N, false);
     cpu.setFlag(Cpu::Flag::C, false);
     cpu.setFlag(Cpu::Flag::H, false);
     runAndCheck([](Cpu& cpu) {
@@ -162,11 +165,60 @@ TEST_F(ALU, SUB_A__HL__) {
 TEST_F(ALU, SUB_A_IMM) {
     setNextInstruction(0xD6, Byte{0x01});
     cpu.A = Byte{0x00};
+    cpu.setFlag(Cpu::Flag::N, false);
     cpu.setFlag(Cpu::Flag::C, true);
     cpu.setFlag(Cpu::Flag::H, true);
     runAndCheck([](Cpu& cpu) {
         cpu.PC += 2;
         cpu.A = Byte{0xFF};
         cpu.setFlags("zNhc");
+    });
+}
+
+#define SBC(opcode, reg)                            \
+    TEST_F(ALU, SBC_##opcode##_A_##reg) {           \
+        setNextInstruction(opcode);                 \
+        cpu.A              = Byte{0x05};            \
+        cpu.reg            = Byte{0x06};            \
+        Byte expectedValue = cpu.A - (cpu.reg + 1); \
+        cpu.setFlag(Cpu::Flag::N, false);           \
+        cpu.setFlag(Cpu::Flag::C, true);            \
+        runAndCheck([&expectedValue](Cpu& cpu) {    \
+            cpu.PC += 1;                            \
+            cpu.A = expectedValue;                  \
+            cpu.setFlags("zNhc");                   \
+        });                                         \
+    }                                               \
+    TEST_F(ALU, SBC_##opcode##_A_##reg##_toZero) {  \
+        setNextInstruction(opcode);                 \
+        cpu.A   = Byte{0x80};                       \
+        cpu.reg = Byte{0x80};                       \
+        cpu.setFlag(Cpu::Flag::Z, false);           \
+        cpu.setFlag(Cpu::Flag::N, false);           \
+        cpu.setFlag(Cpu::Flag::C, false);           \
+        runAndCheck([](Cpu& cpu) {                  \
+            cpu.PC += 1;                            \
+            cpu.A = Byte{0x00};                     \
+            cpu.setFlags("ZNHC");                   \
+        });                                         \
+    }
+
+SBC(0x9F, A);
+SBC(0x98, B);
+SBC(0x99, C);
+SBC(0x9A, D);
+SBC(0x9B, E);
+SBC(0x9C, H);
+SBC(0x9D, L);
+TEST_F(ALU, SBC_A__HL__) {
+    setNextInstruction(0x9E);
+    cpu.A              = Byte{0x55};
+    cpu.HL             = Word{0xFF10};
+    cpu.memory[0xFF10] = Byte{0x11};
+    cpu.setFlags("ZnhC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.A = Byte{0x43};
+        cpu.setFlags("zNHC");
     });
 }
