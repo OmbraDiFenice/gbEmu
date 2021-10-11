@@ -314,3 +314,20 @@ AND(0xA4, H);                 // AND A, H
 AND(0xA5, L);                 // AND A, L
 AND(0xA6, memory[cpu.HL]);    // AND A, (HL)
 AND(0xE6, memory[cpu.PC++]);  // AND A, #
+
+#define OR(opcode, reg)                                 \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.A | cpu.reg;                        \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlags("nhc");                            \
+    }
+
+OR(0xB7, A);                 // OR A, A
+OR(0xB0, B);                 // OR A, B
+OR(0xB1, C);                 // OR A, C
+OR(0xB2, D);                 // OR A, D
+OR(0xB3, E);                 // OR A, E
+OR(0xB4, H);                 // OR A, H
+OR(0xB5, L);                 // OR A, L
+OR(0xB6, memory[cpu.HL]);    // OR A, (HL)
+OR(0xF6, memory[cpu.PC++]);  // OR A, #

@@ -276,3 +276,57 @@ TEST_F(ALU, AND_A_IMM) {
         cpu.setFlags("znHc");
     });
 }
+
+#define OR(opcode, reg)                                      \
+    TEST_F(ALU, OR_##opcode_A_##reg) {                       \
+        setNextInstruction(opcode);                          \
+        cpu.A   = Byte{0x55};                                \
+        cpu.reg = Byte{0x42};                                \
+        cpu.setFlags("ZNHC");                                \
+        runAndCheck([](Cpu& cpu) {                           \
+            cpu.PC += 1;                                     \
+            cpu.A = (#reg == "A") ? Byte{0x42} : Byte{0x57}; \
+            cpu.setFlags("znhc");                            \
+        });                                                  \
+    };                                                       \
+    TEST_F(ALU, OR_##opcode_A_##reg##_toZero) {              \
+        setNextInstruction(opcode);                          \
+        cpu.A   = Byte{0x00};                                \
+        cpu.reg = Byte{0x00};                                \
+        cpu.setFlags("zNHC");                                \
+        runAndCheck([](Cpu& cpu) {                           \
+            cpu.PC += 1;                                     \
+            cpu.A = Byte{0x00};                              \
+            cpu.setFlags("Znhc");                            \
+        });                                                  \
+    };
+
+OR(0xB7, A);
+OR(0xB0, B);
+OR(0xB1, C);
+OR(0xB2, D);
+OR(0xB3, E);
+OR(0xB4, H);
+OR(0xB5, L);
+TEST_F(ALU, OR_A__HL__) {
+    setNextInstruction(0xB6);
+    cpu.A              = Byte{0x55};
+    cpu.HL             = Word{0xFF10};
+    cpu.memory[0xFF10] = Byte{0xA4};
+    cpu.setFlags("ZNHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.A = Byte{0xF5};
+        cpu.setFlags("znhc");
+    });
+}
+TEST_F(ALU, OR_A_IMM) {
+    setNextInstruction(0xF6, Byte{0xA4});
+    cpu.A = Byte{0x55};
+    cpu.setFlags("ZNHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 2;
+        cpu.A = Byte{0xF5};
+        cpu.setFlags("znhc");
+    });
+}
