@@ -348,3 +348,20 @@ XOR(0xAC, H);                 // XOR A, H
 XOR(0xAD, L);                 // XOR A, L
 XOR(0xAE, memory[cpu.HL]);    // XOR A, (HL)
 XOR(0xEE, memory[cpu.PC++]);  // XOR A, #
+
+#define CP(opcode, reg)                            \
+    CPU_INSTRUCTION(opcode) {                      \
+        Byte result = cpu.sub(cpu.A, cpu.reg);     \
+        cpu.setFlag(Cpu::Flag::Z, result == 0x00); \
+        cpu.setFlag(Cpu::Flag::N, true);           \
+    }
+
+CP(0xBF, A);                 // CP A, A
+CP(0xB8, B);                 // CP A, B
+CP(0xB9, C);                 // CP A, C
+CP(0xBA, D);                 // CP A, D
+CP(0xBB, E);                 // CP A, E
+CP(0xBC, H);                 // CP A, H
+CP(0xBD, L);                 // CP A, L
+CP(0xBE, memory[cpu.HL]);    // CP A, (HL)
+CP(0xFE, memory[cpu.PC++]);  // CP A, #
