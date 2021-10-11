@@ -330,3 +330,48 @@ TEST_F(ALU, OR_A_IMM) {
         cpu.setFlags("znhc");
     });
 }
+
+#define XOR(opcode, reg)                                     \
+    TEST_F(ALU, XOR_##opcode_A_##reg) {                      \
+        setNextInstruction(opcode);                          \
+        cpu.A   = Byte{0x55};                                \
+        cpu.reg = Byte{0xAA};                                \
+        cpu.setFlag(Cpu::Flag::Z, #reg != "A");              \
+        cpu.setFlags("NHC");                                 \
+        runAndCheck([](Cpu& cpu) {                           \
+            cpu.PC += 1;                                     \
+            cpu.A = (#reg == "A") ? Byte{0x00} : Byte{0xFF}; \
+            cpu.setFlag(Cpu::Flag::Z, #reg == "A");          \
+            cpu.setFlags("nhc");                             \
+        });                                                  \
+    };
+
+XOR(0xAF, A);
+XOR(0xA8, B);
+XOR(0xA9, C);
+XOR(0xAA, D);
+XOR(0xAB, E);
+XOR(0xAC, H);
+XOR(0xAD, L);
+TEST_F(ALU, XOR_A__HL__) {
+    setNextInstruction(0xAE);
+    cpu.A              = Byte{0x55};
+    cpu.HL             = Word{0xFF10};
+    cpu.memory[0xFF10] = Byte{0xA4};
+    cpu.setFlags("ZNHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.A = Byte{0xF1};
+        cpu.setFlags("znhc");
+    });
+}
+TEST_F(ALU, XOR_A_IMM) {
+    setNextInstruction(0xEE, Byte{0xA4});
+    cpu.A = Byte{0x55};
+    cpu.setFlags("ZNHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 2;
+        cpu.A = Byte{0xF1};
+        cpu.setFlags("znhc");
+    });
+}

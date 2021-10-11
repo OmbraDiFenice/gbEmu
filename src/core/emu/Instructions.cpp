@@ -331,3 +331,20 @@ OR(0xB4, H);                 // OR A, H
 OR(0xB5, L);                 // OR A, L
 OR(0xB6, memory[cpu.HL]);    // OR A, (HL)
 OR(0xF6, memory[cpu.PC++]);  // OR A, #
+
+#define XOR(opcode, reg)                                \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.A ^ cpu.reg;                        \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlags("nhc");                            \
+    }
+
+XOR(0xAF, A);                 // XOR A, A
+XOR(0xA8, B);                 // XOR A, B
+XOR(0xA9, C);                 // XOR A, C
+XOR(0xAA, D);                 // XOR A, D
+XOR(0xAB, E);                 // XOR A, E
+XOR(0xAC, H);                 // XOR A, H
+XOR(0xAD, L);                 // XOR A, L
+XOR(0xAE, memory[cpu.HL]);    // XOR A, (HL)
+XOR(0xEE, memory[cpu.PC++]);  // XOR A, #
