@@ -297,3 +297,20 @@ SBC(0x9B, E);               // SBC A, E
 SBC(0x9C, H);               // SBC A, H
 SBC(0x9D, L);               // SBC A, L
 SBC(0x9E, memory[cpu.HL]);  // SBC A, (HL)
+
+#define AND(opcode, reg)                                \
+    CPU_INSTRUCTION(opcode) {                           \
+        cpu.A = cpu.A & cpu.reg;                        \
+        cpu.setFlag(Cpu::Flag::Z, cpu.A == Byte{0x00}); \
+        cpu.setFlags("nHc");                            \
+    }
+
+AND(0xA7, A);                 // AND A, A
+AND(0xA0, B);                 // AND A, B
+AND(0xA1, C);                 // AND A, C
+AND(0xA2, D);                 // AND A, D
+AND(0xA3, E);                 // AND A, E
+AND(0xA4, H);                 // AND A, H
+AND(0xA5, L);                 // AND A, L
+AND(0xA6, memory[cpu.HL]);    // AND A, (HL)
+AND(0xE6, memory[cpu.PC++]);  // AND A, #
