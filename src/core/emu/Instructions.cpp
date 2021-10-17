@@ -401,3 +401,20 @@ DEC(0x1D, E);               // DEC E
 DEC(0x25, H);               // DEC H
 DEC(0x2D, L);               // DEC L
 DEC(0x35, memory[cpu.HL]);  // DEC (HL)
+
+#define ADD16(opcode, reg)                                       \
+    CPU_INSTRUCTION(opcode) {                                    \
+        cpu.HL = cpu.sum(cpu.HL, cpu.reg);                       \
+        cpu.setFlag(Cpu::Flag::Z, Word{cpu.HL} == Word{0x0000}); \
+        cpu.setFlag(Cpu::Flag::N, false);                        \
+    }
+
+ADD16(0x09, BC);         // ADD HL, BC
+ADD16(0x19, DE);         // ADD HL, DE
+ADD16(0x29, HL);         // ADD HL, HL
+ADD16(0x39, SP);         // ADD HL, SP
+CPU_INSTRUCTION(0xE8) {  // ADD SP, n
+    cpu.SP = cpu.sum(cpu.SP, Word{cpu.memory[cpu.PC++]});
+    cpu.setFlag(Cpu::Flag::Z, Word{cpu.SP} == Word{0x0000});
+    cpu.setFlag(Cpu::Flag::N, false);
+}
