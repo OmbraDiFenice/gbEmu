@@ -94,7 +94,7 @@ class Cpu {
     void setFlag(Cpu::Flag iFlag, bool iValue);
     void setFlags(const std::string& iFlags);
 
-    static void Add(Byte iOpcode, Instruction&& iCode);
+    static void Add(Word iOpcode, Instruction&& iCode, bool iExtInstruction);
 
     Byte sum(Byte iVal1, Byte iVal2, bool withCarry = false);
     Word sum(Word iVal1, Word iVal2);
@@ -105,12 +105,12 @@ class Cpu {
     std::tuple<Byte, bool, bool> adder(Byte iVal1, Byte iVal2, bool c0) const;
 
    private:
-    static std::unordered_map<Byte, Instruction> _instructionSet;
+    static std::unordered_map<Word, Instruction> _instructionSet;
 };
 
-template <Byte opcode>
+template <Word opcode>
 struct InstructionInstantiator {
-    InstructionInstantiator() { Cpu::Add(opcode, body); };
+    InstructionInstantiator() { Cpu::Add(opcode, body, false); };
     static void body(Cpu& cpu){};
 };
 

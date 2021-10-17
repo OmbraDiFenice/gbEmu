@@ -2,9 +2,9 @@
 
 #include "Cpu.h"
 
-std::unordered_map<Byte, Instruction> Cpu::_instructionSet;
+std::unordered_map<Word, Instruction> Cpu::_instructionSet;
 
-void Cpu::Add(Byte iOpcode, Instruction&& iCode) {
+void Cpu::Add(Word iOpcode, Instruction&& iCode, bool iExtInstruction) {
     ASSERT(_instructionSet.count(iOpcode) == 0, "cannot insert instruction " +
                                                     std::to_string(iOpcode) +
                                                     ", opcode already taken");
@@ -22,7 +22,10 @@ Cpu::Cpu(const Cpu& iCpu) {
 }
 
 void Cpu::tick() {
-    Byte opcode = memory[PC++];
+    Word opcode = memory[PC++];
+    if (opcode == 0xCB) {
+        opcode = (opcode << 8) + memory[PC++];
+    }
     if (_instructionSet.count(opcode) != 0) {
         Instruction& instruction = _instructionSet.at(opcode);
         instruction(*this);

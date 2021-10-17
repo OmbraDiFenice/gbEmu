@@ -7,10 +7,13 @@
 class TestInstruction : public testing::Test {
    protected:
     TestInstruction();
-    void setNextInstruction(Byte opcode);
-    void setNextInstruction(Byte opcode, Byte data);
-    void setNextInstruction(Byte opcode, Word data);
+    void setNextInstruction(Word opcode);
+    void setNextInstruction(Word opcode, Byte data);
+    void setNextInstruction(Word opcode, Word data);
     void runAndCheck(std::function<void(Cpu&)>&& setupExpected);
+
+   protected:
+    void reset();
 
    protected:
     Cpu cpu;

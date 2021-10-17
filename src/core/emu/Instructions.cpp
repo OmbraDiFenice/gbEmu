@@ -442,3 +442,21 @@ DEC16(0x0B, BC);  // DEC BC
 DEC16(0x1B, DE);  // DEC DE
 DEC16(0x2B, HL);  // DEC HL
 DEC16(0x3B, SP);  // DEC SP
+
+#define SWAP(opcode, reg)                                 \
+    CPU_INSTRUCTION(opcode) {                             \
+        Byte val = cpu.reg;                               \
+        val      = (val >> 4) | ((val & 0x0F) << 4);      \
+        cpu.reg  = val;                                   \
+        cpu.setFlags("nhc");                              \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == Byte{0x00}); \
+    }
+
+SWAP(0xCB37, A);               // SWAP A
+SWAP(0xCB30, B);               // SWAP B
+SWAP(0xCB31, C);               // SWAP C
+SWAP(0xCB32, D);               // SWAP D
+SWAP(0xCB33, E);               // SWAP E
+SWAP(0xCB34, H);               // SWAP H
+SWAP(0xCB35, L);               // SWAP L
+SWAP(0xCB36, memory[cpu.HL]);  // SWAP (HL)
