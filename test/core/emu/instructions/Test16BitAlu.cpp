@@ -48,3 +48,18 @@ TEST_F(ALU, ADD_SP_n) {
         cpu.setFlags("ZnHC");
     });
 }
+
+#define INC(opcode, reg)              \
+    TEST_F(ALU, INC_##opcode_##reg) { \
+        setNextInstruction(opcode);   \
+        cpu.reg = Word{0x0FFF};       \
+        runAndCheck([](Cpu& cpu) {    \
+            cpu.PC += 1;              \
+            cpu.reg = Word{0x1000};   \
+        });                           \
+    }
+
+INC(0x03, BC);
+INC(0x13, DE);
+INC(0x23, HL);
+INC(0x33, SP);
