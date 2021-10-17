@@ -365,3 +365,21 @@ CP(0xBC, H);                 // CP A, H
 CP(0xBD, L);                 // CP A, L
 CP(0xBE, memory[cpu.HL]);    // CP A, (HL)
 CP(0xFE, memory[cpu.PC++]);  // CP A, #
+
+#define INC(opcode, reg)                                  \
+    CPU_INSTRUCTION(opcode) {                             \
+        bool initialC = cpu.getFlag(Cpu::Flag::C);        \
+        cpu.reg       = cpu.sum(cpu.reg, 0x01);           \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == Byte{0x00}); \
+        cpu.setFlag(Cpu::Flag::N, false);                 \
+        cpu.setFlag(Cpu::Flag::C, initialC);              \
+    }
+
+INC(0x3C, A);               // INC A
+INC(0x04, B);               // INC B
+INC(0x0C, C);               // INC C
+INC(0x14, D);               // INC D
+INC(0x1C, E);               // INC E
+INC(0x24, H);               // INC H
+INC(0x2C, L);               // INC L
+INC(0x34, memory[cpu.HL]);  // INC (HL)

@@ -443,3 +443,44 @@ TEST_F(ALU, CP_A_IMM) {
         cpu.setFlags("zNhc");
     });
 }
+
+#define INC(opcode, reg)                       \
+    TEST_F(ALU, INC_##opcode_##reg) {          \
+        setNextInstruction(opcode);            \
+        cpu.reg = Byte{0x0F};                  \
+        cpu.setFlags("ZNhc");                  \
+        runAndCheck([](Cpu& cpu) {             \
+            cpu.PC += 1;                       \
+            cpu.reg = Byte{0x10};              \
+            cpu.setFlags("znHc");              \
+        });                                    \
+    }                                          \
+    TEST_F(ALU, INC_##opcode_##reg##_toZero) { \
+        setNextInstruction(opcode);            \
+        cpu.reg = Byte{0xFF};                  \
+        cpu.setFlags("zNhc");                  \
+        runAndCheck([](Cpu& cpu) {             \
+            cpu.PC += 1;                       \
+            cpu.reg = Byte{0x00};              \
+            cpu.setFlags("ZnHc");              \
+        });                                    \
+    }
+
+INC(0x3C, A);
+INC(0x04, B);
+INC(0x0C, C);
+INC(0x14, D);
+INC(0x1C, E);
+INC(0x24, H);
+INC(0x2C, L);
+TEST_F(ALU, INC__HL__) {
+    setNextInstruction(0x34);
+    cpu.HL             = Word{0xFF10};
+    cpu.memory[0xFF10] = Byte{0x11};
+    cpu.setFlags("ZNHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.memory[0xFF10] = Byte{0x12};
+        cpu.setFlags("znhC");
+    });
+}
