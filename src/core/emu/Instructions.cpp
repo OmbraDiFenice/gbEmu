@@ -383,3 +383,21 @@ INC(0x1C, E);               // INC E
 INC(0x24, H);               // INC H
 INC(0x2C, L);               // INC L
 INC(0x34, memory[cpu.HL]);  // INC (HL)
+
+#define DEC(opcode, reg)                                  \
+    CPU_INSTRUCTION(opcode) {                             \
+        bool initialC = cpu.getFlag(Cpu::Flag::C);        \
+        cpu.reg       = cpu.sub(cpu.reg, 0x01);           \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == Byte{0x00}); \
+        cpu.setFlag(Cpu::Flag::N, true);                  \
+        cpu.setFlag(Cpu::Flag::C, initialC);              \
+    }
+
+DEC(0x3D, A);               // DEC A
+DEC(0x05, B);               // DEC B
+DEC(0x0D, C);               // DEC C
+DEC(0x15, D);               // DEC D
+DEC(0x1D, E);               // DEC E
+DEC(0x25, H);               // DEC H
+DEC(0x2D, L);               // DEC L
+DEC(0x35, memory[cpu.HL]);  // DEC (HL)
