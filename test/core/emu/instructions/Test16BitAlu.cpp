@@ -63,3 +63,18 @@ INC(0x03, BC);
 INC(0x13, DE);
 INC(0x23, HL);
 INC(0x33, SP);
+
+#define DEC(opcode, reg)              \
+    TEST_F(ALU, DEC_##opcode_##reg) { \
+        setNextInstruction(opcode);   \
+        cpu.reg = Word{0x0FFF};       \
+        runAndCheck([](Cpu& cpu) {    \
+            cpu.PC += 1;              \
+            cpu.reg = Word{0x0FFE};   \
+        });                           \
+    }
+
+DEC(0x0B, BC);
+DEC(0x1B, DE);
+DEC(0x2B, HL);
+DEC(0x3B, SP);

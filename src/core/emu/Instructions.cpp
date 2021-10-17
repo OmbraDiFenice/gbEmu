@@ -430,3 +430,15 @@ INC16(0x03, BC);  // INC BC
 INC16(0x13, DE);  // INC DE
 INC16(0x23, HL);  // INC HL
 INC16(0x33, SP);  // INC SP
+
+#define DEC16(opcode, reg)                                  \
+    CPU_INSTRUCTION(opcode) {                               \
+        Byte initialFlags = cpu.F;                          \
+        cpu.reg           = cpu.sub(cpu.reg, Word{0x0001}); \
+        cpu.F             = initialFlags;                   \
+    }
+
+DEC16(0x0B, BC);  // DEC BC
+DEC16(0x1B, DE);  // DEC DE
+DEC16(0x2B, HL);  // DEC HL
+DEC16(0x3B, SP);  // DEC SP
