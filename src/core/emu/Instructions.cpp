@@ -460,3 +460,13 @@ SWAP(0xCB33, E);               // SWAP E
 SWAP(0xCB34, H);               // SWAP H
 SWAP(0xCB35, L);               // SWAP L
 SWAP(0xCB36, memory[cpu.HL]);  // SWAP (HL)
+
+CPU_INSTRUCTION(0x27) {
+    while (cpu.A >= 100) {
+        cpu.setFlag(Cpu::Flag::C, true);
+        cpu.A -= 100;
+    }
+    cpu.A = ((cpu.A / 10) << 4) | (cpu.A % 10);
+    cpu.setFlag(Cpu::Flag::Z, cpu.A == 0x00);
+    cpu.setFlag(Cpu::Flag::H, false);
+}
