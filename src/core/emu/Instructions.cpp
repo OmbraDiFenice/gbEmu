@@ -461,7 +461,7 @@ SWAP(0xCB34, H);               // SWAP H
 SWAP(0xCB35, L);               // SWAP L
 SWAP(0xCB36, memory[cpu.HL]);  // SWAP (HL)
 
-CPU_INSTRUCTION(0x27) {
+CPU_INSTRUCTION(0x27) {  // DAA
     while (cpu.A >= 100) {
         cpu.setFlag(Cpu::Flag::C, true);
         cpu.A -= 100;
@@ -471,8 +471,20 @@ CPU_INSTRUCTION(0x27) {
     cpu.setFlag(Cpu::Flag::H, false);
 }
 
-CPU_INSTRUCTION(0x2F) {
+CPU_INSTRUCTION(0x2F) {  // CPL
     cpu.A = ~cpu.A;
     cpu.setFlag(Cpu::Flag::N, true);
     cpu.setFlag(Cpu::Flag::H, true);
+}
+
+CPU_INSTRUCTION(0x3F) {  // CCF
+    cpu.setFlag(Cpu::Flag::N, false);
+    cpu.setFlag(Cpu::Flag::H, false);
+    cpu.setFlag(Cpu::Flag::C, !cpu.getFlag(Cpu::Flag::C));
+}
+
+CPU_INSTRUCTION(0x37) {  // SCF
+    cpu.setFlag(Cpu::Flag::N, false);
+    cpu.setFlag(Cpu::Flag::H, false);
+    cpu.setFlag(Cpu::Flag::C, true);
 }

@@ -154,3 +154,39 @@ TEST_F(Misc, CPL) {
         cpu.setFlags("NH");
     });
 }
+
+TEST_F(Misc, CCF) {
+    setNextInstruction(0x3F);
+    cpu.setFlags("NHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.setFlags("nhc");
+    });
+
+    reset();
+
+    setNextInstruction(0x3F);
+    cpu.setFlags("NHc");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.setFlags("nhC");
+    });
+}
+
+TEST_F(Misc, SCF) {
+    setNextInstruction(0x37);
+    cpu.setFlags("NHc");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.setFlags("nhC");
+    });
+
+    reset();
+
+    setNextInstruction(0x37);
+    cpu.setFlags("NHC");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.setFlags("nhC");
+    });
+}
