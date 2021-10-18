@@ -470,3 +470,9 @@ CPU_INSTRUCTION(0x27) {
     cpu.setFlag(Cpu::Flag::Z, cpu.A == 0x00);
     cpu.setFlag(Cpu::Flag::H, false);
 }
+
+CPU_INSTRUCTION(0x2F) {
+    cpu.A = ~cpu.A;
+    cpu.setFlag(Cpu::Flag::N, true);
+    cpu.setFlag(Cpu::Flag::H, true);
+}

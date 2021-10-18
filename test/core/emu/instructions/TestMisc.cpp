@@ -128,8 +128,7 @@ TEST_F(Misc, DAA) {
             {0xFF, {0x55, true}},
         };
 
-    for (const auto& pair : table) {
-        const auto& [initialA, expected]   = pair;
+    for (const auto& [initialA, expected] : table) {
         const auto& [expectedA, expectedC] = expected;
         reset();
         setNextInstruction(0x27);
@@ -143,4 +142,15 @@ TEST_F(Misc, DAA) {
             cpu.setFlag(Cpu::Flag::C, expectedC);
         });
     }
+}
+
+TEST_F(Misc, CPL) {
+    setNextInstruction(0x2F);
+    cpu.A = Byte{0x55};
+    cpu.setFlags("nh");
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.A = Byte{0xAA};
+        cpu.setFlags("NH");
+    });
 }
