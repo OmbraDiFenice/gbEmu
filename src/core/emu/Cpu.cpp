@@ -29,6 +29,8 @@ void Cpu::tick() {
     if (_instructionSet.count(opcode) != 0) {
         Instruction& instruction = _instructionSet.at(opcode);
         instruction(*this);
+    } else {
+        LOG_WARN("unknown opcode " << opcode << ", skipping");
     }
 }
 

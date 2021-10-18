@@ -488,3 +488,7 @@ CPU_INSTRUCTION(0x37) {  // SCF
     cpu.setFlag(Cpu::Flag::H, false);
     cpu.setFlag(Cpu::Flag::C, true);
 }
+
+CPU_INSTRUCTION(0x00) {  // NOP
+    // no-op
+}

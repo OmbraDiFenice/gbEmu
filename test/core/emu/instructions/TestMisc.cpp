@@ -190,3 +190,8 @@ TEST_F(Misc, SCF) {
         cpu.setFlags("nhC");
     });
 }
+
+TEST_F(Misc, NOP) {
+    setNextInstruction(0x00);
+    runAndCheck([](Cpu& cpu) { cpu.PC += 1; });
+}
