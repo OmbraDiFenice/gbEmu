@@ -21,7 +21,7 @@ void TestInstruction::setNextInstructions(const std::vector<Word>& opcodes) {
     for (auto& opcode : opcodes) {
         setNextInstruction(opcode);
         ++cpu.PC;
-        if (cpu.PC >> 8 != 0) {
+        if (opcode > 0xFF) {
             ++cpu.PC;
         }
     }

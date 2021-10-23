@@ -504,3 +504,83 @@ CPU_INSTRUCTION(0xF3) {  // DI
 CPU_INSTRUCTION(0xFB) {  // EI
     cpu.setEnableInterruptAfterNextInstruction();
 }
+
+#define ROTATE_LEFT(opcode, reg)                 \
+    CPU_INSTRUCTION(opcode) {                    \
+        Byte msb = cpu.reg >> 7;                 \
+        cpu.reg <<= 1;                           \
+        cpu.reg |= msb;                          \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0); \
+        cpu.setFlags("nh");                      \
+        cpu.setFlag(Cpu::Flag::C, msb != 0);     \
+    }
+
+#define ROTATE_LEFT_THROUGH_CARRY(opcode, reg)   \
+    CPU_INSTRUCTION(opcode) {                    \
+        Byte msb = cpu.reg >> 7;                 \
+        cpu.reg <<= 1;                           \
+        cpu.reg |= cpu.getFlag(Cpu::Flag::C);    \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0); \
+        cpu.setFlags("nh");                      \
+        cpu.setFlag(Cpu::Flag::C, msb != 0);     \
+    }
+
+#define ROTATE_RIGHT(opcode, reg)                \
+    CPU_INSTRUCTION(opcode) {                    \
+        Byte lsb = cpu.reg << 7;                 \
+        cpu.reg >>= 1;                           \
+        cpu.reg |= lsb;                          \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0); \
+        cpu.setFlags("nh");                      \
+        cpu.setFlag(Cpu::Flag::C, lsb != 0);     \
+    }
+
+#define ROTATE_RIGHT_THROUGH_CARRY(opcode, reg)          \
+    CPU_INSTRUCTION(opcode) {                            \
+        Byte lsb = cpu.reg << 7;                         \
+        cpu.reg >>= 1;                                   \
+        cpu.reg |= Byte{cpu.getFlag(Cpu::Flag::C)} << 7; \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0);         \
+        cpu.setFlags("nh");                              \
+        cpu.setFlag(Cpu::Flag::C, lsb != 0);             \
+    }
+
+ROTATE_LEFT(0x07, A);                 // RLCA
+ROTATE_LEFT(0xCB07, A);               // RLC A
+ROTATE_LEFT(0xCB00, B);               // RLC B
+ROTATE_LEFT(0xCB01, C);               // RLC C
+ROTATE_LEFT(0xCB02, D);               // RLC D
+ROTATE_LEFT(0xCB03, E);               // RLC E
+ROTATE_LEFT(0xCB04, H);               // RLC H
+ROTATE_LEFT(0xCB05, L);               // RLC L
+ROTATE_LEFT(0xCB06, memory[cpu.HL]);  // RLC (HL)
+
+ROTATE_LEFT_THROUGH_CARRY(0x17, A);                 // RLA
+ROTATE_LEFT_THROUGH_CARRY(0xCB17, A);               // RL A
+ROTATE_LEFT_THROUGH_CARRY(0xCB10, B);               // RL B
+ROTATE_LEFT_THROUGH_CARRY(0xCB11, C);               // RL C
+ROTATE_LEFT_THROUGH_CARRY(0xCB12, D);               // RL D
+ROTATE_LEFT_THROUGH_CARRY(0xCB13, E);               // RL E
+ROTATE_LEFT_THROUGH_CARRY(0xCB14, H);               // RL H
+ROTATE_LEFT_THROUGH_CARRY(0xCB15, L);               // RL L
+ROTATE_LEFT_THROUGH_CARRY(0xCB16, memory[cpu.HL]);  // RL (HL)
+
+ROTATE_RIGHT(0x0F, A);                 // RRCA
+ROTATE_RIGHT(0xCB0F, A);               // RRC A
+ROTATE_RIGHT(0xCB08, B);               // RRC B
+ROTATE_RIGHT(0xCB09, C);               // RRC C
+ROTATE_RIGHT(0xCB0A, D);               // RRC D
+ROTATE_RIGHT(0xCB0B, E);               // RRC E
+ROTATE_RIGHT(0xCB0C, H);               // RRC H
+ROTATE_RIGHT(0xCB0D, L);               // RRC L
+ROTATE_RIGHT(0xCB0E, memory[cpu.HL]);  // RRC (HL)
+
+ROTATE_RIGHT_THROUGH_CARRY(0x1F, A);                 // RRA
+ROTATE_RIGHT_THROUGH_CARRY(0xCB1F, A);               // RR A
+ROTATE_RIGHT_THROUGH_CARRY(0xCB18, B);               // RR B
+ROTATE_RIGHT_THROUGH_CARRY(0xCB19, C);               // RR C
+ROTATE_RIGHT_THROUGH_CARRY(0xCB1A, D);               // RR D
+ROTATE_RIGHT_THROUGH_CARRY(0xCB1B, E);               // RR E
+ROTATE_RIGHT_THROUGH_CARRY(0xCB1C, H);               // RR H
+ROTATE_RIGHT_THROUGH_CARRY(0xCB1D, L);               // RR L
+ROTATE_RIGHT_THROUGH_CARRY(0xCB1E, memory[cpu.HL]);  // RR (HL)
