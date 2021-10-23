@@ -146,3 +146,111 @@ ROTATE_RIGHT_THROUGH_CARRY(0xCB1B, E);
 ROTATE_RIGHT_THROUGH_CARRY(0xCB1C, H);
 ROTATE_RIGHT_THROUGH_CARRY(0xCB1D, L);
 ROTATE_RIGHT_THROUGH_CARRY(0xCB1E, memory[cpu.HL]);
+
+#define SHIFT_LEFT(opcode, reg)                  \
+    TEST_F(TestRotatesAndShifts, SLA_##opcode) { \
+        setNextInstructions({opcode, opcode});   \
+        cpu.HL = Word{0xFF10};                   \
+                                                 \
+        cpu.reg = 0x85;                          \
+        cpu.setFlags("ZNHc");                    \
+        runAndCheck([](Cpu& cpu) {               \
+            cpu.PC += 2;                         \
+            cpu.reg = 0x0A;                      \
+            cpu.setFlags("znhC");                \
+        });                                      \
+                                                 \
+        cpu.reg = 0x00;                          \
+        cpu.setFlags("zNHC");                    \
+        runAndCheck([](Cpu& cpu) {               \
+            cpu.PC += 2;                         \
+            cpu.reg = 0x00;                      \
+            cpu.setFlags("Znhc");                \
+        });                                      \
+    }
+
+#define ARITHMETIC_SHIFT_RIGHT(opcode, reg)            \
+    TEST_F(TestRotatesAndShifts, SRA_##opcode) {       \
+        setNextInstructions({opcode, opcode, opcode}); \
+        cpu.HL = Word{0xFF10};                         \
+                                                       \
+        cpu.reg = 0x85;                                \
+        cpu.setFlags("ZNHc");                          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 2;                               \
+            cpu.reg = 0xC2;                            \
+            cpu.setFlags("znhC");                      \
+        });                                            \
+                                                       \
+        cpu.reg = 0x00;                                \
+        cpu.setFlags("zNHC");                          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 2;                               \
+            cpu.reg = 0x00;                            \
+            cpu.setFlags("Znhc");                      \
+        });                                            \
+                                                       \
+        cpu.reg = 0x01;                                \
+        cpu.setFlags("zNHc");                          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 2;                               \
+            cpu.reg = 0x00;                            \
+            cpu.setFlags("ZnhC");                      \
+        });                                            \
+    }
+
+#define LOGICAL_SHIFT_RIGHT(opcode, reg)               \
+    TEST_F(TestRotatesAndShifts, SRL_##opcode) {       \
+        setNextInstructions({opcode, opcode, opcode}); \
+        cpu.HL = Word{0xFF10};                         \
+                                                       \
+        cpu.reg = 0x85;                                \
+        cpu.setFlags("ZNHc");                          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 2;                               \
+            cpu.reg = 0x42;                            \
+            cpu.setFlags("znhC");                      \
+        });                                            \
+                                                       \
+        cpu.reg = 0x00;                                \
+        cpu.setFlags("zNHC");                          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 2;                               \
+            cpu.reg = 0x00;                            \
+            cpu.setFlags("Znhc");                      \
+        });                                            \
+                                                       \
+        cpu.reg = 0x01;                                \
+        cpu.setFlags("zNHc");                          \
+        runAndCheck([](Cpu& cpu) {                     \
+            cpu.PC += 2;                               \
+            cpu.reg = 0x00;                            \
+            cpu.setFlags("ZnhC");                      \
+        });                                            \
+    }
+SHIFT_LEFT(0xCB27, A);
+SHIFT_LEFT(0xCB20, B);
+SHIFT_LEFT(0xCB21, C);
+SHIFT_LEFT(0xCB22, D);
+SHIFT_LEFT(0xCB23, E);
+SHIFT_LEFT(0xCB24, H);
+SHIFT_LEFT(0xCB25, L);
+SHIFT_LEFT(0xCB26, memory[cpu.HL]);
+
+ARITHMETIC_SHIFT_RIGHT(0xCB2F, A);
+ARITHMETIC_SHIFT_RIGHT(0xCB28, B);
+ARITHMETIC_SHIFT_RIGHT(0xCB29, C);
+ARITHMETIC_SHIFT_RIGHT(0xCB2A, D);
+ARITHMETIC_SHIFT_RIGHT(0xCB2B, E);
+ARITHMETIC_SHIFT_RIGHT(0xCB2C, H);
+ARITHMETIC_SHIFT_RIGHT(0xCB2D, L);
+ARITHMETIC_SHIFT_RIGHT(0xCB2E, memory[cpu.HL]);
+
+LOGICAL_SHIFT_RIGHT(0xCB3F, A);
+LOGICAL_SHIFT_RIGHT(0xCB38, B);
+LOGICAL_SHIFT_RIGHT(0xCB39, C);
+LOGICAL_SHIFT_RIGHT(0xCB3A, D);
+LOGICAL_SHIFT_RIGHT(0xCB3B, E);
+LOGICAL_SHIFT_RIGHT(0xCB3C, H);
+LOGICAL_SHIFT_RIGHT(0xCB3D, L);
+LOGICAL_SHIFT_RIGHT(0xCB3E, memory[cpu.HL]);

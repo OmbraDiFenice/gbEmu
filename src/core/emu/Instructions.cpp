@@ -584,3 +584,59 @@ ROTATE_RIGHT_THROUGH_CARRY(0xCB1B, E);               // RR E
 ROTATE_RIGHT_THROUGH_CARRY(0xCB1C, H);               // RR H
 ROTATE_RIGHT_THROUGH_CARRY(0xCB1D, L);               // RR L
 ROTATE_RIGHT_THROUGH_CARRY(0xCB1E, memory[cpu.HL]);  // RR (HL)
+
+#define SHIFT_LEFT(opcode, reg)                  \
+    CPU_INSTRUCTION(opcode) {                    \
+        Byte msb = cpu.reg >> 7;                 \
+        cpu.reg <<= 1;                           \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0); \
+        cpu.setFlags("nh");                      \
+        cpu.setFlag(Cpu::Flag::C, msb != 0);     \
+    }
+
+SHIFT_LEFT(0xCB27, A);               // SLA A
+SHIFT_LEFT(0xCB20, B);               // SLA B
+SHIFT_LEFT(0xCB21, C);               // SLA C
+SHIFT_LEFT(0xCB22, D);               // SLA D
+SHIFT_LEFT(0xCB23, E);               // SLA E
+SHIFT_LEFT(0xCB24, H);               // SLA H
+SHIFT_LEFT(0xCB25, L);               // SLA L
+SHIFT_LEFT(0xCB26, memory[cpu.HL]);  // SLA (HL)
+
+#define ARITHMETIC_SHIFT_RIGHT(opcode, reg)      \
+    CPU_INSTRUCTION(opcode) {                    \
+        Byte lsb = cpu.reg << 7;                 \
+        Byte msb = cpu.reg & 0x80;               \
+        cpu.reg >>= 1;                           \
+        cpu.reg |= msb;                          \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0); \
+        cpu.setFlags("nh");                      \
+        cpu.setFlag(Cpu::Flag::C, lsb != 0);     \
+    }
+
+#define LOGICAL_SHIFT_RIGHT(opcode, reg)         \
+    CPU_INSTRUCTION(opcode) {                    \
+        Byte lsb = cpu.reg << 7;                 \
+        cpu.reg >>= 1;                           \
+        cpu.setFlag(Cpu::Flag::Z, cpu.reg == 0); \
+        cpu.setFlags("nh");                      \
+        cpu.setFlag(Cpu::Flag::C, lsb != 0);     \
+    }
+
+ARITHMETIC_SHIFT_RIGHT(0xCB2F, A);               // SRA A
+ARITHMETIC_SHIFT_RIGHT(0xCB28, B);               // SRA B
+ARITHMETIC_SHIFT_RIGHT(0xCB29, C);               // SRA C
+ARITHMETIC_SHIFT_RIGHT(0xCB2A, D);               // SRA D
+ARITHMETIC_SHIFT_RIGHT(0xCB2B, E);               // SRA E
+ARITHMETIC_SHIFT_RIGHT(0xCB2C, H);               // SRA H
+ARITHMETIC_SHIFT_RIGHT(0xCB2D, L);               // SRA L
+ARITHMETIC_SHIFT_RIGHT(0xCB2E, memory[cpu.HL]);  // SRA (HL)
+
+LOGICAL_SHIFT_RIGHT(0xCB3F, A);               // SRL A
+LOGICAL_SHIFT_RIGHT(0xCB38, B);               // SRL B
+LOGICAL_SHIFT_RIGHT(0xCB39, C);               // SRL C
+LOGICAL_SHIFT_RIGHT(0xCB3A, D);               // SRL D
+LOGICAL_SHIFT_RIGHT(0xCB3B, E);               // SRL E
+LOGICAL_SHIFT_RIGHT(0xCB3C, H);               // SRL H
+LOGICAL_SHIFT_RIGHT(0xCB3D, L);               // SRL L
+LOGICAL_SHIFT_RIGHT(0xCB3E, memory[cpu.HL]);  // SRL (HL)
