@@ -195,3 +195,23 @@ TEST_F(Misc, NOP) {
     setNextInstruction(0x00);
     runAndCheck([](Cpu& cpu) { cpu.PC += 1; });
 }
+
+TEST_F(Misc, DI) {
+    setNextInstructions({0xF3, 0x00});
+    cpu.interruptsEnabled = true;
+    runAndCheck([](Cpu& cpu) { cpu.PC += 1; });
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.interruptsEnabled = false;
+    });
+}
+
+TEST_F(Misc, EI) {
+    setNextInstructions({0xFB, 0x00});
+    cpu.interruptsEnabled = false;
+    runAndCheck([](Cpu& cpu) { cpu.PC += 1; });
+    runAndCheck([](Cpu& cpu) {
+        cpu.PC += 1;
+        cpu.interruptsEnabled = true;
+    });
+}

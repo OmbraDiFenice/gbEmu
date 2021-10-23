@@ -8,6 +8,7 @@ class TestInstruction : public testing::Test {
    protected:
     TestInstruction();
     void setNextInstruction(Word opcode);
+    void setNextInstructions(const std::vector<Word>& opcodes);
     void setNextInstruction(Word opcode, Byte data);
     void setNextInstruction(Word opcode, Word data);
     void runAndCheck(std::function<void(Cpu&)>&& setupExpected);

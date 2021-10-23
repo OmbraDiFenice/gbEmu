@@ -496,3 +496,11 @@ CPU_INSTRUCTION(0x00) {  // NOP
 // TODO CPU_INSTRUCTION(0x76) {} // HALT
 
 // TODO CPU_INSTRUCTION(0x1000) {} // STOP
+
+CPU_INSTRUCTION(0xF3) {  // DI
+    cpu.setDisableInterruptAfterNextInstruction();
+}
+
+CPU_INSTRUCTION(0xFB) {  // EI
+    cpu.setEnableInterruptAfterNextInstruction();
+}

@@ -16,6 +16,18 @@ void TestInstruction::setNextInstruction(Word opcode) {
     }
 }
 
+void TestInstruction::setNextInstructions(const std::vector<Word>& opcodes) {
+    auto startingPc = cpu.PC;
+    for (auto& opcode : opcodes) {
+        setNextInstruction(opcode);
+        ++cpu.PC;
+        if (cpu.PC >> 8 != 0) {
+            ++cpu.PC;
+        }
+    }
+    cpu.PC = startingPc;
+}
+
 void TestInstruction::setNextInstruction(Word opcode, Byte data) {
     setNextInstruction(opcode);
     cpu.memory[cpu.PC + 1] = data;
@@ -52,6 +64,8 @@ void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
     EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::N), cpu.getFlag(Cpu::Flag::N));
     EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::H), cpu.getFlag(Cpu::Flag::H));
     EXPECT_EQ(expectedCpu.getFlag(Cpu::Flag::C), cpu.getFlag(Cpu::Flag::C));
+
+    EXPECT_EQ(expectedCpu.interruptsEnabled, cpu.interruptsEnabled);
 }
 
 void TestInstruction::reset() {
@@ -62,4 +76,5 @@ void TestInstruction::reset() {
     cpu.DE = 0;
     cpu.HL = 0;
     std::memset(cpu.memory, 0, Cpu::kMemSize);
+    cpu.interruptsEnabled = -1;
 }

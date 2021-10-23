@@ -19,6 +19,7 @@ Cpu::Cpu(const Cpu& iCpu) {
     HL = iCpu.HL;
     AF = iCpu.AF;
     memcpy(memory, iCpu.memory, sizeof(Byte) * kMemSize);
+    interruptsEnabled = iCpu.interruptsEnabled;
 }
 
 void Cpu::tick() {
@@ -31,6 +32,14 @@ void Cpu::tick() {
         instruction(*this);
     } else {
         LOG_WARN("unknown opcode " << opcode << ", skipping");
+    }
+
+    if (_shouldDisableInterrupt > 0 && --_shouldDisableInterrupt == 0) {
+        interruptsEnabled = false;
+    }
+
+    if (_shouldEnableInterrupt > 0 && --_shouldEnableInterrupt == 0) {
+        interruptsEnabled = true;
     }
 }
 
@@ -79,6 +88,14 @@ void Cpu::setFlags(const std::string& iFlags) {
                 break;
         }
     }
+}
+
+void Cpu::setDisableInterruptAfterNextInstruction() {
+    _shouldDisableInterrupt = 2;
+}
+
+void Cpu::setEnableInterruptAfterNextInstruction() {
+    _shouldEnableInterrupt = 2;
 }
 
 Byte Cpu::sum(Byte iVal1, Byte iVal2, bool withCarry) {

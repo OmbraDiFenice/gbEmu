@@ -6,6 +6,9 @@ class Cpu;
 
 using Instruction = std::function<void(Cpu&)>;
 
+template <Word opcode>
+struct InstructionInstantiator;
+
 class Cpu {
    public:
     static constexpr size_t kMemSize = 0x10000;
@@ -85,6 +88,8 @@ class Cpu {
     Byte& H = HL.msb;
     Byte& L = HL.lsb;
 
+    bool interruptsEnabled = true;
+
    public:
     Cpu() = default;
     Cpu(const Cpu& iCpu);
@@ -93,6 +98,9 @@ class Cpu {
     bool getFlag(Flag iFlag) const;
     void setFlag(Cpu::Flag iFlag, bool iValue);
     void setFlags(const std::string& iFlags);
+
+    void setDisableInterruptAfterNextInstruction();
+    void setEnableInterruptAfterNextInstruction();
 
     static void Add(Word iOpcode, Instruction&& iCode, bool iExtInstruction);
 
@@ -106,6 +114,8 @@ class Cpu {
 
    private:
     static std::unordered_map<Word, Instruction> _instructionSet;
+    int _shouldDisableInterrupt = -1;
+    int _shouldEnableInterrupt  = -1;
 };
 
 template <Word opcode>
