@@ -640,3 +640,52 @@ LOGICAL_SHIFT_RIGHT(0xCB3B, E);               // SRL E
 LOGICAL_SHIFT_RIGHT(0xCB3C, H);               // SRL H
 LOGICAL_SHIFT_RIGHT(0xCB3D, L);               // SRL L
 LOGICAL_SHIFT_RIGHT(0xCB3E, memory[cpu.HL]);  // SRL (HL)
+
+#define BIT(opcode, reg)                                  \
+    CPU_INSTRUCTION(opcode) {                             \
+        Byte bitIndex = cpu.memory[cpu.PC++];             \
+        Byte mask     = 0x01 << bitIndex;                 \
+        cpu.setFlag(Cpu::Flag::Z, (cpu.reg & mask) == 0); \
+        cpu.setFlags("nH");                               \
+    }
+
+BIT(0xCB47, A);               // BIT b, A
+BIT(0xCB40, B);               // BIT b, B
+BIT(0xCB41, C);               // BIT b, C
+BIT(0xCB42, D);               // BIT b, D
+BIT(0xCB43, E);               // BIT b, E
+BIT(0xCB44, H);               // BIT b, H
+BIT(0xCB45, L);               // BIT b, L
+BIT(0xCB46, memory[cpu.HL]);  // BIT b, (HL)
+
+#define SET(opcode, reg)                      \
+    CPU_INSTRUCTION(opcode) {                 \
+        Byte bitIndex = cpu.memory[cpu.PC++]; \
+        Byte mask     = 0x01 << bitIndex;     \
+        cpu.reg |= mask;                      \
+    }
+
+SET(0xCBC7, A);               // SET b, A
+SET(0xCBC0, B);               // SET b, B
+SET(0xCBC1, C);               // SET b, C
+SET(0xCBC2, D);               // SET b, D
+SET(0xCBC3, E);               // SET b, E
+SET(0xCBC4, H);               // SET b, H
+SET(0xCBC5, L);               // SET b, L
+SET(0xCBC6, memory[cpu.HL]);  // SET b, (HL)
+
+#define RES(opcode, reg)                      \
+    CPU_INSTRUCTION(opcode) {                 \
+        Byte bitIndex = cpu.memory[cpu.PC++]; \
+        Byte mask     = ~(0x01 << bitIndex);  \
+        cpu.reg &= mask;                      \
+    }
+
+RES(0xCB87, A);               // RES b, A
+RES(0xCB80, B);               // RES b, B
+RES(0xCB81, C);               // RES b, C
+RES(0xCB82, D);               // RES b, D
+RES(0xCB83, E);               // RES b, E
+RES(0xCB84, H);               // RES b, H
+RES(0xCB85, L);               // RES b, L
+RES(0xCB86, memory[cpu.HL]);  // RES b, (HL)

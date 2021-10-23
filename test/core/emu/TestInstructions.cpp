@@ -28,15 +28,28 @@ void TestInstruction::setNextInstructions(const std::vector<Word>& opcodes) {
     cpu.PC = startingPc;
 }
 
+void TestInstruction::setNextInstructions(
+    const std::vector<std::pair<Word, Byte>>& opcodes) {
+    auto startingPc = cpu.PC;
+    for (auto& [opcode, data] : opcodes) {
+        setNextInstruction(opcode, data);
+        cpu.PC += 2;
+        if (opcode > 0xFF) {
+            ++cpu.PC;
+        }
+    }
+    cpu.PC = startingPc;
+}
+
 void TestInstruction::setNextInstruction(Word opcode, Byte data) {
     setNextInstruction(opcode);
-    cpu.memory[cpu.PC + 1] = data;
+    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 2 : 1)] = data;
 }
 
 void TestInstruction::setNextInstruction(Word opcode, Word data) {
     setNextInstruction(opcode);
-    cpu.memory[cpu.PC + 1] = (data >> 8) & 0xFF;
-    cpu.memory[cpu.PC + 2] = data & 0xFF;
+    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 2 : 1)] = (data >> 8) & 0xFF;
+    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 3 : 2)] = data & 0xFF;
 }
 
 void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
