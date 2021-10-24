@@ -6,67 +6,31 @@ class Cpu;
 
 using Instruction = std::function<void(Cpu&)>;
 
-template <Word opcode>
-struct InstructionInstantiator;
+struct TwoByteRegister {
+    Byte msb;
+    Byte lsb;
+    TwoByteRegister();
+    TwoByteRegister(const TwoByteRegister& iOther);
+    TwoByteRegister(Word iVal);
+    TwoByteRegister& operator=(Word iVal);
+    TwoByteRegister operator+=(Word iVal);
+    TwoByteRegister operator-=(Word iVal);
+    bool operator==(const TwoByteRegister& iOther) const;
+    TwoByteRegister operator-(::Word iVal);
+    TwoByteRegister& operator--();
+    TwoByteRegister& operator++();
+    TwoByteRegister operator++(int);
+    operator Word();
+
+   private:
+    void assign(Word iVal);
+    Byte getMsb(const Word& iWord);
+    Byte getLsb(const Word& iWord);
+};
 
 class Cpu {
    public:
     enum class Flag { Z = 7, N = 6, H = 5, C = 4 };
-    struct TwoByteRegister {
-        Byte msb;
-        Byte lsb;
-        TwoByteRegister() {
-            msb = 0;
-            lsb = 0;
-        }
-        TwoByteRegister(const TwoByteRegister& iOther) {
-            msb = iOther.msb;
-            lsb = iOther.lsb;
-        }
-        TwoByteRegister(Word iVal) { assign(iVal); }
-        TwoByteRegister& operator=(Word iVal) {
-            assign(iVal);
-            return *this;
-        }
-        TwoByteRegister operator+=(Word iVal) {
-            assign(Word{*this} + iVal);
-            return *this;
-        }
-        TwoByteRegister operator-=(Word iVal) {
-            assign(Word{*this} - iVal);
-            return *this;
-        }
-        bool operator==(const TwoByteRegister& iOther) const {
-            return msb == iOther.msb && lsb == iOther.lsb;
-        }
-        TwoByteRegister operator-(::Word iVal) {
-            *this = Word{*this} - iVal;
-            return *this;
-        }
-        TwoByteRegister& operator--() {
-            assign(*this - Word{1});
-            return *this;
-        }
-        TwoByteRegister& operator++() {
-            assign(*this + Word{1});
-            return *this;
-        }
-        TwoByteRegister operator++(int) {
-            Word ret = *this;
-            assign(*this + Word{1});
-            return ret;
-        }
-        operator Word() { return msb << 8 | lsb; }
-
-       private:
-        void assign(Word iVal) {
-            msb = getMsb(iVal);
-            lsb = getLsb(iVal);
-        }
-        Byte getMsb(const Word& iWord) { return (iWord >> 8) & 0xFF; }
-        Byte getLsb(const Word& iWord) { return iWord & 0xFF; }
-    };
-
     Word PC            = 0;
     TwoByteRegister SP = 0;
     Memory memory;

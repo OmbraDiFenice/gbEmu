@@ -2,6 +2,73 @@
 
 #include "Cpu.h"
 
+// ---------------------- TwoByteRegister ----------------------
+
+TwoByteRegister::TwoByteRegister() {
+    msb = 0;
+    lsb = 0;
+}
+
+TwoByteRegister::TwoByteRegister(const TwoByteRegister& iOther) {
+    msb = iOther.msb;
+    lsb = iOther.lsb;
+}
+
+TwoByteRegister::TwoByteRegister(Word iVal) { assign(iVal); }
+
+TwoByteRegister& TwoByteRegister::operator=(Word iVal) {
+    assign(iVal);
+    return *this;
+}
+
+TwoByteRegister TwoByteRegister::operator+=(Word iVal) {
+    assign(Word{*this} + iVal);
+    return *this;
+}
+
+TwoByteRegister TwoByteRegister::operator-=(Word iVal) {
+    assign(Word{*this} - iVal);
+    return *this;
+}
+
+bool TwoByteRegister::operator==(const TwoByteRegister& iOther) const {
+    return msb == iOther.msb && lsb == iOther.lsb;
+}
+
+TwoByteRegister TwoByteRegister::operator-(::Word iVal) {
+    *this = Word{*this} - iVal;
+    return *this;
+}
+
+TwoByteRegister& TwoByteRegister::operator--() {
+    assign(*this - Word{1});
+    return *this;
+}
+
+TwoByteRegister& TwoByteRegister::operator++() {
+    assign(*this + Word{1});
+    return *this;
+}
+
+TwoByteRegister TwoByteRegister::operator++(int) {
+    Word ret = *this;
+    assign(*this + Word{1});
+    return ret;
+}
+
+TwoByteRegister::operator Word() { return msb << 8 | lsb; }
+
+void TwoByteRegister::assign(Word iVal) {
+    msb = getMsb(iVal);
+    lsb = getLsb(iVal);
+}
+
+Byte TwoByteRegister::getMsb(const Word& iWord) { return (iWord >> 8) & 0xFF; }
+
+Byte TwoByteRegister::getLsb(const Word& iWord) { return iWord & 0xFF; }
+
+// ---------------------------- Cpu ----------------------------
+
 std::unordered_map<Word, Instruction> Cpu::_instructionSet;
 
 void Cpu::Add(Word iOpcode, Instruction&& iCode, bool iExtInstruction) {
