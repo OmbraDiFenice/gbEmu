@@ -685,3 +685,42 @@ RES(0xCB83, E);               // RES b, E
 RES(0xCB84, H);               // RES b, H
 RES(0xCB85, L);               // RES b, L
 RES(0xCB86, memory[cpu.HL]);  // RES b, (HL)
+
+CPU_INSTRUCTION(0xC3) {  // JP nn
+    Word addr = cpu.readImmediateInstructionValue();
+    cpu.PC    = addr;
+}
+
+#define CONDITIONAL_JUMP(opcode, condition, flag)        \
+    CPU_INSTRUCTION(opcode) {                            \
+        Word addr = cpu.readImmediateInstructionValue(); \
+        if (cpu.getFlag(Cpu::Flag::flag) == condition) { \
+            cpu.PC = addr;                               \
+        }                                                \
+    }
+
+CONDITIONAL_JUMP(0xC2, false, Z);  // JP NZ, nn
+CONDITIONAL_JUMP(0xCA, true, Z);   // JP Z, nn
+CONDITIONAL_JUMP(0xD2, false, C);  // JP NC, nn
+CONDITIONAL_JUMP(0xDA, true, C);   // JP C, nn
+
+CPU_INSTRUCTION(0xE9) {  // JP (HL)
+    cpu.PC = cpu.HL;
+}
+
+CPU_INSTRUCTION(0x18) {  // JR n
+    cpu.PC += cpu.memory[cpu.PC++];
+}
+
+#define CONDITIONAL_RELATIVE_JUMP(opcode, condition, flag) \
+    CPU_INSTRUCTION(opcode) {                              \
+        Byte offset = cpu.memory[cpu.PC++];                \
+        if (cpu.getFlag(Cpu::Flag::flag) == condition) {   \
+            cpu.PC += offset;                              \
+        }                                                  \
+    }
+
+CONDITIONAL_RELATIVE_JUMP(0x20, false, Z);  // JR NZ, n
+CONDITIONAL_RELATIVE_JUMP(0x28, true, Z);   // JR Z, n
+CONDITIONAL_RELATIVE_JUMP(0x30, false, C);  // JR NC, n
+CONDITIONAL_RELATIVE_JUMP(0x38, true, C);   // JR C, n
