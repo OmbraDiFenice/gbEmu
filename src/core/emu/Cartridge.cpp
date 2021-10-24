@@ -7,7 +7,7 @@
 Cartridge::~Cartridge() { delete[] _data; }
 
 bool Cartridge::load(const std::string& filename) {
-    _data = loadData(filename.c_str());
+    _data = static_cast<Byte*>(loadData(filename.c_str()));
     return _data != nullptr;
 }
 
@@ -66,12 +66,10 @@ std::string Cartridge::getDestination() {
     return _data[0x14A] == 0 ? "Japanese" : "Non-japanese";
 }
 
-unsigned char Cartridge::getHeaderChecksum() {
-    return static_cast<unsigned char>(_data[0x14D]);
-}
+Byte Cartridge::getHeaderChecksum() { return static_cast<Byte>(_data[0x14D]); }
 
-unsigned char Cartridge::computeHeaderChecksum() {
-    unsigned char checksum = 0;
+Byte Cartridge::computeHeaderChecksum() {
+    Byte checksum = 0;
     for (int i = 0x134; i <= 0x14C; ++i) {
         checksum = checksum - _data[i] - 1;
     }

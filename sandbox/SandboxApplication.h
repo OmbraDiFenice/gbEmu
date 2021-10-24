@@ -11,7 +11,7 @@
 class SandboxApplication : public Application {
    public:
     SandboxApplication();
-    ~SandboxApplication();
+    ~SandboxApplication() override;
 
    private:
     void init() override;

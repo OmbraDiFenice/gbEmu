@@ -9,6 +9,7 @@
 class Application {
    public:
     Application() : _windowManager(new GLWindowManager()){};
+    virtual ~Application() = default;
 
     void run();
 

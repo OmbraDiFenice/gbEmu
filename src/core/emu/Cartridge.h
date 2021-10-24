@@ -1,5 +1,6 @@
 #pragma once
 
+#include <core/emu/Memory.h>
 #include <string>
 
 class Cartridge {
@@ -13,9 +14,9 @@ class Cartridge {
     size_t getRomSize();
     size_t getRamSize();
     std::string getDestination();
-    unsigned char getHeaderChecksum();
-    unsigned char computeHeaderChecksum();
+    Byte getHeaderChecksum();
+    Byte computeHeaderChecksum();
 
    private:
-    unsigned char* _data = nullptr;
+    Byte* _data = nullptr;
 };

@@ -6,7 +6,7 @@
 class EmuApplication : public Application {
    public:
     EmuApplication() = default;
-    ~EmuApplication();
+    ~EmuApplication() override;
 
    private:
     void init() override;
