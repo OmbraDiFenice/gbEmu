@@ -48,8 +48,8 @@ void TestInstruction::setNextInstruction(Word opcode, Byte data) {
 
 void TestInstruction::setNextInstruction(Word opcode, Word data) {
     setNextInstruction(opcode);
-    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 2 : 1)] = (data >> 8) & 0xFF;
-    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 3 : 2)] = data & 0xFF;
+    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 2 : 1)] = data & 0xFF;
+    cpu.memory[cpu.PC + ((opcode > 0xFF) ? 3 : 2)] = (data >> 8) & 0xFF;
 }
 
 void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {

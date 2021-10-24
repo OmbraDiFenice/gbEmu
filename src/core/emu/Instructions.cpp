@@ -8,12 +8,10 @@
         cpu.reg        = immediate;            \
     }
 
-#define LD_REG16_IMM(opcode, reg)                               \
-    CPU_INSTRUCTION(opcode) {                                   \
-        Byte immediateMsb = cpu.memory[cpu.PC++];               \
-        Byte immediateLsb = cpu.memory[cpu.PC++];               \
-        Word immediate    = (immediateMsb << 8) | immediateLsb; \
-        cpu.reg           = immediate;                          \
+#define LD_REG16_IMM(opcode, reg)                             \
+    CPU_INSTRUCTION(opcode) {                                 \
+        Word immediate = cpu.readImmediateInstructionValue(); \
+        cpu.reg        = immediate;                           \
     }
 
 LD_REG_IMM(0x3E, A);  // LD A, n
@@ -45,17 +43,17 @@ LD_REG_IMM(0x2E, L);  // LD L, n
         cpu.memory[cpu.regaddr] = value;                \
     }
 
-#define LD_REG_IMMaddr(opcode, reg)                                      \
-    CPU_INSTRUCTION(opcode) {                                            \
-        Word addr  = cpu.memory[cpu.PC++] | (cpu.memory[cpu.PC++] << 8); \
-        Byte value = cpu.memory[addr];                                   \
-        cpu.reg    = value;                                              \
+#define LD_REG_IMMaddr(opcode, reg)                       \
+    CPU_INSTRUCTION(opcode) {                             \
+        Word addr  = cpu.readImmediateInstructionValue(); \
+        Byte value = cpu.memory[addr];                    \
+        cpu.reg    = value;                               \
     }
 
-#define LD_IMMaddr_REG(opcode, reg)                                            \
-    CPU_INSTRUCTION(opcode) {                                                  \
-        Word addr        = cpu.memory[cpu.PC++] | (cpu.memory[cpu.PC++] << 8); \
-        cpu.memory[addr] = cpu.reg;                                            \
+#define LD_IMMaddr_REG(opcode, reg)                             \
+    CPU_INSTRUCTION(opcode) {                                   \
+        Word addr        = cpu.readImmediateInstructionValue(); \
+        cpu.memory[addr] = cpu.reg;                             \
     }
 
 LD_REG_REG(0x7F, A, A);       // LD A, A
@@ -202,9 +200,7 @@ CPU_INSTRUCTION(0xF8) {  // LD HL, SP+n
 }
 
 CPU_INSTRUCTION(0x08) {  // LD (nn), SP
-    Word immediateMsb    = cpu.memory[cpu.PC++];
-    Word immediateLsb    = cpu.memory[cpu.PC++];
-    Word addr            = (immediateMsb << 8) | immediateLsb;
+    Word addr            = cpu.readImmediateInstructionValue();
     cpu.memory[addr]     = cpu.SP.msb;
     cpu.memory[addr + 1] = cpu.SP.lsb;
 }

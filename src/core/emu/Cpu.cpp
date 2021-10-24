@@ -98,6 +98,12 @@ void Cpu::setEnableInterruptAfterNextInstruction() {
     _shouldEnableInterrupt = 2;
 }
 
+Word Cpu::readImmediateInstructionValue() {
+    Byte immediateLsb = memory[PC++];
+    Byte immediateMsb = memory[PC++];
+    return (immediateMsb << 8) | immediateLsb;
+}
+
 Byte Cpu::sum(Byte iVal1, Byte iVal2, bool withCarry) {
     auto [result, halfCarry, fullCarry] =
         adder(iVal1, iVal2, withCarry && getFlag(Flag::C));
