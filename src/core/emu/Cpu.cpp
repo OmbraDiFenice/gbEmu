@@ -98,7 +98,7 @@ void Cpu::setEnableInterruptAfterNextInstruction() {
     _shouldEnableInterrupt = 2;
 }
 
-Word Cpu::readImmediateInstructionValue() {
+Word Cpu::readWordImmediateInstructionValue() {
     Byte immediateLsb = memory[PC++];
     Byte immediateMsb = memory[PC++];
     return (immediateMsb << 8) | immediateLsb;

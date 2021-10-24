@@ -8,10 +8,10 @@
         cpu.reg        = immediate;            \
     }
 
-#define LD_REG16_IMM(opcode, reg)                             \
-    CPU_INSTRUCTION(opcode) {                                 \
-        Word immediate = cpu.readImmediateInstructionValue(); \
-        cpu.reg        = immediate;                           \
+#define LD_REG16_IMM(opcode, reg)                                 \
+    CPU_INSTRUCTION(opcode) {                                     \
+        Word immediate = cpu.readWordImmediateInstructionValue(); \
+        cpu.reg        = immediate;                               \
     }
 
 LD_REG_IMM(0x3E, A);  // LD A, n
@@ -43,17 +43,17 @@ LD_REG_IMM(0x2E, L);  // LD L, n
         cpu.memory[cpu.regaddr] = value;                \
     }
 
-#define LD_REG_IMMaddr(opcode, reg)                       \
-    CPU_INSTRUCTION(opcode) {                             \
-        Word addr  = cpu.readImmediateInstructionValue(); \
-        Byte value = cpu.memory[addr];                    \
-        cpu.reg    = value;                               \
+#define LD_REG_IMMaddr(opcode, reg)                           \
+    CPU_INSTRUCTION(opcode) {                                 \
+        Word addr  = cpu.readWordImmediateInstructionValue(); \
+        Byte value = cpu.memory[addr];                        \
+        cpu.reg    = value;                                   \
     }
 
-#define LD_IMMaddr_REG(opcode, reg)                             \
-    CPU_INSTRUCTION(opcode) {                                   \
-        Word addr        = cpu.readImmediateInstructionValue(); \
-        cpu.memory[addr] = cpu.reg;                             \
+#define LD_IMMaddr_REG(opcode, reg)                                 \
+    CPU_INSTRUCTION(opcode) {                                       \
+        Word addr        = cpu.readWordImmediateInstructionValue(); \
+        cpu.memory[addr] = cpu.reg;                                 \
     }
 
 LD_REG_REG(0x7F, A, A);       // LD A, A
@@ -200,7 +200,7 @@ CPU_INSTRUCTION(0xF8) {  // LD HL, SP+n
 }
 
 CPU_INSTRUCTION(0x08) {  // LD (nn), SP
-    Word addr            = cpu.readImmediateInstructionValue();
+    Word addr            = cpu.readWordImmediateInstructionValue();
     cpu.memory[addr]     = cpu.SP.msb;
     cpu.memory[addr + 1] = cpu.SP.lsb;
 }
@@ -687,16 +687,16 @@ RES(0xCB85, L);               // RES b, L
 RES(0xCB86, memory[cpu.HL]);  // RES b, (HL)
 
 CPU_INSTRUCTION(0xC3) {  // JP nn
-    Word addr = cpu.readImmediateInstructionValue();
+    Word addr = cpu.readWordImmediateInstructionValue();
     cpu.PC    = addr;
 }
 
-#define CONDITIONAL_JUMP(opcode, condition, flag)        \
-    CPU_INSTRUCTION(opcode) {                            \
-        Word addr = cpu.readImmediateInstructionValue(); \
-        if (cpu.getFlag(Cpu::Flag::flag) == condition) { \
-            cpu.PC = addr;                               \
-        }                                                \
+#define CONDITIONAL_JUMP(opcode, condition, flag)            \
+    CPU_INSTRUCTION(opcode) {                                \
+        Word addr = cpu.readWordImmediateInstructionValue(); \
+        if (cpu.getFlag(Cpu::Flag::flag) == condition) {     \
+            cpu.PC = addr;                                   \
+        }                                                    \
     }
 
 CONDITIONAL_JUMP(0xC2, false, Z);  // JP NZ, nn
@@ -724,3 +724,63 @@ CONDITIONAL_RELATIVE_JUMP(0x20, false, Z);  // JR NZ, n
 CONDITIONAL_RELATIVE_JUMP(0x28, true, Z);   // JR Z, n
 CONDITIONAL_RELATIVE_JUMP(0x30, false, C);  // JR NC, n
 CONDITIONAL_RELATIVE_JUMP(0x38, true, C);   // JR C, n
+
+CPU_INSTRUCTION(0xCD) {  // CALL nn
+    Word addr            = cpu.readWordImmediateInstructionValue();
+    cpu.memory[--cpu.SP] = cpu.PC >> 8;
+    cpu.memory[--cpu.SP] = cpu.PC & 0xFF;
+    cpu.PC               = addr;
+}
+
+#define CONDITIONAL_CALL(opcode, condition, flag)            \
+    CPU_INSTRUCTION(opcode) {                                \
+        Word addr = cpu.readWordImmediateInstructionValue(); \
+        if (cpu.getFlag(Cpu::Flag::flag) == condition) {     \
+            cpu.memory[--cpu.SP] = cpu.PC >> 8;              \
+            cpu.memory[--cpu.SP] = cpu.PC & 0xFF;            \
+            cpu.PC               = addr;                     \
+        }                                                    \
+    }
+
+CONDITIONAL_CALL(0xC4, false, Z);  // CALL NZ, nn
+CONDITIONAL_CALL(0xCC, true, Z);   // CALL Z, nn
+CONDITIONAL_CALL(0xD4, false, C);  // CALL NC, nn
+CONDITIONAL_CALL(0xDC, true, C);   // CALL C, nn
+
+#define RST(opcode, n)                        \
+    CPU_INSTRUCTION(opcode) {                 \
+        cpu.memory[--cpu.SP] = cpu.PC >> 8;   \
+        cpu.memory[--cpu.SP] = cpu.PC & 0xFF; \
+        cpu.PC               = Word{n};       \
+    }
+
+RST(0xC7, 0x00);  // RST 00H
+RST(0xCF, 0x08);  // RST 08H
+RST(0xD7, 0x10);  // RST 10H
+RST(0xDF, 0x18);  // RST 18H
+RST(0xE7, 0x20);  // RST 20H
+RST(0xEF, 0x28);  // RST 28H
+RST(0xF7, 0x30);  // RST 30H
+RST(0xFF, 0x38);  // RST 38H
+
+CPU_INSTRUCTION(0xC9) {
+    cpu.PC = Word(cpu.memory[cpu.SP++]) | Word(cpu.memory[cpu.SP++] << 8);
+}
+
+#define CONDITIONAL_RET(opcode, condition, flag)                              \
+    CPU_INSTRUCTION(opcode) {                                                 \
+        if (cpu.getFlag(Cpu::Flag::flag) == condition) {                      \
+            cpu.PC =                                                          \
+                Word(cpu.memory[cpu.SP++]) | Word(cpu.memory[cpu.SP++] << 8); \
+        }                                                                     \
+    }
+
+CONDITIONAL_RET(0xC0, false, Z);  // RET NZ
+CONDITIONAL_RET(0xC8, true, Z);   // RET Z
+CONDITIONAL_RET(0xD0, false, C);  // RET NC
+CONDITIONAL_RET(0xD8, true, C);   // RET C
+
+CPU_INSTRUCTION(0xD9) {  // RETI
+    cpu.PC = Word(cpu.memory[cpu.SP++]) | Word(cpu.memory[cpu.SP++] << 8);
+    cpu.interruptsEnabled = true;
+}

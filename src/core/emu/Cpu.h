@@ -102,7 +102,7 @@ class Cpu {
     void setDisableInterruptAfterNextInstruction();
     void setEnableInterruptAfterNextInstruction();
 
-    Word readImmediateInstructionValue();
+    Word readWordImmediateInstructionValue();
 
     static void Add(Word iOpcode, Instruction&& iCode, bool iExtInstruction);
 
