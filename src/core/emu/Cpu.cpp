@@ -11,14 +11,13 @@ void Cpu::Add(Word iOpcode, Instruction&& iCode, bool iExtInstruction) {
     _instructionSet.emplace(iOpcode, iCode);
 }
 
-Cpu::Cpu(const Cpu& iCpu) {
-    PC = iCpu.PC;
-    SP = iCpu.SP;
-    BC = iCpu.BC;
-    DE = iCpu.DE;
-    HL = iCpu.HL;
-    AF = iCpu.AF;
-    memcpy(memory, iCpu.memory, sizeof(Byte) * kMemSize);
+Cpu::Cpu(const Cpu& iCpu) : memory(iCpu.memory) {
+    PC                = iCpu.PC;
+    SP                = iCpu.SP;
+    BC                = iCpu.BC;
+    DE                = iCpu.DE;
+    HL                = iCpu.HL;
+    AF                = iCpu.AF;
     interruptsEnabled = iCpu.interruptsEnabled;
 }
 

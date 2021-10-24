@@ -11,7 +11,6 @@ struct InstructionInstantiator;
 
 class Cpu {
    public:
-    static constexpr size_t kMemSize = 0x10000;
     enum class Flag { Z = 7, N = 6, H = 5, C = 4 };
     struct TwoByteRegister {
         Byte msb;
@@ -70,7 +69,7 @@ class Cpu {
 
     Word PC            = 0;
     TwoByteRegister SP = 0;
-    Byte memory[kMemSize];
+    Memory memory;
 
     TwoByteRegister AF;
     Byte& A = AF.msb;

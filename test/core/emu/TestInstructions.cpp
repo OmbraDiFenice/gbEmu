@@ -67,7 +67,7 @@ void TestInstruction::runAndCheck(std::function<void(Cpu&)>&& setupExpected) {
     EXPECT_EQ(expectedCpu.H, cpu.H);
     EXPECT_EQ(expectedCpu.L, cpu.L);
 
-    for (size_t addr = 0; addr < Cpu::kMemSize; ++addr) {
+    for (size_t addr = 0; addr < Memory::kMemSize; ++addr) {
         EXPECT_EQ(expectedCpu.memory[addr], cpu.memory[addr])
             << "memory values differ at address: " << addr;
     }
@@ -88,6 +88,6 @@ void TestInstruction::reset() {
     cpu.BC = 0;
     cpu.DE = 0;
     cpu.HL = 0;
-    std::memset(cpu.memory, 0, Cpu::kMemSize);
+    cpu.memory.zero();
     cpu.interruptsEnabled = -1;
 }
